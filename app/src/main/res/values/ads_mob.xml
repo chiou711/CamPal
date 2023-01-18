@@ -2,9 +2,9 @@
 <resources>
 
     <!--real app id-->
-    <string translatable="false" name="ad_mob_app_id">ca-app-pub-2343355362438067~8747463492</string>
+    <string translatable="false" name="ad_mob_app_id">ca-app-pub-?</string>
     <!--real ad unit id-->
-    <string translatable="false" name="banner_ad_unit_id">ca-app-pub-2343355362438067/6092831252</string>
+    <string translatable="false" name="banner_ad_unit_id">ca-app-pub-?</string>
 
     <!-- test app id -->
     <string translatable="false" name="ad_mob_app_id_test">ca-app-pub-3940256099942544~3347511713</string>

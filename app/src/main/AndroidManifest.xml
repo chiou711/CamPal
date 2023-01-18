@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.cw.campal"
+    android:versionCode="00001"
+    android:versionName="0.00.01">
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+	<uses-permission android:name="android.permission.CAMERA" />
+	<uses-permission android:name="android.permission.WAKE_LOCK" />	
+	<!--<uses-permission android:name="android.permission.READ_PHONE_STATE"/>-->
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="com.google.android.apps.photos.permission.GOOGLE_PHOTOS"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+<!--    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"-->
+<!--        tools:ignore="ScopedStorage" />-->
+
+	<uses-feature android:name="android.hardware.camera"
+	    		  android:required="false"/>
+	<uses-feature android:name="android.hardware.camera.autofocus"
+                  android:required="false"/>
+    <uses-feature android:name="android.hardware.telephony"
+                  android:required="false"/>
+
+    <!--option 1-->
+    <!--    <queries>-->
+    <!--        <intent>-->
+    <!--            <action android:name="com.google.android.youtube.api.service.START" />-->
+    <!--        </intent>-->
+    <!--    </queries>-->
+
+    <!--    option 2-->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data  android:scheme="https" android:host="youtube.com" />
+        </intent>
+    </queries>
+
+    <application
+        android:name="com.cw.campal.util.uil.UilApplication"
+        android:allowBackup="true"
+		android:largeHeap="true"        
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning"
+        android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true"
+        >
+
+        <!-- android:theme="@style/Theme.AppCompat" -->
+        <!-- android:theme="@style/CustomTheme" -->
+        <activity
+            android:name="com.cw.campal.main.MainAct"
+            android:theme="@style/MyTheme"
+            android:launchMode="singleTop"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize|screenLayout|uiMode"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+	   		<intent-filter>
+			   <action android:name="android.intent.action.SEND" />
+			   <category android:name="android.intent.category.DEFAULT" />
+			   <data android:mimeType="text/*" />
+			</intent-filter>
+            <intent-filter android:priority="0">
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="com.cw.campal.note_add.Note_addText"
+                  android:theme="@style/MyTheme"
+                  android:windowSoftInputMode="adjustPan"
+                  android:parentActivityName="com.cw.campal.main.MainAct">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cw.campal.main.MainAct" />
+        </activity>
+        <activity android:name="com.cw.campal.note_add.Note_addAudio"
+                  android:theme="@style/MyTheme"/>
+        <activity android:name="com.cw.campal.note_add.Note_addCameraImage"/>
+        <activity android:name="com.cw.campal.note_add.Note_addReadyImage"
+                  android:theme="@style/MyTheme"/>
+        <activity android:name="com.cw.campal.note_add.Note_addCameraVideo"/>
+        <activity android:name="com.cw.campal.note_add.Note_addReadyVideo"/>
+        <activity android:name="com.cw.campal.util.drawing.Note_drawingAct" />
+        <activity android:name="com.cw.campal.note_edit.Note_edit"
+                  android:windowSoftInputMode="adjustPan"/>
+        <activity android:name="com.cw.campal.note.Note"
+                  android:theme="@style/MyTheme"
+            	  android:configChanges="orientation|keyboard|keyboardHidden|screenSize|screenLayout|uiMode">
+            <intent-filter android:priority="0">
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </activity>
+        <!-- note: add orientation above, when doing Rotate, activity will not go through the following states:
+             onPause/onSaveInstanceState/onStop/onDestroy/
+                                                onCreate/onStart/onRestoreInstanceState/onResume    -->
+
+        <activity android:name="com.cw.campal.operation.youtube.YouTubePlayerAct"
+                  android:configChanges="orientation|screenSize|keyboardHidden"/>
+        <activity android:name="com.cw.campal.operation.import_export.Import_webAct"
+                  android:theme="@style/MyTheme"/>
+        <activity android:name="com.cw.campal.operation.gallery.GalleryGridAct"/>
+        <activity android:name="com.cw.campal.operation.gallery.GalleryPagerAct"/>
+      	<activity android:name="com.cw.campal.operation.slideshow.SlideshowPlayer"
+                  android:theme="@android:style/Theme.NoTitleBar"/>
+
+        <!--YouTube search -->
+        <activity android:name="com.cw.campal.operation.youtube.SearchYouTube"
+                  android:windowSoftInputMode="adjustPan"
+                  android:theme="@style/MyTheme"/>
+
+        <!--Add_recording-->
+        <activity
+            android:name="com.cw.campal.note_add.add_recording.Add_recording_act"
+            android:screenOrientation="unspecified"
+            android:label="@string/app_name"
+            android:theme="@style/MyTheme" >
+        </activity>
+
+        <service android:name="com.cw.campal.note_add.add_recording.RecordingService" />
+
+        <!--receiver-->
+        <receiver
+            android:name="com.cw.campal.util.DeleteFileAlarmReceiver"
+            android:enabled="true" />
+        <receiver android:name="androidx.media.session.MediaButtonReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
+            </intent-filter>
+        </receiver>
+
+        <!-- will create BackgroundAudioService instance when notification button is pressed -->
+        <service android:name="com.cw.campal.operation.audio.BackgroundAudioService">
+        <intent-filter>
+            <action android:name="android.intent.action.MEDIA_BUTTON" />
+            <action android:name="android.media.AUDIO_BECOMING_NOISY" />
+            <action android:name="android.media.browse.MediaBrowserService" />
+        </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/ad_mob_app_id"/>
+
+<!--            <meta-data-->
+<!--                android:name="com.google.android.gms.ads.APPLICATION_ID"-->
+<!--                android:value="@string/ad_mob_app_id_test"/>-->
+
+        <meta-data
+            android:name="com.google.android.gms.ads.AD_MANAGER_APP"
+            android:value="true"/>
+           </application>
+
+        </manifest>
+        <!-- reference
+             theme:
+                android:theme="@style/AppTheme"
+                android:theme="@style/CustomTheme"
+             screen orientation:
+                android:screenOrientation="portrait"
+
+            For android tv:
+
+            - in manifest
+                <uses-feature android:name="android.software.leanback"
+                android:required="false" />
+                <uses-feature android:name="android.hardware.touchscreen"
+                android:required="false" />
+
+            - in application tag
+                android:banner="@drawable/ic_banner"
+
+            - in main activity
+                <intent-filter>
+                    <action android:name="android.intent.action.MAIN" />
+                    <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+                </intent-filter>
+
+
+         -->
