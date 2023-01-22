@@ -6,10 +6,6 @@
     <string name="btn_Continue">Continue</string>
     <string name="btn_Stop">Stop</string>
     <string name="btn_Renew">Renew</string>
-    <string name="title_playing_audio">Still playing audio.</string>
-    <string name="message_continue_or_stop">Continue or stop audio playing?</string>
-    <string name="message_continue_or_stop_YouTube_title">Continue playing next link?</string>
-    <string name="message_continue_or_stop_YouTube_message">If not playing, please press No within 5 seconds.</string>
     <string name="btn_Finish">Finish</string>
     <string name="btn_Select">Select</string>
     <string name="btn_None">None</string>

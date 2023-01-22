@@ -266,20 +266,4 @@ public class Pref
         String key = "KEY_DRAWING_LINE_COLOR_BLUE";
         return pref.getInt(key, 0);
     }
-
-    // set recording quality
-    public static void setPref_recorder_high_quality(Activity act, boolean set )
-    {
-        SharedPreferences pref = act.getSharedPreferences("audio_recorder_quality", 0);
-        String key = "KEY_PREF_HIGH_QUALITY";
-        pref.edit().putBoolean(key, set).apply();
-    }
-
-    // get recording quality
-    public static boolean getPref_recorder_high_quality(Activity act)
-    {
-        SharedPreferences pref = act.getSharedPreferences("audio_recorder_quality", 0);
-        String key = "KEY_PREF_HIGH_QUALITY";
-        return pref.getBoolean(key, false);
-    }
 }

@@ -15,26 +15,6 @@
 	android:layout_height="wrap_content"
     android:orientation="vertical"    >
 
-<!-- audio header -->
-	<LinearLayout 
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        tools:ignore="UseCompoundDrawables"
-        >
-		<ImageView 
-		    android:layout_width="20dp"
-			android:layout_height="20dp" 
-			android:src="@drawable/ic_audio_info"
-            android:gravity="center"
-			android:contentDescription="audio"
-			/>
-		<TextView
-		    android:id="@+id/edit_audio" 
-		    android:layout_width="match_parent"
-			android:layout_height="wrap_content" 
-			android:text="@string/note_audio" />
-	</LinearLayout>    
 	<View android:layout_width="match_parent" android:layout_height="1dip" android:background="#4f4f4f" />
 
 
@@ -130,34 +110,6 @@
 		android:gravity="top"
 		/>
 
-<!-- Link header -->
-	<LinearLayout
-		android:orientation="horizontal"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:background="@color/bar_color"
-		tools:ignore="UseCompoundDrawables" >
-		<ImageView
-			android:layout_width="20dp"
-			android:layout_height="20dp"
-			android:src="@android:drawable/ic_menu_share"
-			android:contentDescription="@string/note_youtube_link"
-			/>
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textColor="@android:color/white"
-			android:labelFor="@+id/edit_link"
-			android:text="@string/edit_note_dlg_link" />
-	</LinearLayout>
-	<EditText
-		android:id="@+id/edit_link"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:inputType=""
-		android:minLines="2"
-		android:maxLines="5"
-		android:textCursorDrawable="@null" />
 	<View android:layout_width="match_parent" android:layout_height="1dip" android:background="#4f4f4f" />
 
 <!-- expanded image  -->

@@ -32,40 +32,27 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.cw.campal.main.MainAct;
-import com.cw.campal.operation.youtube.YouTubeDeveloperKey;
 import com.cw.campal.page.Checked_notes_option;
 import com.cw.campal.R;
 import com.cw.campal.db.DB_folder;
 import com.cw.campal.db.DB_page;
-import com.cw.campal.note.Note;
 import com.cw.campal.tabs.TabsHost;
-import com.cw.campal.util.audio.UtilAudio;
 import com.cw.campal.util.image.UtilImage;
 import com.cw.campal.util.preferences.Pref;
 import com.cw.campal.util.video.UtilVideo;
 import com.cw.campal.define.Define;
-import com.google.android.youtube.player.YouTubeIntents;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ListActivity;
-import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -457,7 +444,7 @@ public class Util
 					  currentResources.getDisplayMetrics(), 
 					  currentResources.getConfiguration());
 		
-//		System.out.println("Util / _getStorageDirName / appName = " + appName);
+		System.out.println("Util / _getStorageDirName / appName = " + appName);
 		return appName;		
 	}
 	
@@ -749,37 +736,7 @@ public class Util
 		}
 		else if(scheme.equalsIgnoreCase("file")  )
 		{
-			if(UtilAudio.hasAudioExtension(uriString))
-			{
-				// Get MP3 title from MP3 file
-				String audio_artist = null;
-				String audio_title = null;
-				MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-//				System.out.println("Util / _getDisplayNameByUriString / uri = " + uri);
-				if(!Util.isEmptyString(uriString))
-				{
-					try
-					{
-						mmr.setDataSource(activity,uri);
-					}
-					catch(Exception e)
-					{
-
-					}
-					audio_title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-					audio_artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-					display_name = audio_title + " / " + audio_artist;
-				}
-
-				// add for video with mkv format
-				if(Util.isEmptyString(audio_title) &&
-				   Util.isEmptyString(audio_artist)   )
-				{
-					display_name = uri.getLastPathSegment();
-				}
-			}
-			else
-				display_name = uri.getLastPathSegment();
+			display_name = uri.getLastPathSegment();
 		}
 		//System.out.println("display_name = " + display_name);
                 	
@@ -1074,8 +1031,7 @@ public class Util
             
 	        for(File file : files)
 	        {
-		        if( ( (type == AUDIO) && (UtilAudio.hasAudioExtension(file)) ) ||
-		        	( (type == IMAGE) && (UtilImage.hasImageExtension(file)) ) ||
+		        if( ( (type == IMAGE) && (UtilImage.hasImageExtension(file)) ) ||
 		        	( (type == VIDEO) && (UtilVideo.hasVideoExtension(file)) )  )	
 	            {
 		            if(i< files.length)
@@ -1160,50 +1116,6 @@ public class Util
 		long sec = TimeUnit.MILLISECONDS.toSeconds(duration) - TimeUnit.HOURS.toSeconds(hour) - TimeUnit.MINUTES.toSeconds(min);
 		String str = String.format(Locale.US,"%2d:%02d:%02d", hour, min, sec);
 		return str;
-	}
-	
-	public static boolean isYouTubeLink(String strLink)
-	{
-		boolean is = false;
-		
-		if(Util.isEmptyString(strLink) || (!strLink.startsWith("http")))
-			return is;
-		
-//		//check if single string
-//		String strArr[] = strLink.split("\\s"); // \s: A whitespace character, short for [ \t\n\x0b\r\f]
-//		int cnt = 0;
-//		for(int i=0; i < strArr.length; i++ )
-//		{
-//			System.out.println("strArr [" + i + "] = " + strArr[i]);
-//			cnt++;
-//		}
-//		
-//		//check if youTube keyword
-//		if( (cnt == 1) &&
-//			(strLink.contains("youtube") ||
-//			 strLink.contains("youtu.be")  )&&
-//			strLink.contains("//")) 
-//		{
-//			is = true;
-//		}
-		
-		//check if single string
-		String strArr[] = strLink.split("/");
-//		for(int i=0; i < strArr.length; i++ )
-//		{
-//			System.out.println("YouTube strArr [" + i + "] = " + strArr[i]);
-//		}
-		
-		if(strArr.length >= 2)
-		{
-			if(	strArr[2].contains("youtube") ||
-				strArr[2].contains("youtu.be")  ) 		
-			{
-				is = true;
-			}		
-		}
-		
-		return is;
 	}
 	
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -1296,8 +1208,6 @@ public class Util
         	charSeq = act.getResources().getText(R.string.add_new_chooser_image);
         else if(type.startsWith("video"))
         	charSeq = act.getResources().getText(R.string.add_new_chooser_video);
-        else if(type.startsWith("audio"))
-        	charSeq = act.getResources().getText(R.string.add_new_chooser_audio);
 
 		openInChooser = Intent.createChooser(intentList.remove(intentList.size()-1), charSeq);//remove duplicated item
 		LabeledIntent[] extraIntentsFinal = intentList.toArray(new LabeledIntent[intentList.size()]);
@@ -1330,268 +1240,6 @@ public class Util
 		    e.printStackTrace();
 		}	    	
     }
-    
-    // Get YouTube Id
-	public static String getYoutubeId(String url) {
-
-	    String videoId = "";
-
-		// format 1: https://www.youtube.com/watch?v=_sQSXwdtxlY
-		// format 2: https://youtu.be/V7MfPD7kZuQ (notice: start with V)
-	    if (url != null && url.trim().length() > 0 && url.startsWith("http")) {
-//			String expression = "^.*((youtu.be\\/)|(v\\/)|(\\/u\\/w\\/)|(embed\\/)|(watch\\?))\\??v?=?([^#\\&\\?]*).*";
-            String expression = "^.*((youtu.be\\/)|(v\\/)|(\\/u\\/w\\/)|(embed\\/)|(watch\\?))\\??(v=)?([^#\\&\\?]*).*";
-	        CharSequence input = url;
-	        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-	        Matcher matcher = pattern.matcher(input);
-	        if (matcher.matches()) {
-//				String groupIndex1 = matcher.group(7);
-				String groupIndex1 = matcher.group(8);
-//				System.out.println("Util / _getYoutubeId 1 / matcher.group(0) = " + matcher.group(0));
-//				System.out.println("Util / _getYoutubeId 1 / matcher.group(1) = " + matcher.group(1));
-//				System.out.println("Util / _getYoutubeId 1 / matcher.group(2) = " + matcher.group(2));
-//				System.out.println("Util / _getYoutubeId 1 / matcher.group(3) = " + matcher.group(3));
-//				System.out.println("Util / _getYoutubeId 1 / matcher.group(4) = " + matcher.group(4));
-//				System.out.println("Util / _getYoutubeId 1 / matcher.group(5) = " + matcher.group(5));
-//				System.out.println("Util / _getYoutubeId 1 / matcher.group(6) = " + matcher.group(6));
-//				System.out.println("Util / _getYoutubeId 1 / matcher.group(7) = " + matcher.group(7));
-//				System.out.println("Util / _getYoutubeId 1 / matcher.group(8) = " + matcher.group(8));
-	            if (groupIndex1 != null && groupIndex1.length() == 11)
-	                videoId = groupIndex1;
-	        }
-	    }
-//		System.out.println("Util / _getYoutubeId / video_id = " + videoId);
-
-	    return videoId;
-	}
-
-
-    // Get YouTube list Id
-    public static String getYoutubeListId(String url) {
-
-        String videoId = "";
-
-        if (url != null && url.trim().length() > 0 && url.startsWith("http")) {
-			String expression = "^.*((youtu.be/)|(v/)|(/u/w/)|(embed/)|(watch\\?))\\??v?=?([^#&?]*).*list?=?([^#&?]*).*";
-            CharSequence input = url;
-            Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-            Matcher matcher = pattern.matcher(input);
-            if (matcher.matches()) {
-                String groupIndex1 = matcher.group(8);
-                if (groupIndex1 != null )
-                    videoId = groupIndex1;
-            }
-        }
-
-        System.out.println("Util / _getYoutubeListId / list_id = " + videoId);
-        return videoId;
-    }
-
-	// Get YouTube playlist Id
-	public static String getYoutubePlaylistId(String url) {
-
-		String videoId = "";
-
-		if (url != null && url.trim().length() > 0 && url.startsWith("http")) {
-			String expression = "^.*((youtu.be/)|(v/)|(/u/w/)|(embed/)|(playlist\\?))\\??v?=?([^#&?]*).*list?=?([^#&?]*).*";
-			CharSequence input = url;
-			Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-			Matcher matcher = pattern.matcher(input);
-			if (matcher.matches()) {
-				String groupIndex1 = matcher.group(8);
-				if (groupIndex1 != null )
-					videoId = groupIndex1;
-			}
-		}
-		System.out.println("Util / _getYoutubePlaylistId / playlist_id = " + videoId);
-		return videoId;
-	}
-
-	static String title;
-	// Get YouTube title
-	public static String getYouTubeTitle(String youtubeUrl)
-	{
-//    		URL embeddedURL = null;
-//    		if (youtubeUrl != null)
-//    		{
-//    			try {
-//					embeddedURL = new URL("http://www.youtube.com/oembed?url=" +
-//										   youtubeUrl +
-//										   "&format=json");
-//				} catch (MalformedURLException e) {
-//					e.printStackTrace();
-//				}
-//    		}
-//
-//			JsonAsync jsonAsyncTask = new JsonAsync();
-//    		jsonAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,embeddedURL);
-//    		isTimeUp = false;
-//			setupLongTimeout(1000);
-//
-//			while(Util.isEmptyString(jsonAsyncTask.title) && (!isTimeUp))
-//    		{
-//    			//Add for Android 7.1.1 hang up after adding YouTube link
-//				try { Thread.sleep(100); } catch (InterruptedException e) {}
-//    		}
-//    		isTimeUp = true;
-//	        return jsonAsyncTask.title;
-		///
-		String idStr = Util.getYoutubeId(youtubeUrl);
-		title = null;
-		String urlStr = "https://www.googleapis.com/youtube/v3/videos?id=" +
-				idStr +
-				"&key=" +
-				YouTubeDeveloperKey.DEVELOPER_KEY +
-//				"&part=snippet,contentDetails,statistics,status";
-				"&part=snippet";
-
-		// volley
-		StringRequest stringRequest = new StringRequest(
-				Request.Method.GET,
-				urlStr,
-				response -> {
-					try {
-						JSONObject jsonObject = new JSONObject(response);
-						JSONArray jsonArray = jsonObject.getJSONArray("items");
-
-						JSONObject object = jsonArray.getJSONObject(0);
-						JSONObject snippet = object.getJSONObject("snippet");
-
-						title = snippet.getString("title");
-						System.out.println("Util / _getYouTubeTitle / title = " + title);
-
-						// save title to DB
-						SharedPreferences pref_show_note_attribute = MainAct.mAct.getSharedPreferences("add_new_note_option", 0);
-						boolean isAddedToTop = pref_show_note_attribute.getString("KEY_ADD_NEW_NOTE_TO","bottom").equalsIgnoreCase("top");
-
-						DB_page dB_page = new DB_page(MainAct.mAct,Pref.getPref_focusView_page_tableId(MainAct.mAct));
-						int count = dB_page.getNotesCount(true);
-
-						if(pref_show_note_attribute
-								.getString("KEY_ENABLE_LINK_TITLE_SAVE", "yes")
-								.equalsIgnoreCase("yes"))
-						{
-							Date now = new Date();
-
-							long row_id;
-							if(isAddedToTop)
-								row_id = dB_page.getNoteId(0,true);
-							else
-								row_id = dB_page.getNoteId(count-1,true);
-
-							dB_page.updateNote(row_id, title, "",  "","",youtubeUrl, "", 0,now.getTime(), true); // update note
-						}
-//
-						Toast.makeText(MainAct.mAct,
-										MainAct.mAct.getResources().getText(R.string.add_new_note_option_title) + title,
-										Toast.LENGTH_SHORT)
-								.show();
-
-//						if(!isAdded_onNewIntent)
-//							MainAct.mAct.finish();
-
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-				},
-				error -> Toast.makeText(MainAct.mAct, "API data request error", Toast.LENGTH_LONG).show()){};
-
-		// Request (if not using Singleton [RequestHandler]
-		RequestQueue requestQueue = Volley.newRequestQueue(MainAct.mAct);
-		requestQueue.add(stringRequest);
-
-		// Request with RequestHandler (Singleton: if created)
-//		Request.getInstance(MainAct.mAct).addToRequestQueue(stringRequest);
-		return title;
-
-		///
-	}
-
-
-	// Set Http title
-	static String httpTitle;
-	public static void setHttpTitle(String httpUrl, Activity act, final EditText editText) {
-		if (!isEmptyString(httpUrl)) {
-			try {
-				WebView wv = new WebView(act);
-				wv.loadUrl(httpUrl);
-				isTimeUp = false;
-				setupLongTimeout(1000);
-
-				//Add for non-stop showing of full screen web view
-				wv.setWebViewClient(new WebViewClient() {
-					@Override
-					public boolean shouldOverrideUrlLoading(WebView view, String url) {
-						view.loadUrl(url);
-						return true;
-					}
-				});
-
-				wv.setWebChromeClient(new WebChromeClient() {
-					@Override
-					public void onReceivedTitle(WebView view, String title) {
-						super.onReceivedTitle(view, title);
-						httpTitle = title;
-						editText.setHint(Html.fromHtml("<small style=\"text-color: gray;\"><i>" +
-								httpTitle +
-								"</i></small>"));
-						editText.setSelection(0);
-
-						editText.setOnTouchListener(new View.OnTouchListener() {
-							@Override
-							public boolean onTouch(View v, MotionEvent event) {
-								((EditText) v).setText(httpTitle);
-								((EditText) v).setSelection(httpTitle.length());
-								return false;
-							}
-						});
-					}
-				});
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	// Set Http title
-	public static void setHttpTitle(String httpUrl, Activity act, final TextView textView)
-	{
-		if(!isEmptyString(httpUrl))
-		{
-			try
-			{
-				WebView wv = new WebView(act);
-				wv.loadUrl(httpUrl);
-				isTimeUp = false;
-				setupLongTimeout(1000);
-
-				//Add for non-stop showing of full screen web view
-				wv.setWebViewClient(new WebViewClient() {
-					@Override
-					public boolean shouldOverrideUrlLoading(WebView view, String url)
-					{
-						view.loadUrl(url);
-						return true;
-					}
-				});
-
-				wv.setWebChromeClient(new WebChromeClient() {
-					@Override
-					public void onReceivedTitle(WebView view, String title) {
-						super.onReceivedTitle(view, title);
-						textView.setText(title);
-						textView.setTextColor(Color.GRAY);
-						System.out.println("Util / _setHttpTitle / title = " +title);
-					}
-				});
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-	}
-
 
 	public static boolean isTimeUp;
 	public static Timer longTimer;
@@ -1706,8 +1354,7 @@ public class Util
 	}
 
 	// Create assets file
-	public static File createAssetsFile(Activity act, String fileName)
-	{
+	public static File createAssetsFile(Activity act, String fileName){
 		System.out.println("Util / _createAssetsFile / fileName = " + fileName);
 
         File file = null;
@@ -1720,8 +1367,11 @@ public class Util
 		}
 
 		// main directory
-		String dirString = Environment.getExternalStorageDirectory().toString() +
-				"/" + Util.getStorageDirName(act);
+//		String dirString = Environment.getExternalStorageDirectory().toString() +
+//				"/" + Util.getStorageDirName(act);
+
+		String dirString = act.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+				.toString();
 
 		File dir = new File(dirString);
 		if(!dir.isDirectory())
@@ -1750,8 +1400,7 @@ public class Util
 	}
 
 	// Get external storage path for different devices
-	public static String getDefaultExternalStoragePath(String path)
-	{
+	public static String getDefaultExternalStoragePath(String path){
 		if(path.contains("/storage/emulated/0"))
 			path = path.replace("/storage/emulated/0", Environment.getExternalStorageDirectory().getAbsolutePath() );
 		else if( path.contains("/mnt/internal_sd"))
@@ -1761,8 +1410,7 @@ public class Util
 
 
 	// Get picture path on activity result
-	public static String getPicturePathOnActivityResult(Activity act, Intent returnedIntent)
-	{
+	public static String getPicturePathOnActivityResult(Activity act, Intent returnedIntent){
 		Uri selectedUri = returnedIntent.getData();
 		System.out.println("Note_edit / _onActivityResult / selectedUri = " + selectedUri.toString());
 
@@ -1818,100 +1466,5 @@ public class Util
 	}
 
 	public static final int STORAGE_MANAGER_PERMISSION = 98;
-	final public static int YOUTUBE_LINK_INTENT = 99;
-	final public static int YOUTUBE_ADD_NEW_LINK_INTENT = 100;
-	//
-	// Open link of YouTube
-	//
-	// Due to "AdWords or copyright" server limitation, for some URI,
-	// "video is not available" message could show up.
-	// At this case, one solution is to switch current mobile website to desktop website by browser setting.
-	// So, base on URI key words to decide "YouTube App" or "browser" launch.
-	public static void openLink_YouTube(AppCompatActivity act, String linkUri)
-	{
-		// by YouTube App
-		if(linkUri.contains("youtu.be") || linkUri.contains("youtube.com"))
-        {
-            // stop audio and video if playing
-            Note.stopAV();
 
-//            String id = Util.getYoutubeId(linkUri);
-			// option 1
-//			  Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube://" + id));
-//			  intent.putExtra("force_fullscreen",true);
-//			  intent.putExtra("finish_on_ended",true);
-//			  act.startActivity(intent);
-
-            // option 2
-            // check Id string first
-            String idStr = Util.getYoutubeId(linkUri);
-            String listIdStr = Util.getYoutubeListId(linkUri);
-            String playListIdStr = Util.getYoutubePlaylistId(linkUri);
-
-            Intent intent = null;
-            // only v
-            if (!Util.isEmptyString(idStr) &&
-                Util.isEmptyString(listIdStr) &&
-                Util.isEmptyString(playListIdStr))
-            {
-                System.out.println("Util / _openLink_YouTube / v= ");
-                intent = YouTubeIntents.createPlayVideoIntentWithOptions(act, idStr, false/*fullscreen*/, true/*finishOnEnd*/);
-//                intent = YouTubeIntents.createPlayVideoIntent(act, idStr);
-            }
-            // v and list
-            else if(!Util.isEmptyString(idStr) &&
-                    !Util.isEmptyString(listIdStr) &&
-                    Util.isEmptyString(playListIdStr) )
-            {
-                System.out.println("Util / _openLink_YouTube / v= list= ");
-				intent = YouTubeIntents.createPlayVideoIntentWithOptions(act, listIdStr, false/*fullscreen*/, true/*finishOnEnd*/);
-//                intent = YouTubeIntents.createPlayPlaylistIntent(act, listIdStr);
-            }
-            // only playlist
-            else if( Util.isEmptyString(idStr) &&
-                    Util.isEmptyString(listIdStr) &&
-                    !Util.isEmptyString(playListIdStr) )
-            {
-                System.out.println("Util / _openLink_YouTube / playlist?list= ");
-                //todo Can not apply -With options- to play list?
-//				intent = YouTubeIntents.createPlayVideoIntentWithOptions(act, playListIdStr, false/*fullscreen*/, true/*finishOnEnd*/);
-				intent = YouTubeIntents.createPlayPlaylistIntent(act, playListIdStr);
-            }
-
-	        if(Pref.getPref_is_autoPlay_YouTubeApi(act))
-		        act.startActivityForResult(intent,YOUTUBE_LINK_INTENT);
-	        else
-		        act.startActivity(intent);
-		}
-		// by Chrome browser
-		else if(linkUri.contains("youtube.com"))
-		{
-			Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(linkUri));
-			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			i.setPackage("com.android.chrome");
-
-			try
-			{
-				act.startActivity(i);
-			}
-			catch (ActivityNotFoundException e)
-			{
-				// Chrome is probably not installed
-				// Try with the default browser
-				i.setPackage(null);
-				act.startActivity(i);
-			}
-		}
-	}
-
-	public static void openLink_YouTube(ListActivity act, String idStr)
-	{
-			System.out.println("Util / _openLink_YouTube / idStr = " + idStr);
-
-			Intent intent = null;
-			if (!Util.isEmptyString(idStr) )
-				intent = YouTubeIntents.createPlayVideoIntentWithOptions(act, idStr, false/*fullscreen*/, true/*finishOnEnd*/);
-
-			act.startActivity(intent);
-	}
 }

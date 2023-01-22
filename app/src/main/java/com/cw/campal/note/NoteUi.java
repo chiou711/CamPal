@@ -18,9 +18,6 @@ package com.cw.campal.note;
 
 import com.cw.campal.R;
 import com.cw.campal.db.DB_page;
-import com.cw.campal.operation.audio.Audio_manager;
-import com.cw.campal.operation.audio.BackgroundAudioService;
-import com.cw.campal.operation.youtube.YouTubePlayerAct;
 import com.cw.campal.tabs.TabsHost;
 import com.cw.campal.util.image.UtilImage;
 import com.cw.campal.util.video.UtilVideo;
@@ -124,8 +121,6 @@ public class NoteUi
             String pictureName;
             if(!Util.isEmptyString(pictureUri))
                 pictureName = Util.getDisplayNameByUriString(pictureUri, act);
-            else if(Util.isYouTubeLink(linkUri))
-                pictureName = linkUri;
             else
                 pictureName = "";
 
@@ -235,82 +230,11 @@ public class NoteUi
             mVideoPlayButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View view) {
                     System.out.println("NoteUi / setPictureView_listeners / mVideoPlayButton / getVideoState() = " + UtilVideo.getVideoState());
-
-                    if( (BackgroundAudioService.mMediaPlayer != null) &&
-                        (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP) &&
-						(UtilVideo.getVideoState() != UtilVideo.VIDEO_AT_PLAY) )
-                    {
-                        // Dialog: confirm to disable audio or not
-                        AlertDialog.Builder builder = new AlertDialog.Builder(act);
-                        builder.setTitle(R.string.title_playing_audio)
-                               .setMessage(R.string.message_continue_or_stop)
-                               .setPositiveButton(R.string.btn_Stop,
-                                       new DialogInterface.OnClickListener(){
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                Audio_manager.stopAudioPlayer();
-
-                                                UtilVideo.changeVideoState();
-                                                UtilVideo.playOrPauseVideo(pager,strPicture);
-                                            }})
-                               .setNegativeButton(R.string.btn_Continue,
-                                       new DialogInterface.OnClickListener(){
-                                           @Override
-                                           public void onClick(DialogInterface dialog, int which) {
-                                               UtilVideo.changeVideoState();
-                                               UtilVideo.playOrPauseVideo(pager,strPicture);
-                                           }})
-                                .show();
-                    }
-                    else
-                    {
-                        UtilVideo.changeVideoState();
-                        UtilVideo.playOrPauseVideo(pager,strPicture);
-                        updateVideoPlayButtonState(pager, getFocus_notePos());
-                    }
+                    UtilVideo.changeVideoState();
+                    UtilVideo.playOrPauseVideo(pager,strPicture);
+                    updateVideoPlayButtonState(pager, getFocus_notePos());
                 }
             });
-        }
-        else if(Util.isYouTubeLink(linkUri))
-        {
-            mVideoPlayButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_media_play, 0, 0, 0);
-            mVideoPlayButton.setVisibility(View.VISIBLE);
-            // set listener for running YouTube
-            mVideoPlayButton.setOnClickListener(new View.OnClickListener()
-            {
-                public void onClick(View view) {
-                    System.out.println("NoteUi / _setPictureView_listeners / onClick to play YouTube / linkUri = " + linkUri);
-
-                    // apply native YouTube
-//                    Util.openLink_YouTube(act, linkUri);
-
-                    // apply YouTube DATA API for note view
-                    Intent intent = new Intent(act, YouTubePlayerAct.class);
-                    act.startActivityForResult(intent, Util.YOUTUBE_LINK_INTENT);
-                }
-            });
-        }
-        else if(Util.isEmptyString(strPicture) &&
-                linkUri.startsWith("http")     &&
-                !UtilImage.hasImageExtension(linkUri,act) && //filter: some link has image extension
-            	Note.isViewAllMode()              )
-        {
-            // set listener for running browser
-            if (viewGroup != null) {
-                CustomWebView linkWebView = ((CustomWebView) viewGroup.findViewById(R.id.link_web_view));
-                linkWebView.setOnTouchListener(new View.OnTouchListener() {
-                                                   @Override
-                                                   public boolean onTouch(View v, MotionEvent event) {
-                                                       if (event.getAction() == MotionEvent.ACTION_DOWN)
-                                                       {
-                                                           Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(linkUri));
-                                                           act.startActivity(i);
-                                                       }
-                                                       return true;
-                                                   }
-                                               }
-                );
-            }
         }
 
         // view mode
@@ -350,9 +274,6 @@ public class NoteUi
 
 	            public void onClick(View view)
 	            {
-                    TextView audio_title_text_view = (TextView) act.findViewById(R.id.pager_audio_title);
-                    audio_title_text_view.setSelected(false);
-
 	            	//Creating the instance of PopupMenu
 	                popup = new PopupMenu(act, view);
 
@@ -387,18 +308,7 @@ public class NoteUi
 	                {
 						@Override
 						public void onDismiss(PopupMenu menu)
-						{
-                            TextView audio_title_text_view = (TextView) act.findViewById(R.id.pager_audio_title);
-							if(BackgroundAudioService.mMediaPlayer != null)
-							{
-								if(BackgroundAudioService.mMediaPlayer.isPlaying()) {
-									AudioUi_note.showAudioName(act);
-									audio_title_text_view.setSelected(true);
-								}
-							}
-							else
-								audio_title_text_view.setSelected(false);
-						}
+						{	}
 					} );
                     popup.show();//showing pop up menu, will show status bar
 

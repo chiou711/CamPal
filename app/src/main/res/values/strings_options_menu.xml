@@ -2,10 +2,6 @@
 <resources>
     <string name="options">Options</string>
     <string name="menu_button_play">Play</string>
-    <string name="menu_button_play_audio">Play audio</string>
-    <string name="menu_button_continue_play_audio">Continue playing audio</string>
-    <string name="menu_button_pause_audio">Pause audio</string>
-    <string name="menu_button_stop_audio">Stop audio</string>
     <string name="menu_button_slide_show">Play slide show</string>
     <string name="change_page_color">Page Color</string>
     <string name="rearrange_page">Page order</string>
@@ -24,10 +20,6 @@
     <string name="gallery_toast_no_file">No file yet, please create one first</string>
     <string name="drag_note">Drag note</string>
     <string name="preview_note_body">Preview body</string>
-    <string name="click_launch_youtube">Click to launch YouTube</string>
-    <string name="search_youtube">YouTube search</string>
-    <string name="search_youtube_keywords">Keywords input</string>
-    <string name="search_youtube_btn">search</string>
     <string name="drag_folder">Drag folder</string>
     <string name="delete_folders">Delete folders</string>
 </resources>

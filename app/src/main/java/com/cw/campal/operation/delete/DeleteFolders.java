@@ -38,8 +38,6 @@ import com.cw.campal.db.DB_folder;
 import com.cw.campal.folder.FolderUi;
 import com.cw.campal.main.MainAct;
 import com.cw.campal.operation.List_selectFolder;
-import com.cw.campal.operation.audio.Audio_manager;
-import com.cw.campal.operation.audio.BackgroundAudioService;
 import com.cw.campal.util.BaseBackPressedListener;
 import com.cw.campal.util.Util;
 import com.cw.campal.util.preferences.Pref;
@@ -179,8 +177,7 @@ public class DeleteFolders extends Fragment {
     /**
      * Do delete folders
      */
-	void doDeleteFolders()
-    {
+	void doDeleteFolders(){
         DB_drawer dbDrawer = new DB_drawer(act);
 
         // drawer DB check
@@ -255,14 +252,6 @@ public class DeleteFolders extends Fragment {
         // set scroll X
 //        int scrollX = 0; //over the last scroll X
 //        Pref.setPref_focusView_scrollX_byFolderTableId(act, scrollX );
-
-        if(BackgroundAudioService.mMediaPlayer != null)
-        {
-            Audio_manager.stopAudioPlayer();
-            Audio_manager.mAudioPos = 0;
-            Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_STOP);
-        }
-
         list_selFolder = new List_selectFolder(act,rootView , mListView);
     }
 

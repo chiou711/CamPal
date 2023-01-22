@@ -17,8 +17,6 @@
     	android:layout_weight="2"
 		android:gravity="top"/>
 
-    <!-- start: audio group -->
-	<include layout = "@layout/note_view_portrait_audio_footer"/>
 	</LinearLayout>
 
 	<!-- buttons -->

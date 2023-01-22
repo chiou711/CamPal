@@ -7,10 +7,6 @@
     <string name="edit_note_confirm_update">目前記事已被更改，您要更新它嗎？</string>
     <string name="edit_note_button_delete">刪除</string>
     <string name="edit_note_set_picture_dlg_title">設置圖影</string>
-    <string name="edit_note_set_audio_dlg_title">設置音訊</string>
-    <string name="edit_note_link">連結</string>
-    <string name="edit_note_dlg_link">連結:</string>
-    <string name="edit_note_dlg_set_link">設置連結</string>
     <string name="edit_note_dlg_title">標題:</string>
     <string name="edit_note_dlg_body">正文:</string>
     <string name="view_note_title">檢視記事</string>

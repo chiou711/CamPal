@@ -36,12 +36,6 @@
     <!-- Play sub menu -->
     <menu>
         <item
-            android:id="@+id/PLAY_OR_STOP_MUSIC"
-            android:orderInCategory="0"
-            app:showAsAction="never"
-            android:title="@string/menu_button_play_audio"
-            android:icon="@drawable/ic_menu_play_clip"/>
-        <item
             android:id="@+id/SLIDE_SHOW"
             android:orderInCategory="1"
             app:showAsAction="never"

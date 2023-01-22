@@ -339,9 +339,7 @@ public class Note_addText extends AppCompatActivity {
 			{
 				if( (!Util.isEmptyString(title)) ||
 						(!Util.isEmptyString(body)) ||
-						(!Util.isEmptyString(pictureUri)) ||
-						(!Util.isEmptyString(audioUri)) ||
-						(!Util.isEmptyString(linkUri))            )
+						(!Util.isEmptyString(pictureUri)) )
 				{
 					// insert
 					System.out.println("Note_addText / _saveStateInDB / insert");

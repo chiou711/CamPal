@@ -33,7 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cw.campal.R;
-import com.cw.campal.note_add.add_recording.Add_recording_act;
 import com.cw.campal.util.Util;
 import com.cw.campal.util.drawing.Note_drawingAct;
 
@@ -66,14 +65,10 @@ public class Add_note_option {
 
     private final static int ID_NEW_TEXT = 1;
     private final static int ID_NEW_DRAWING = 2;
-    private final static int ID_NEW_RECORDING = 3;
-    private final static int ID_NEW_AUDIO = 4;
     private final static int ID_NEW_CAMERA_IMAGE = 5;
     private final static int ID_NEW_READY_IMAGE = 6;
     private final static int ID_NEW_CAMERA_VIDEO = 7;
     private final static int ID_NEW_READY_VIDEO = 8;
-    private final static int ID_NEW_YOUTUBE_LINK = 9;
-    private final static int ID_NEW_WEB_LINK = 20;
     private final static int ID_NEW_BACK = 11;
     private final static int ID_NEW_SETTING = 12;
 
@@ -102,17 +97,6 @@ public class Add_note_option {
                     R.drawable.ic_menu_draw,
                     R.string.note_drawing));
 
-            // recording
-            addNoteList.add(new Add_note_option(ID_NEW_RECORDING,
-//                    android.R.drawable.ic_btn_speak_now,
-                    R.drawable.ic_mic,
-                    R.string.note_recording));
-
-            // audio
-            addNoteList.add(new Add_note_option(ID_NEW_AUDIO,
-                    R.drawable.ic_audio_unselected,
-                    R.string.note_ready_audio));
-
             // camera image
             if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
                 addNoteList.add(new Add_note_option(ID_NEW_CAMERA_IMAGE,
@@ -137,16 +121,6 @@ public class Add_note_option {
                     R.drawable.ic_ready_video,
                     R.string.note_ready_video));
         }
-
-        // YouTube link
-        addNoteList.add(new Add_note_option(ID_NEW_YOUTUBE_LINK,
-                android.R.drawable.ic_menu_share,
-                R.string.note_youtube_link));
-
-        // Web link
-        addNoteList.add(new Add_note_option(ID_NEW_WEB_LINK,
-                android.R.drawable.ic_menu_share,
-                R.string.note_web_link));
 
         // Back
         addNoteList.add(new Add_note_option(ID_NEW_BACK,
@@ -210,38 +184,6 @@ public class Add_note_option {
             }
             break;
 
-            case ID_NEW_AUDIO:
-            {
-                Intent intent = new Intent(act, Note_addAudio.class);
-                if( bTop && !bDirectory )
-                    intent.putExtra("EXTRA_ADD_EXIST", "single_to_top");
-                else if(!bTop && !bDirectory)
-                    intent.putExtra("EXTRA_ADD_EXIST", "single_to_bottom");
-                else if(bTop && bDirectory)
-                    intent.putExtra("EXTRA_ADD_EXIST", "directory_to_top");
-                else if(!bTop && bDirectory)
-                    intent.putExtra("EXTRA_ADD_EXIST", "directory_to_bottom");
-
-                act.startActivity(intent);
-            }
-            break;
-
-            case ID_NEW_RECORDING:
-            {
-                Intent intent = new Intent(act, Add_recording_act.class);
-                if( bTop && !bDirectory )
-                    intent.putExtra("EXTRA_ADD_EXIST", "single_to_top");
-                else if(!bTop && !bDirectory)
-                    intent.putExtra("EXTRA_ADD_EXIST", "single_to_bottom");
-                else if(bTop && bDirectory)
-                    intent.putExtra("EXTRA_ADD_EXIST", "directory_to_top");
-                else if(!bTop && bDirectory)
-                    intent.putExtra("EXTRA_ADD_EXIST", "directory_to_bottom");
-
-                act.startActivity(intent);
-            }
-            break;
-
             case ID_NEW_CAMERA_IMAGE:
             {
                 Intent intent = new Intent(act, Note_addCameraImage.class);
@@ -294,20 +236,6 @@ public class Add_note_option {
                 else if(!bTop && bDirectory)
                     intent.putExtra("EXTRA_ADD_EXIST", "directory_to_bottom");
 
-                act.startActivity(intent);
-            }
-            break;
-
-            case ID_NEW_YOUTUBE_LINK:
-            {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com"));
-                act.startActivityForResult(intent, Util.YOUTUBE_ADD_NEW_LINK_INTENT);
-            }
-            break;
-
-            case ID_NEW_WEB_LINK:
-            {
-                Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse("https://www.google.com"));
                 act.startActivity(intent);
             }
             break;
@@ -384,20 +312,14 @@ public class Add_note_option {
                 // text , drawing
                 if( (position == 0) || (position == 1) )
                     view.setBackgroundColor( act.getResources().getColor(R.color.textGrid));
-                // recording, audio
-                else if((position == 2) || (position == 3))
-                    view.setBackgroundColor( act.getResources().getColor(R.color.audioGrid));
                 // picture, ready picture
-                else if ( (position == 4) || (position == 5) )
+                else if ( (position == 2) || (position == 3) )
                     view.setBackgroundColor( act.getResources().getColor(R.color.pictureGrid));
                 // video , ready video
-                else if((position == 6) || (position == 7))
+                else if((position == 4) || (position == 5))
                     view.setBackgroundColor( act.getResources().getColor(R.color.videoGrid));
-                // link
-                else if((position == 8) || (position == 9))
-                    view.setBackgroundColor( act.getResources().getColor(R.color.linkGrid));
                 // others
-                else if((position == 10) || (position == 11))
+                else if((position == 6) || (position == 7))
                     view.setBackgroundColor( act.getResources().getColor(R.color.otherGrid));
 
             } else {

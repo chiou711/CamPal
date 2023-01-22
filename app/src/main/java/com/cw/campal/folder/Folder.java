@@ -153,14 +153,6 @@ public class Folder
                     endPosition--;
             }
 
-            DB_drawer db_drawer = new DB_drawer(act);
-            // update audio playing drawer index
-            int drawerCount = db_drawer.getFoldersCount(true);
-            for(int i=0;i<drawerCount;i++)
-            {
-                if(db_drawer.getFolderTableId(i,true) == MainAct.mPlaying_folderTableId)
-                    MainAct.mPlaying_folderPos = i;
-            }
             adapter.notifyDataSetChanged();
             FolderUi.updateFocus_folderPosition();
         }

@@ -16,47 +16,32 @@
 
 package com.cw.campal.page;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cw.campal.R;
-import com.cw.campal.db.DB_drawer;
 import com.cw.campal.db.DB_folder;
 import com.cw.campal.db.DB_page;
-import com.cw.campal.folder.FolderUi;
 import com.cw.campal.main.MainAct;
 import com.cw.campal.note.Note;
 import com.cw.campal.note_edit.Note_edit;
-import com.cw.campal.operation.audio.Audio_manager;
-import com.cw.campal.operation.audio.AudioPlayer_page;
-import com.cw.campal.operation.audio.BackgroundAudioService;
 import com.cw.campal.page.item_touch_helper.ItemTouchHelperAdapter;
 import com.cw.campal.page.item_touch_helper.ItemTouchHelperViewHolder;
 import com.cw.campal.page.item_touch_helper.OnStartDragListener;
-import com.cw.campal.tabs.AudioUi_page;
 import com.cw.campal.tabs.TabsHost;
 import com.cw.campal.util.ColorSet;
 import com.cw.campal.util.CustomWebView;
 import com.cw.campal.util.Util;
-import com.cw.campal.util.audio.UtilAudio;
-import com.cw.campal.util.image.AsyncTaskAudioBitmap;
 import com.cw.campal.util.image.UtilImage;
 import com.cw.campal.util.image.UtilImage_bitmapLoader;
 import com.cw.campal.util.preferences.Pref;
@@ -107,21 +92,13 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
         ImageView btnMarking;
         ImageView btnViewNote;
         ImageView btnEditNote;
-        ImageView btnPlayAudio;
-        ImageView btnPlayYouTube;
-        ImageView btnPlayWeb;
 		TextView rowId;
-		View audioBlock;
-		ImageView iconAudio;
-		TextView audioName;
 		TextView textTitle;
 		TextView textBody;
 		TextView textTime;
         ImageViewCustom btnDrag;
 		View thumbBlock;
 		ImageView thumbPicture;
-		ImageView thumbAudio;
-		CustomWebView thumbWeb;
 		ProgressBar progressBar;
 
         public ViewHolder(View v) {
@@ -136,19 +113,11 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
             textTitle = (TextView) v.findViewById(R.id.row_title);
             rowId= (TextView) v.findViewById(R.id.row_id);
-            audioBlock = v.findViewById(R.id.audio_block);
-            iconAudio = (ImageView) v.findViewById(R.id.img_audio);
-            audioName = (TextView) v.findViewById(R.id.row_audio_name);
             btnMarking = (ImageView) v.findViewById(R.id.btn_marking);
             btnViewNote = (ImageView) v.findViewById(R.id.btn_view_note);
             btnEditNote = (ImageView) v.findViewById(R.id.btn_edit_note);
-            btnPlayAudio = (ImageView) v.findViewById(R.id.btn_play_audio);
-            btnPlayYouTube = (ImageView) v.findViewById(R.id.btn_play_youtube);
-            btnPlayWeb = (ImageView) v.findViewById(R.id.btn_play_web);
             thumbBlock = v.findViewById(R.id.row_thumb_nail);
             thumbPicture = (ImageView) v.findViewById(R.id.thumb_picture);
-            thumbAudio = (ImageView) v.findViewById(R.id.thumb_audio);
-            thumbWeb = (CustomWebView) v.findViewById(R.id.thumb_web);
             btnDrag = (ImageViewCustom) v.findViewById(R.id.btn_drag);
             progressBar = (ProgressBar) v.findViewById(R.id.thumb_progress);
             textTitle = (TextView) v.findViewById(R.id.row_title);
@@ -183,6 +152,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
     }
 
     // Replace the contents of a view (invoked by the layout manager)
+    @SuppressLint("Range")
     @Override
     public void onBindViewHolder(ViewHolder holder, final int _position) {
 
@@ -199,7 +169,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
         String strTitle = null;
         String strBody = null;
         String pictureUri = null;
-        String audioUri = null;
         String drawingUri = null;
         Long timeCreated = null;
         linkUri = null;
@@ -214,7 +183,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
             strTitle = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_TITLE));
             strBody = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_BODY));
             pictureUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_PICTURE_URI));
-            audioUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_AUDIO_URI));
             linkUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_LINK_URI));
             drawingUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_DRAWING_URI));
             marking = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_NOTE_MARKING));
@@ -250,120 +218,12 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
         else
             holder.btnDrag.setVisibility(View.GONE);
 
-        // show audio button
-        if( !Util.isEmptyString(audioUri) && (marking == 1) && Util.isUriExisted(audioUri,mAct))
-            holder.btnPlayAudio.setVisibility(View.VISIBLE);
-        else
-            holder.btnPlayAudio.setVisibility(View.GONE);
-
-        // show/hide play YouTube button, on play Web button
-        if(!Util.isEmptyString(linkUri) &&
-           linkUri.startsWith("http")      )
-        {
-            if(Util.isYouTubeLink(linkUri))
-            {
-                // YouTube
-                holder.btnPlayYouTube.setVisibility(View.VISIBLE);
-                holder.btnPlayWeb.setVisibility(View.GONE);
-            }
-            else
-            {
-                // Web
-                holder.btnPlayYouTube.setVisibility(View.GONE);
-                holder.btnPlayWeb.setVisibility(View.VISIBLE);
-            }
-        }
-        else
-        {
-            holder.btnPlayYouTube.setVisibility(View.GONE);
-            holder.btnPlayWeb.setVisibility(View.GONE);
-        }
-
-        // set audio name
-        String audio_name = null;
-        if(!Util.isEmptyString(audioUri))
-            audio_name = Util.getDisplayNameByUriString(audioUri, mAct);
-
-        // show audio name
-        if(Util.isUriExisted(audioUri, mAct))
-            holder.audioName.setText(audio_name);
-        else
-            holder.audioName.setText(R.string.file_not_found);
-
-//			holder.audioName.setTextSize(12.0f);
-
-        if(!Util.isEmptyString(audioUri))
-            holder.audioName.setTextColor(ColorSet.mText_ColorArray[style]);
-
-        // show audio highlight if audio is not at Stop
-        if( PageUi.isAudioPlayingPage() &&
-            (marking !=0) &&
-            (position == Audio_manager.mAudioPos)  &&
-            (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP) &&
-            (Audio_manager.getAudioPlayMode() == Audio_manager.PAGE_PLAY_MODE) 	)
-        {
-//            System.out.println("PageAdapter / _getView / show highlight / position = " + position);
-            TabsHost.getCurrentPage().mHighlightPosition = position;
-            holder.audioBlock.setBackgroundResource(R.drawable.bg_highlight_border);
-            holder.audioBlock.setVisibility(View.VISIBLE);
-
-            // set type face
-//			holder.audioName.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-            holder.audioName.setTextColor(ColorSet.getHighlightColor(mAct));
-
-            // set icon
-            holder.iconAudio.setVisibility(View.VISIBLE);
-            holder.iconAudio.setImageResource(R.drawable.ic_audio);
-
-            // set animation
-//			Animation animation = AnimationUtils.loadAnimation(mContext , R.anim.right_in);
-//			holder.audioBlock.startAnimation(animation);
-        }
-        else
-        {
-
-//			System.out.println("PageAdapter / _getView / not show highlight ");
-            holder.audioBlock.setBackgroundResource(R.drawable.bg_gray_border);
-            holder.audioBlock.setVisibility(View.VISIBLE);
-
-            // set type face
-//			holder.audioName.setTypeface(Typeface.DEFAULT, Typeface.NORMAL);
-
-            // set icon
-            holder.iconAudio.setVisibility(View.VISIBLE);
-            if(style % 2 == 0)
-                holder.iconAudio.setImageResource(R.drawable.ic_audio_off_white);
-            else
-                holder.iconAudio.setImageResource(R.drawable.ic_audio_off_black);
-        }
-
-        // show audio icon and block
-        if(Util.isEmptyString(audioUri))
-        {
-            holder.iconAudio.setVisibility(View.GONE);
-            holder.audioBlock.setVisibility(View.GONE);
-        }
-
 		// show text title
 		if( Util.isEmptyString(strTitle) )
 		{
-			if(Util.isYouTubeLink(linkUri)) {
-				strTitle = Util.getYouTubeTitle(linkUri);
-				holder.textTitle.setVisibility(View.VISIBLE);
-				holder.textTitle.setText(strTitle);
-				holder.textTitle.setTextColor(Color.GRAY);
-			}
-			else if( (linkUri != null) && (linkUri.startsWith("http")))
-			{
-				holder.textTitle.setVisibility(View.VISIBLE);
-				Util.setHttpTitle(linkUri, mAct,holder.textTitle);
-			}
-			else
-			{
-				// make sure empty title is empty after scrolling
-				holder.textTitle.setVisibility(View.VISIBLE);
-				holder.textTitle.setText("");
-			}
+			// make sure empty title is empty after scrolling
+			holder.textTitle.setVisibility(View.VISIBLE);
+			holder.textTitle.setText("");
 		}
 		else
 		{
@@ -372,13 +232,8 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 			holder.textTitle.setTextColor(ColorSet.mText_ColorArray[style]);
 		}
 
-		// set YouTube thumb nail if picture Uri is none and YouTube link exists
-		if(Util.isEmptyString(pictureUri) &&
-		   Util.isYouTubeLink(linkUri)      )
-		{
-			pictureUri = "https://img.youtube.com/vi/"+Util.getYoutubeId(linkUri)+"/0.jpg";
-		}
-		else if(UtilImage.hasImageExtension(drawingUri, mAct ))
+		// set thumb nail of picture Uri
+		if(UtilImage.hasImageExtension(drawingUri, mAct ))
             pictureUri = drawingUri;
 
 		// case 1: show thumb nail if picture Uri exists
@@ -387,8 +242,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 		{
 			holder.thumbBlock.setVisibility(View.VISIBLE);
 			holder.thumbPicture.setVisibility(View.VISIBLE);
-			holder.thumbAudio.setVisibility(View.GONE);
-			holder.thumbWeb.setVisibility(View.GONE);
 			// load bitmap to image view
 			try
 			{
@@ -403,93 +256,10 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 				Log.e("PageAdapter_recycler", "UtilImage_bitmapLoader error");
 				holder.thumbBlock.setVisibility(View.GONE);
 				holder.thumbPicture.setVisibility(View.GONE);
-				holder.thumbAudio.setVisibility(View.GONE);
-				holder.thumbWeb.setVisibility(View.GONE);
 			}
-		}
-		// case 2: show audio thumb nail if picture Uri is none and audio Uri exists
-		else if((Util.isEmptyString(pictureUri) && UtilAudio.hasAudioExtension(audioUri) ) )
-		{
-			holder.thumbBlock.setVisibility(View.VISIBLE);
-			holder.thumbPicture.setVisibility(View.GONE);
-			holder.thumbAudio.setVisibility(View.VISIBLE);
-			holder.thumbWeb.setVisibility(View.GONE);
-
-            try {
-                AsyncTaskAudioBitmap audioAsyncTask;
-                audioAsyncTask = new AsyncTaskAudioBitmap(mAct,
-                        audioUri,
-                        holder.thumbAudio,
-                        holder.progressBar,
-                        false);
-                audioAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "Searching media ...");
-            } catch (Exception e) {
-                Log.e("PageAdapter", "AsyncTaskAudioBitmap error");
-                holder.thumbBlock.setVisibility(View.GONE);
-                holder.thumbPicture.setVisibility(View.GONE);
-                holder.thumbAudio.setVisibility(View.GONE);
-                holder.thumbWeb.setVisibility(View.GONE);
-            }
-		}
-		// case 3: set web title and web view thumb nail of link if no title content
-		else if(!Util.isEmptyString(linkUri) &&
-                linkUri.startsWith("http")   &&
-				!Util.isYouTubeLink(linkUri)   )
-		{
-			// reset web view
-			CustomWebView.pauseWebView(holder.thumbWeb);
-			CustomWebView.blankWebView(holder.thumbWeb);
-
-			holder.thumbBlock.setVisibility(View.VISIBLE);
-			holder.thumbWeb.setInitialScale(50);
-			holder.thumbWeb.getSettings().setJavaScriptEnabled(true);//Using setJavaScriptEnabled can introduce XSS vulnerabilities
-			holder.thumbWeb.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT );
-			holder.thumbWeb.loadUrl(linkUri);
-			holder.thumbWeb.setVisibility(View.VISIBLE);
-
-			holder.thumbPicture.setVisibility(View.GONE);
-			holder.thumbAudio.setVisibility(View.GONE);
-
-			//Add for non-stop showing of full screen web view
-			holder.thumbWeb.setWebViewClient(new WebViewClient() {
-				@Override
-			    public boolean shouldOverrideUrlLoading(WebView view, String url)
-			    {
-			        view.loadUrl(url);
-			        return true;
-			    }
-			});
-
-			holder.thumbWeb.setOnTouchListener(new View.OnTouchListener() {
-				@Override
-				public boolean onTouch(View v, MotionEvent event) {
-					v.performClick();
-					return true;
-				}
-			});
-
-			if (Util.isEmptyString(strTitle)) {
-
-				holder.thumbWeb.setWebChromeClient(new WebChromeClient() {
-					@Override
-					public void onReceivedTitle(WebView view, String title) {
-						super.onReceivedTitle(view, title);
-						if (!TextUtils.isEmpty(title) &&
-								!title.equalsIgnoreCase("about:blank")) {
-							holder.textTitle.setVisibility(View.VISIBLE);
-							holder.rowId.setText(String.valueOf(position + 1));
-							holder.rowId.setTextColor(ColorSet.mText_ColorArray[style]);
-						}
-					}
-				});
-			}
-		}
-		else
-		{
+		}else{
 			holder.thumbBlock.setVisibility(View.GONE);
 			holder.thumbPicture.setVisibility(View.GONE);
-			holder.thumbAudio.setVisibility(View.GONE);
-			holder.thumbWeb.setVisibility(View.GONE);
 		}
 
 		// Show text body
@@ -548,11 +318,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
                 // toggle marking
                 toggleNoteMarking(mAct,position);
 
-                // Stop if unmarked item is at playing state
-                if(Audio_manager.mAudioPos == position) {
-                    UtilAudio.stopAudioIfNeeded();
-                }
-
                 //Toggle marking will resume page, so do Store v scroll
                 RecyclerView listView = TabsHost.mTabsPagerAdapter.fragmentList.get(TabsHost.getFocus_tabPos()).recyclerView;
                 TabsHost.store_listView_vScroll(listView);
@@ -560,12 +325,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
                 TabsHost.reloadCurrentPage();
                 TabsHost.showFooter(MainAct.mAct);
-
-                // update audio info
-                if(PageUi.isAudioPlayingPage()) {
-                    System.out.println("PageAdapter / _getView / btnMarking / is AudioPlayingPage");
-                    AudioPlayer_page.prepareAudioInfo();
-                }
             }
         });
 
@@ -605,117 +364,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
                 i.putExtra(DB_page.KEY_NOTE_BODY, db_page.getNoteBody_byId(rowId));
                 i.putExtra(DB_page.KEY_NOTE_CREATED, db_page.getNoteCreatedTime_byId(rowId));
                 mAct.startActivity(i);
-            }
-        });
-
-        // on play audio
-        viewHolder.btnPlayAudio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TabsHost.reloadCurrentPage();// after Drag and drop: this is needed to update thumb nail and title
-
-                Audio_manager.setAudioPlayMode(Audio_manager.PAGE_PLAY_MODE);
-                DB_page db_page = new DB_page(mAct, TabsHost.getCurrentPageTableId());
-                int notesCount = db_page.getNotesCount(true);
-                if(position >= notesCount) //end of list
-                    return ;
-
-                int marking = db_page.getNoteMarking(position,true);
-                String uriString = db_page.getNoteAudioUri(position,true);
-
-                boolean isAudioUri = false;
-                if( !Util.isEmptyString(uriString) && (marking == 1))
-                    isAudioUri = true;
-
-                if(position < notesCount) // avoid footer error
-                {
-                    if(isAudioUri)
-                    {
-                        // cancel playing
-                        if(BackgroundAudioService.mMediaPlayer != null)
-                        {
-                            if(BackgroundAudioService.mMediaPlayer.isPlaying())
-                                BackgroundAudioService.mMediaPlayer.pause();
-
-                            if((AudioPlayer_page.mAudioHandler != null) &&
-                                    (TabsHost.audioPlayer_page != null)        ){
-                                AudioPlayer_page.mAudioHandler.removeCallbacks(TabsHost.audioPlayer_page.page_runnable);
-                            }
-                            BackgroundAudioService.mMediaPlayer.release();
-                            BackgroundAudioService.mMediaPlayer = null;
-                        }
-
-                        Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_PLAY);
-
-                        // create new Intent to play audio
-                        Audio_manager.mAudioPos = position;
-                        Audio_manager.setAudioPlayMode(Audio_manager.PAGE_PLAY_MODE);
-
-                        TabsHost.audioUi_page = new AudioUi_page(mAct, TabsHost.getCurrentPage().recyclerView);
-                        TabsHost.audioUi_page.initAudioBlock(MainAct.mAct);
-
-                        TabsHost.audioPlayer_page = new AudioPlayer_page(mAct,TabsHost.audioUi_page);
-                        AudioPlayer_page.prepareAudioInfo();
-                        TabsHost.audioPlayer_page.runAudioState();
-
-                        // update audio play position
-                        TabsHost.audioPlayTabPos = page_pos;
-
-                        // update audio panel
-                        UtilAudio.updateAudioPanel(TabsHost.audioUi_page.audioPanel_play_button,
-                                TabsHost.audioUi_page.audio_panel_title_textView);
-
-                        // update playing page position
-                        MainAct.mPlaying_pagePos = TabsHost.getFocus_tabPos();
-
-                        // update playing page table Id
-                        MainAct.mPlaying_pageTableId = TabsHost.getCurrentPageTableId();
-
-                        // update playing folder position
-                        MainAct.mPlaying_folderPos = FolderUi.getFocus_folderPos();
-
-                        // update playing folder table Id
-                        DB_drawer dB_drawer = new DB_drawer(mAct);
-                        MainAct.mPlaying_folderTableId = dB_drawer.getFolderTableId(MainAct.mPlaying_folderPos,true);
-
-                        TabsHost.mTabsPagerAdapter.notifyDataSetChanged();
-                    }
-                }
-            }
-        });
-
-        // on play YouTube
-        viewHolder.btnPlayYouTube.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v) {
-                TabsHost.getCurrentPage().mCurrPlayPosition = position;
-                DB_page db_page = new DB_page(mAct, TabsHost.getCurrentPageTableId());
-                db_page.open();
-                int count = db_page.getNotesCount(false);
-                String linkStr = db_page.getNoteLinkUri(position, false);
-                db_page.close();
-
-                if (position < count) {
-                    if (Util.isYouTubeLink(linkStr)) {
-                        Audio_manager.stopAudioPlayer();
-
-                        // apply native YouTube
-                        Util.openLink_YouTube(mAct, linkStr);
-                    }
-                }
-            }
-        });
-
-        // on play Web
-        viewHolder.btnPlayWeb.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v) {
-                DB_page db_page = new DB_page(mAct, TabsHost.getCurrentPageTableId());
-                linkUri = db_page.getNoteLinkUri(position, true);
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(linkUri));
-                MainAct.mAct.startActivity(intent);
             }
         });
 
@@ -813,40 +461,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
                 toPos++;
             else
                 toPos--;
-        }
-
-        if( PageUi.isAudioPlayingPage() &&
-                (BackgroundAudioService.mMediaPlayer != null)				   )
-        {
-            if( (Page_recycler.mHighlightPosition == oriEndPos)  && (oriStartPos > oriEndPos))
-            {
-                Page_recycler.mHighlightPosition = oriEndPos+1;
-            }
-            else if( (Page_recycler.mHighlightPosition == oriEndPos) && (oriStartPos < oriEndPos))
-            {
-                Page_recycler.mHighlightPosition = oriEndPos-1;
-            }
-            else if( (Page_recycler.mHighlightPosition == oriStartPos)  && (oriStartPos > oriEndPos))
-            {
-                Page_recycler.mHighlightPosition = oriEndPos;
-            }
-            else if( (Page_recycler.mHighlightPosition == oriStartPos) && (oriStartPos < oriEndPos))
-            {
-                Page_recycler.mHighlightPosition = oriEndPos;
-            }
-            else if(  (Page_recycler.mHighlightPosition < oriEndPos) &&
-                    (Page_recycler.mHighlightPosition > oriStartPos)   )
-            {
-                Page_recycler.mHighlightPosition--;
-            }
-            else if( (Page_recycler.mHighlightPosition > oriEndPos) &&
-                    (Page_recycler.mHighlightPosition < oriStartPos)  )
-            {
-                Page_recycler.mHighlightPosition++;
-            }
-
-            Audio_manager.mAudioPos = Page_recycler.mHighlightPosition;
-            AudioPlayer_page.prepareAudioInfo();
         }
 
         // update footer

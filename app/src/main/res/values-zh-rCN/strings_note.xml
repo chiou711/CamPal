@@ -7,10 +7,6 @@
     <string name="edit_note_confirm_update">目前笔记已被更改，您要更新它吗？</string>
     <string name="edit_note_button_delete">删除</string>
     <string name="edit_note_set_picture_dlg_title">设置图影</string>
-    <string name="edit_note_set_audio_dlg_title">设置音讯</string>
-    <string name="edit_note_link">连结</string>
-    <string name="edit_note_dlg_link">连结:</string>
-    <string name="edit_note_dlg_set_link">设置连结</string>
     <string name="edit_note_dlg_title">标题:</string>
     <string name="edit_note_dlg_body">正文:</string>
     <string name="view_note_title">查看笔记</string>

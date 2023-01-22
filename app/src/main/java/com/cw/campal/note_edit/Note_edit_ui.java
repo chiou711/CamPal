@@ -53,12 +53,10 @@ import android.widget.Toast;
 
 public class Note_edit_ui {
 
-	private TextView audioTextView;
 
 	private ImageView picImageView;
 	private String pictureUriInDB;
 	private String drawingUriInDB;
-	private String audioUriInDB;
 	String oriPictureUri;
 	String currPictureUri;
 	String currAudioUri;
@@ -119,7 +117,6 @@ public class Note_edit_ui {
 
 		UI_init_text();
 
-    	audioTextView = (TextView) act.findViewById(R.id.edit_audio);
     	linkEditText = (EditText) act.findViewById(R.id.edit_link);
         picImageView = (ImageView) act.findViewById(R.id.edit_picture);
 
@@ -130,17 +127,6 @@ public class Note_edit_ui {
 		style = dbFolder.getPageStyle(TabsHost.getFocus_tabPos(), true);
 
 		enlargedImage = (TouchImageView)act.findViewById(R.id.expanded_image);
-
-		//set audio color
-//		audioTextView.setTextColor(Util.mText_ColorArray[style]);
-//		audioTextView.setBackgroundColor(Util.mBG_ColorArray[style]);
-
-		//set link color
-		if(linkEditText != null)
-		{
-			linkEditText.setTextColor(ColorSet.mText_ColorArray[style]);
-			linkEditText.setBackgroundColor(ColorSet.mBG_ColorArray[style]);
-		}
 
 		picImageView.setBackgroundColor(ColorSet.mBG_ColorArray[style]);
 
@@ -459,70 +445,7 @@ public class Note_edit_ui {
 	    		setCloseImageListeners(titleEditText);
 	    		setCloseImageListeners(bodyEditText);
 	    	}			
-	    	
-    		// audio
-			audioUriInDB = dB_page.getNoteAudioUri_byId(rowId);
-        	if(!Util.isEmptyString(audioUriInDB))
-    		{
-    			String audio_name = audioUriInDB;
-				System.out.println("populateFields_all / set audio name / audio_name = " + audio_name);
-				audioTextView.setText(act.getResources().getText(R.string.note_audio) + ": " + audio_name);
-    		}
-        	else
-				audioTextView.setText("");
-        		
-    		// link
-			String strLinkEdit = dB_page.getNoteLink_byId(rowId);
-            linkEditText.setText(strLinkEdit);
-            linkEditText.setSelection(strLinkEdit.length());
-
-            // title        	
-			String strTitleEdit = dB_page.getNoteTitle_byId(rowId);
-			final String curLinkStr = linkEditText.getText().toString();
-			if( Util.isEmptyString(strTitleEdit) &&
-				Util.isEmptyString(titleEditText.getText().toString()) )
-			{
-				if(Util.isYouTubeLink(curLinkStr) )
-				{
-					final String hint = Util.getYouTubeTitle(curLinkStr);
-
-					titleEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
-                        @Override
-                        public void onFocusChange(View v, boolean hasFocus) {
-                            if (hasFocus) {
-								titleEditText.setHint(Html.fromHtml("<small style=\"text-color: gray;\"><i>" +
-																	  hint +
-																	  "</i></small>") );
-                            }
-                        }
-                    });
-
-					titleEditText.setOnTouchListener(new View.OnTouchListener() {
-						@Override
-						public boolean onTouch(View v, MotionEvent event) {
-						        ((EditText) v).setText(hint);
-                                ((EditText) v).setSelection(hint.length());
-							return false;
-						}
-					});
-				}
-				else if(curLinkStr.startsWith("http"))
-				{
-					Util.setHttpTitle(curLinkStr, act, titleEditText);
-				}
-			}
         }
-    	else
-    	{
-            // renew link
-			String strLinkEdit = "";
-			if(linkEditText != null)
-			{
-	            linkEditText.setText(strLinkEdit);
-	            linkEditText.setSelection(strLinkEdit.length());
-	            linkEditText.requestFocus();
-			}
-    	}
     }
 
 	private boolean isLinkUriModified()
@@ -538,14 +461,6 @@ public class Note_edit_ui {
 	private boolean isPictureModified()
     {
     	return !oriPictureUri.equals(pictureUriInDB);
-    }
-
-	private boolean isAudioModified()
-    {
-    	if(oriAudioUri == null)
-    		return false;
-    	else
-    		return !oriAudioUri.equals(audioUriInDB);
     }
 
 	private boolean isBodyModified()
@@ -564,9 +479,7 @@ public class Note_edit_ui {
 //		System.out.println("Note_edit_ui / _isNoteModified / bRemoveAudioUri = " + bRemoveAudioUri);
     	if( isTitleModified() ||
     		isPictureModified() ||
-    		isAudioModified() ||
     		isBodyModified() ||
-    		isLinkUriModified() ||
     		bRemovePictureUri ||
     		bRemoveAudioUri)
     	{
@@ -590,25 +503,20 @@ public class Note_edit_ui {
 	        {
 	        	if( (!Util.isEmptyString(title)) ||
 	        		(!Util.isEmptyString(body)) ||
-	        		(!Util.isEmptyString(pictureUri)) ||
-	        		(!Util.isEmptyString(audioUri)) ||
-	        		(!Util.isEmptyString(linkUri))            )
+	        		(!Util.isEmptyString(pictureUri))       )
 	        	{
 	        		// insert
 	        		System.out.println("Note_edit_ui / _saveStateInDB / insert");
 	        		rowId = dB_page.insertNote(title, pictureUri, audioUri, drawingUri, linkUri, body, 0, (long) 0);// add new note, get return row Id
 	        	}
         		currPictureUri = pictureUri; // update file name
-        		currAudioUri = audioUri; // update file name
-	        } 
+	        }
 	        else // for Edit
 	        {
     	        Date now = new Date();
 	        	if( !Util.isEmptyString(title) ||
 	        		!Util.isEmptyString(body) ||
-	        		!Util.isEmptyString(pictureUri) ||
-	        		!Util.isEmptyString(audioUri) ||
-	        		!Util.isEmptyString(linkUri)       )
+	        		!Util.isEmptyString(pictureUri)  )
 	        	{
 	        		// update
 	        		if(bRollBackData) //roll back
@@ -639,14 +547,11 @@ public class Note_edit_ui {
 	        			System.out.println("--- isOK = " + isOK);
 	        		}
 	        		currPictureUri = pictureUri;
-	        		currAudioUri = audioUri;
 	        	}
 	        	else if( Util.isEmptyString(title) &&
 	        			 Util.isEmptyString(body) &&
  						 Util.isEmptyString(pictureUri) &&
-						 Util.isEmptyString(drawingUri) &&
-			        	 Util.isEmptyString(audioUri) &&
-			        	 Util.isEmptyString(linkUri)         )
+						 Util.isEmptyString(drawingUri)   )
 	        	{
 	        		// delete
 	        		System.out.println("Note_edit_ui / _saveStateInDB / delete");

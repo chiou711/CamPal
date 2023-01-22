@@ -45,7 +45,6 @@
             android:text="@string/blank_folder"
             android:textSize="25sp"
             />
-        <!-- footer audio control -->
         <TextView
             android:id="@+id/footerText"
             android:layout_width="match_parent"
@@ -68,9 +67,6 @@
 <!--            ads:adSize="BANNER"-->
 <!--            ads:adUnitId="@string/banner_ad_unit_id"/>-->
     </LinearLayout>
-    <include
-        layout="@layout/audio_panel_landscape"
-        />
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

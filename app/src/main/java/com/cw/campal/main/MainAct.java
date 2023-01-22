@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 CW Chiu
+ * Copyright (C) 2023 CW Chiu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,24 +32,17 @@ import com.cw.campal.drawer.Drawer;
 import com.cw.campal.folder.Folder;
 import com.cw.campal.folder.FolderUi;
 import com.cw.campal.note_add.Add_note_option;
-import com.cw.campal.operation.audio.Audio_manager;
-import com.cw.campal.operation.audio.AudioPlayer_page;
-import com.cw.campal.operation.audio.BackgroundAudioService;
 import com.cw.campal.operation.delete.DeleteFolders;
 import com.cw.campal.operation.delete.DeletePages;
 import com.cw.campal.operation.import_export.Import_fileView;
 import com.cw.campal.operation.import_export.Import_webAct;
 import com.cw.campal.page.Checked_notes_option;
 import com.cw.campal.page.PageUi;
-import com.cw.campal.page.Page_recycler;
-import com.cw.campal.tabs.AudioUi_page;
 import com.cw.campal.tabs.TabsHost;
 import com.cw.campal.util.DeleteFileAlarmReceiver;
 import com.cw.campal.operation.import_export.Export_toSDCardFragment;
 import com.cw.campal.operation.import_export.Import_filesList;
 import com.cw.campal.db.DB_drawer;
-import com.cw.campal.util.Dialog_EULA;
-import com.cw.campal.util.audio.UtilAudio;
 import com.cw.campal.operation.gallery.GalleryGridAct;
 import com.cw.campal.operation.slideshow.SlideshowInfo;
 import com.cw.campal.operation.slideshow.SlideshowPlayer;
@@ -66,7 +59,6 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -77,7 +69,6 @@ import android.os.RemoteException;
 import android.os.StrictMode;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -89,20 +80,18 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import static android.os.Build.VERSION_CODES.M;
 import static android.os.Build.VERSION_CODES.O;
-//import static android.os.Build.VERSION_CODES.R;
 
 public class MainAct extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener
 {
@@ -129,27 +118,11 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
     public static int mCurrentState;
     public final static int STATE_PAUSED = 0;
     public final static int STATE_PLAYING = 1;
-    public boolean bEULA_accepted;
 
 	// Main Act onCreate
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        ///
-//    	 StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-//    	   .detectDiskReads()
-//    	   .detectDiskWrites()
-//    	   .detectNetwork() 
-//    	   .penaltyLog()
-//    	   .build());
-//
-//    	    StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-////    	   .detectLeakedSqlLiteObjects() //??? unmark this line will cause strict mode error
-//    	   .penaltyLog() 
-//    	   .penaltyDeath()
-//    	   .build());     	
-        ///
-
         super.onCreate(savedInstanceState);
         Define.setAppBuildMode();
 
@@ -172,10 +145,6 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
         mAppTitle = getTitle();
         mMainUi = new MainUi();
 
-        // File provider implementation is needed after Android version 24
-        // if not, will encounter android.os.FileUriExposedException
-        // cf. https://stackoverflow.com/questions/38200282/android-os-fileuriexposedexception-file-storage-emulated-0-test-txt-exposed
-
         // add the following to disable this requirement
         if (Build.VERSION.SDK_INT >= 24) {
             try {
@@ -197,120 +166,67 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
         else
             Toast.makeText(this, mAppTitle, Toast.LENGTH_SHORT).show();
 
-        //Log.d below can be disabled by applying proguard
-        //1. enable proguard-android-optimize.txt in project.properties
-        //2. be sure to use newest version to avoid build error
-        //3. add the following in proguard-project.txt
-        /*-assumenosideeffects class android.util.Log {
-        public static boolean isLoggable(java.lang.String, int);
-        public static int v(...);
-        public static int i(...);
-        public static int w(...);
-        public static int d(...);
-        public static int e(...);
-        }
-        */
         UtilImage.getDefaultScaleInPercent(MainAct.this);
 
-        // EULA
-        Dialog_EULA dialog_EULA = new Dialog_EULA(this);
-        bEULA_accepted = dialog_EULA.isEulaAlreadyAccepted();
-
-        // Show dialog of EULA
-        if (!bEULA_accepted)
+        if( (Define.DEFAULT_CONTENT == Define.BY_ASSETS) ||
+            (Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) )
         {
-            //deleteDatabase(Define.DB_FILE_NAME);
+            // has not answered if default content needed
+            if(!Pref.getPref_has_answered_if_default_content_needed(this)) {
+                // Click Yes
+                DialogInterface.OnClickListener click_sample_Yes = (DialogInterface dlg, int j) -> {
+                    Pref.setPref_will_create_default_content(this, true);
 
-            // Ok button listener
-            dialog_EULA.clickListener_Ok = (DialogInterface dialog, int i) -> {
-
-                dialog_EULA.applyPreference();
-
-                // dialog: with default content
-                if( (Define.DEFAULT_CONTENT == Define.BY_ASSETS) ||
-                    (Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) )
-                {
-                    // has not answered if default content needed
-                    if(!Pref.getPref_has_answered_if_default_content_needed(this)) {
-                        // Click Yes
-                        DialogInterface.OnClickListener click_sample_Yes = (DialogInterface dlg, int j) -> {
-                            // Close dialog
-                            dialog.dismiss();
-
-                            // check build version for permission request (starts from API 23)
-                            if(Build.VERSION.SDK_INT >= 30)
-//                                checkStorageManagerPermission();
-                                checkCameraPermission();
-                            else if (Build.VERSION.SDK_INT >= 23)
-                                checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES);
-                            else {
-                                if (Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) {
-                                    createDefaultContent_byDownload();
-                                } else {
-                                    Pref.setPref_will_create_default_content(this, true);
-                                    recreate();
-                                }
-                            }
-                        };
-
-                        // Click No
-                        DialogInterface.OnClickListener click_sample_No = (DialogInterface dlg, int j) -> {
-                            // Close dialog
-                            dialog.dismiss();
-
-                            // check build version for permission request
-                            if (Build.VERSION.SDK_INT >= 23)
-                                checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO);
-                            else {
-                                Pref.setPref_will_create_default_content(this, false);
-                                recreate();
-                            }
-                        };
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(mAct)
-                                .setTitle(R.string.sample_notes_title)
-                                .setMessage(R.string.sample_notes_message)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.confirm_dialog_button_yes, click_sample_Yes)
-                                .setNegativeButton(R.string.confirm_dialog_button_no, click_sample_No);
-                        builder.create().show();
-                    } else {
-                        // check build version for permission request
-                        if (Build.VERSION.SDK_INT >= 23)
-                            checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO);
-                        else {
-                            Pref.setPref_will_create_default_content(this, false);
+                    // check build version for permission request (starts from API 23)
+                    if(Build.VERSION.SDK_INT >= 30)
+                        checkCameraPermission();
+                    else if (Build.VERSION.SDK_INT >= 23)
+                        checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES);
+                    else {
+                        if (Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) {
+                            createDefaultContent_byDownload();
+                        } else {
+                            Pref.setPref_will_create_default_content(this, true);
                             recreate();
                         }
                     }
+                };
 
-                }
-                else if((Define.DEFAULT_CONTENT == Define.BY_INITIAL_TABLES) && (Define.INITIAL_FOLDERS_COUNT > 0))
-                {
-                    if(Build.VERSION.SDK_INT >= 23)
-                        checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES);
-                    else
-                    {
-                        Pref.setPref_will_create_default_content(this, true);
+                // Click No
+                DialogInterface.OnClickListener click_sample_No = (DialogInterface dlg, int j) -> {
+                    // check build version for permission request
+                    if (Build.VERSION.SDK_INT >= 23)
+                        checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO);
+                    else {
+                        Pref.setPref_will_create_default_content(this, false);
                         recreate();
                     }
-                    // Close dialog
-                    dialog.dismiss();
-                }
-            };
+                };
 
-            // No button listener
-            dialog_EULA.clickListener_No = (DialogInterface dialog, int which) -> {
-                    // Close the activity as they have declined
-                    // the EULA
-                    dialog.dismiss();
-                    mAct.finish();
-            };
+                AlertDialog.Builder builder = new AlertDialog.Builder(mAct)
+                        .setTitle(R.string.sample_notes_title)
+                        .setMessage(R.string.sample_notes_message)
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.confirm_dialog_button_yes, click_sample_Yes)
+                        .setNegativeButton(R.string.confirm_dialog_button_no, click_sample_No);
+                builder.create().show();
+            } else {
+                doCreate();
+            }
 
-            dialog_EULA.show();
         }
-        else
-            doCreate();
+        else if((Define.DEFAULT_CONTENT == Define.BY_INITIAL_TABLES) && (Define.INITIAL_FOLDERS_COUNT > 0))
+        {
+            if(Build.VERSION.SDK_INT >= 23)
+                checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES);
+            else
+            {
+                Pref.setPref_will_create_default_content(this, true);
+                recreate();
+            }
+        }
+
+        doCreate();
     }
 
     public void checkStorageManagerPermission() {
@@ -327,25 +243,13 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
         }
     }
 
+    // check camera permission
     public void checkCameraPermission() {
-
         if(ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
                     Util.PERMISSIONS_REQUEST_CAMERA);
         }
-
-//        if (!Environment.isExternalStorageManager()) {
-//            Intent intent = new Intent(Settings.ACTION_CA
-//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); //set this will go to _onActivityResult soon
-//            startActivityForResult(intent,Util.STORAGE_MANAGER_PERMISSION);
-
-            // flow of this query:
-            // MainAct / _onPause / _onStop
-            // this query UI
-            // onActivityResult
-            // MainAct / _onStart / _onResume
-//        }
     }
 
     // check permission dialog
@@ -374,8 +278,7 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
     }
 
     // Do major create operation
-    void doCreate()
-    {
+    void doCreate() {
         System.out.println("MainAct / _doCreate");
 
         // Will create default contents: by assets or by initial tables
@@ -388,9 +291,6 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
 
         mFolderTitles = new ArrayList<>();
 
-//		Context context = getApplicationContext();
-
-        //Add note with the link which got from other App
         String intentLink = mMainUi.addNote_IntentLink(getIntent(), mAct);
         if (!Util.isEmptyString(intentLink)) {
             finish(); // CamPal not running at first, keep closing
@@ -422,42 +322,14 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
 
         isAddedOnNewIntent = false;
 
-        // Register Bluetooth device receiver
-        if (Build.VERSION.SDK_INT < 21) {
-            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
-            this.registerReceiver(bluetooth_device_receiver, filter);
-        } else // if(Build.VERSION.SDK_INT >= 21)
-        {
-            // Media session: to receive media button event of bluetooth device
-            // new media browser instance and create BackgroundAudioService instance: support notification
-            if (mMediaBrowserCompat == null) {
-                mMediaBrowserCompat = new MediaBrowserCompat(mAct,
-                        new ComponentName(mAct, BackgroundAudioService.class),
-                        mMediaBrowserCompatConnectionCallback,
-                        mAct.getIntent().getExtras());
-
-                if (!mMediaBrowserCompat.isConnected())
-                    mMediaBrowserCompat.connect();//cf: https://stackoverflow.com/questions/43169875/mediabrowser-subscribe-doesnt-work-after-i-get-back-to-activity-1-from-activity
-
-                mCurrentState = STATE_PAUSED;
-            }
-        }
-
-        // init audio parameters
-        MainAct.mPlaying_folderPos = -1;
-        Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_STOP);
-        TabsHost.audioPlayTabPos = -1;
-
-        if(bEULA_accepted)
-            configLayoutView(); //createAssetsFile inside
+        configLayoutView(); //createAssetsFile inside
     }
 
 
     /**
      *  Create default content
      */
-    void createDefaultContent_byAssets()
-    {
+    void createDefaultContent_byAssets(){
         System.out.println("MainAct / _createDefaultContent_byAssets");
 
         String fileName;
@@ -577,26 +449,15 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
 //        System.out.println("MainAct / _onKeyDown / keyCode = " + keyCode);
         switch (keyCode) {
             case KeyEvent.KEYCODE_MEDIA_PREVIOUS: //88
-                if(TabsHost.audioUi_page != null)
-                    TabsHost.audioUi_page.audioPanel_previous_btn.performClick();
                 return true;
 
             case KeyEvent.KEYCODE_MEDIA_NEXT: //87
-                if(TabsHost.audioUi_page != null)
-                    TabsHost.audioUi_page.audioPanel_next_btn.performClick();
-
                 return true;
 
             case KeyEvent.KEYCODE_MEDIA_PLAY: //126
-                if(TabsHost.audioUi_page != null)
-                    TabsHost.audioUi_page.audioPanel_play_button.performClick();
-                else
-                    playFirstAudio();
                 return true;
 
             case KeyEvent.KEYCODE_MEDIA_PAUSE: //127
-                if(TabsHost.audioUi_page != null)
-                    TabsHost.audioUi_page.audioPanel_play_button.performClick();
                 return true;
 
             case KeyEvent.KEYCODE_BACK:
@@ -621,38 +482,39 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
 
     // callback of granted permission
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
-    {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         System.out.println("MainAct / _onRequestPermissionsResult / grantResults.length =" + grantResults.length);
         System.out.println("MainAct / _onRequestPermissionsResult / requestCode =" + requestCode);
 
-//        if ( (grantResults.length > 0) &&
-//             (grantResults[0] == PackageManager.PERMISSION_GRANTED) ){
-//            isStorageRequested = true;
-//        }
+        for(int i=0;i<grantResults.length;i++)
+            System.out.println("MainAct / _onRequestPermissionsResult / grantResults["+ i+"]=" + grantResults[i]);
 
-//        if ( (grantResults.length > 0) &&
-//             ( (grantResults[0] == PackageManager.PERMISSION_GRANTED) &&
-//               (grantResults[1] == PackageManager.PERMISSION_GRANTED)   ) )
-        {
-            switch (requestCode)
-            {
-                case Util.PERMISSIONS_REQUEST_CAMERA:
-                    if ( (grantResults.length > 0) &&
-                            (grantResults[0] == PackageManager.PERMISSION_GRANTED) ){
-//                        isStorageRequested = true;
+        switch (requestCode) {
+            case Util.PERMISSIONS_REQUEST_CAMERA:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    System.out.println("MainAct / _onRequestPermissionsResult / camera permission granted");
+
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                         ActivityCompat.requestPermissions(this,
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                        Manifest.permission.READ_EXTERNAL_STORAGE},
+                                new String[]{Manifest.permission.READ_MEDIA_IMAGES,
+                                             Manifest.permission.READ_MEDIA_VIDEO},
                                 Util.PERMISSIONS_REQUEST_STORAGE);
-                    }
-                    break;
-                case Util.PERMISSIONS_REQUEST_STORAGE:
-                    if ( (grantResults.length > 0) &&
-                        ( (grantResults[0] == PackageManager.PERMISSION_GRANTED) &&
-                        (grantResults[1] == PackageManager.PERMISSION_GRANTED)   ) )
+                    else
+                        ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                         Manifest.permission.READ_EXTERNAL_STORAGE},
+                            Util.PERMISSIONS_REQUEST_STORAGE);
+                }
+                break;
+
+            case Util.PERMISSIONS_REQUEST_STORAGE:
+                if ((grantResults.length > 0) &&
+                    ((grantResults[0] == PackageManager.PERMISSION_GRANTED) &&
+                     (grantResults[1] == PackageManager.PERMISSION_GRANTED)))
                     isStorageRequested = true;
-                    break;
+
+                break;
 
 //                case Util.PERMISSIONS_REQUEST_STORAGE_IMPORT:
 //                    isStorageRequestedImport = true;
@@ -675,21 +537,11 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
 //                    Pref.setPref_will_create_default_content(this, false);
 //                    recreate();
 //                break;
-            }
         }
-        //todo Need below?
-//        else
-//        {
-//            Pref.setPref_will_create_default_content(this, false);
-//            recreate();
-//        }
-
-        //normally, will go to _resume
     }
 
     //  Download XML file from Google drive
-    void createDefaultContent_byDownload()
-    {
+    void createDefaultContent_byDownload(){
 
         /**
          * CamPal_default_content.xml
@@ -867,9 +719,6 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
         if(!isAddedOnNewIntent)
         {
             String intentTitle = mMainUi.addNote_IntentLink(intent, mAct);
-//            if (!Util.isEmptyString(intentTitle) && intentTitle.startsWith("http")) {
-//                Page.itemAdapter.notifyDataSetChanged();
-//            }
 
             if (!Util.isEmptyString(intentTitle))
                 TabsHost.reloadCurrentPage();
@@ -882,7 +731,6 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
     @Override
     protected void onPause() {
         super.onPause();
-//        bluetooth_device_receiver.abortBroadcast();//todo better place?
         System.out.println("MainAct / _onPause");
     }
 
@@ -893,21 +741,19 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
         mAct = this;
 
         // Sync the toggle state after onRestoreInstanceState has occurred.
-        if(bEULA_accepted) {
-            if(drawer != null)
-                drawer.drawerToggle.syncState();
+        if(drawer != null)
+            drawer.drawerToggle.syncState();
 
-            // get focus folder table Id, default folder table Id: 1
-            DB_drawer dB_drawer = new DB_drawer(this);
-            dB_drawer.open();
-            for (int i = 0; i < dB_drawer.getFoldersCount(false); i++) {
-                if (dB_drawer.getFolderTableId(i, false) == Pref.getPref_focusView_folder_tableId(this)) {
-                    FolderUi.setFocus_folderPos(i);
-                    System.out.println("MainAct / _mainAction / FolderUi.getFocus_folderPos() = " + FolderUi.getFocus_folderPos());
-                }
+        // get focus folder table Id, default folder table Id: 1
+        DB_drawer dB_drawer = new DB_drawer(this);
+        dB_drawer.open();
+        for (int i = 0; i < dB_drawer.getFoldersCount(false); i++) {
+            if (dB_drawer.getFolderTableId(i, false) == Pref.getPref_focusView_folder_tableId(this)) {
+                FolderUi.setFocus_folderPos(i);
+                System.out.println("MainAct / _mainAction / FolderUi.getFocus_folderPos() = " + FolderUi.getFocus_folderPos());
             }
-            dB_drawer.close();
         }
+        dB_drawer.close();
     }
 
 
@@ -918,8 +764,7 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
 
         if( isStorageRequested ||
             isStorageRequestedImport ||
-            isStorageRequestedExport   )
-        {
+            isStorageRequestedExport   ){
             //hide the menu
             if(mMenu!=null) {
                 mMenu.setGroupVisible(R.id.group_notes, false);
@@ -927,8 +772,7 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
             }
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-            if(isStorageRequested)
-            {
+            if(isStorageRequested){
                 DB_folder dB_folder = new DB_folder(this, Pref.getPref_focusView_folder_tableId(this));
                 if (dB_folder!= null && dB_folder.getPagesCount(true) > 0) {
                     MailPagesFragment mailFragment = new MailPagesFragment();
@@ -950,8 +794,7 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
                 isStorageRequestedImport = false;
             }
 
-            if(isStorageRequestedExport)
-            {
+            if(isStorageRequestedExport){
                 DB_folder dB_folder = new DB_folder(this, Pref.getPref_focusView_folder_tableId(this));
                 if (dB_folder.getPagesCount(true) > 0) {
                     Export_toSDCardFragment exportFragment = new Export_toSDCardFragment();
@@ -969,7 +812,7 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
         // fix: home button failed after power off/on in Config fragment
         else {
 //		// fix: home button failed after power off/on in Config fragment
-            if (bEULA_accepted) {
+//            if (bEULA_accepted) {
 	            if(mFragmentManager != null)
                     mFragmentManager.popBackStack();
 
@@ -978,13 +821,12 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
                     openFolder();
                 } else
                     System.out.println("MainAct / _onResumeFragments / mAct is Destroyed()");
-            }
+//            }
         }
     }
 
     // open folder
-    public static void openFolder()
-    {
+    public static void openFolder(){
         System.out.println("MainAct / _openFolder");
 
         DB_drawer dB_drawer = new DB_drawer(mAct);
@@ -1012,35 +854,8 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
 
 
     @Override
-    protected void onDestroy()
-    {
+    protected void onDestroy(){
         System.out.println("MainAct / onDestroy");
-
-        if(bluetooth_device_receiver != null)
-        {
-            try
-            {
-                unregisterReceiver(bluetooth_device_receiver);
-            }
-            catch (Exception e)
-            {
-            }
-            bluetooth_device_receiver = null;
-        }
-
-        // stop audio player
-        if(BackgroundAudioService.mMediaPlayer != null)
-            Audio_manager.stopAudioPlayer();
-
-        // disconnect MediaBrowserCompat
-        if( (mMediaBrowserCompat != null) && mMediaBrowserCompat.isConnected())
-            mMediaBrowserCompat.disconnect();
-
-        //hide notification
-        NotificationManagerCompat.from(MainAct.mAct).cancel(BackgroundAudioService.id);
-
-        mMediaBrowserCompat = null;
-
         super.onDestroy();
     }
 
@@ -1068,16 +883,13 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
      *  on Back button pressed
      */
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed(){
         System.out.println("MainAct / _onBackPressed");
         doBackKeyEvent();
     }
 
-    void doBackKeyEvent()
-    {
-        if (onBackPressedListener != null)
-        {
+    void doBackKeyEvent(){
+        if (onBackPressedListener != null){
             DB_drawer dbDrawer = new DB_drawer(this);
             int foldersCnt = dbDrawer.getFoldersCount(true);
 
@@ -1092,9 +904,7 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
             else {
                 onBackPressedListener.doBack();
             }
-        }
-        else
-        {
+        }else{
             if((drawer != null) && drawer.isDrawerOpen())
                 drawer.closeDrawer();
             else
@@ -1113,9 +923,7 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
         {
             System.out.println("MainAct / _onBackStackChanged / fragment");
             initActionBar_home();
-        }
-        else if(backStackEntryCount == 0) // init
-        {
+        } else if(backStackEntryCount == 0){ // init
             System.out.println("MainAct / _onBackStackChanged / init");
             onBackPressedListener = null;
 
@@ -1144,8 +952,7 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
     String nextTitle;
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode,resultCode,data);
         System.out.println("MainAct / _onActivityResult ");
         String stringFileName[] = null;
@@ -1166,72 +973,6 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
                     stringFileName);
         }
 
-        // YouTube
-        if(requestCode == Util.YOUTUBE_LINK_INTENT)
-        {
-            // preference of delay
-            SharedPreferences pref_delay = getSharedPreferences("youtube_launch_delay", 0);
-            count = Integer.valueOf(pref_delay.getString("KEY_YOUTUBE_LAUNCH_DELAY","10"));
-
-            builder = new AlertDialog.Builder(this);
-
-            do
-            {
-                TabsHost.getCurrentPage().mCurrPlayPosition++;
-                if(Page_recycler.mCurrPlayPosition >= TabsHost.getCurrentPage().getNotesCountInPage(mAct))
-                    TabsHost.getCurrentPage().mCurrPlayPosition = 0; //back to first index
-
-                nextLink = mMainUi.getYouTubeLink(this,TabsHost.getCurrentPage().mCurrPlayPosition);
-                nextTitle = mMainUi.getYouTubeTitle(this,TabsHost.getCurrentPage().mCurrPlayPosition);
-            }
-            while (!Util.isYouTubeLink(nextLink));
-
-            countStr = getResources().getString(R.string.message_continue_or_stop_YouTube_message);
-            countStr = countStr.replaceFirst("[0-9]",String.valueOf(count));
-
-            builder.setTitle(R.string.message_continue_or_stop_YouTube_title)
-                    .setMessage( "\n" + nextTitle +"\n\n" + countStr)
-                    .setNegativeButton(R.string.confirm_dialog_button_no, new DialogInterface.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(DialogInterface dialog1, int which1)
-                        {
-                            alertDlg.dismiss();
-                            mMainUi.cancelYouTubeHandler(handler,runCountDown);
-                        }
-                    })
-                    .setPositiveButton(R.string.confirm_dialog_button_yes, new DialogInterface.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(DialogInterface dialog1, int which1) {
-                            alertDlg.dismiss();
-                            mMainUi.cancelYouTubeHandler(handler,runCountDown);
-                            mMainUi.launchNextYouTubeIntent(mAct,handler,runCountDown);
-                        }
-                    });
-
-            alertDlg = builder.create();
-
-            // set listener for selection
-            alertDlg.setOnShowListener(new DialogInterface.OnShowListener() {
-                @Override
-                public void onShow(DialogInterface dlgInterface) {
-                    handler = new Handler();
-                    handler.postDelayed(runCountDown,1000);
-                }
-            });
-            alertDlg.show();
-        }
-
-        // make sure main activity is still executing
-        if(requestCode == Util.YOUTUBE_ADD_NEW_LINK_INTENT)
-        {
-            System.out.println("MainAct / _onActivityResult /YOUTUBE_ADD_NEW_LINK_INTENT");
-
-            if(Build.VERSION.SDK_INT >= O)//API26
-                isAddedOnNewIntent = false;
-        }
-
         if(requestCode == Util.STORAGE_MANAGER_PERMISSION){
             if(Environment.isExternalStorageManager()){
                 Pref.setPref_will_create_default_content(this, true);
@@ -1239,33 +980,6 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
             }
         }
     }
-
-    /**
-     * runnable for counting down
-     */
-    Runnable runCountDown = new Runnable() {
-        public void run() {
-            // show count down
-            TextView messageView = (TextView) alertDlg.findViewById(android.R.id.message);
-            count--;
-            countStr = getResources().getString(R.string.message_continue_or_stop_YouTube_message);
-            countStr = countStr.replaceFirst("[0-9]",String.valueOf(count));
-            messageView.setText( "\n" + nextTitle + "\n\n" +countStr);
-
-            if(count>0)
-                handler.postDelayed(runCountDown,1000);
-            else
-            {
-                // launch next intent
-                alertDlg.dismiss();
-                mMainUi.cancelYouTubeHandler(handler,runCountDown);
-                System.out.println("MainAct / _runCountDown /alertDlg  dismiss ");
-                mMainUi.launchNextYouTubeIntent(mAct,handler,runCountDown);
-            }
-        }
-    };
-
-
 
     /***********************************************************************************
      *
@@ -1281,7 +995,7 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
     public boolean onPrepareOptionsMenu(android.view.Menu menu) {
         System.out.println("MainAct / _onPrepareOptionsMenu");
 
-        if((drawer == null) || (drawer.drawerLayout == null) || (!bEULA_accepted))
+        if((drawer == null) || (drawer.drawerLayout == null) /*||(!bEULA_accepted)*/)
             return false;
 
         DB_drawer db_drawer = new DB_drawer(this);
@@ -1323,8 +1037,7 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
              */
             mMenu.setGroupVisible(R.id.group_pages_and_more, foldersCnt >0);
 
-            if(foldersCnt>0)
-            {
+            if(foldersCnt>0){
                 getSupportActionBar().setTitle(mFolderTitle);
 
                 // pages count
@@ -1391,18 +1104,13 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
      * onCreate Options Menu
      *
      *************************/
-    public static MenuItem mSubMenuItemAudio;
-    MenuItem playOrStopMusicButton;
     @Override
-    public boolean onCreateOptionsMenu(android.view.Menu menu)
-    {
+    public boolean onCreateOptionsMenu(android.view.Menu menu){
 //		System.out.println("MainAct / _onCreateOptionsMenu");
         mMenu = menu;
 
         // inflate menu
         getMenuInflater().inflate(R.menu.main_menu, menu);
-
-        playOrStopMusicButton = menu.findItem(R.id.PLAY_OR_STOP_MUSIC);
 
         // enable drag note
         mPref_show_note_attribute = getSharedPreferences("show_note_attribute", 0);
@@ -1570,11 +1278,9 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
                 return true;
 
             case MenuId.ADD_NEW_NOTE:
-                if(Build.VERSION.SDK_INT >= M)//api23
-                {
+                if(Build.VERSION.SDK_INT >= M){//api23
                     // create selection list
                     if(Build.VERSION.SDK_INT >= 30) {
-//                        Add_note_option.createSelection(this, Environment.isExternalStorageManager());
                         int permissionCamera = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
                         Add_note_option.createSelection(this, permissionCamera == PackageManager.PERMISSION_GRANTED);
                     } else if (Build.VERSION.SDK_INT >= 23) {
@@ -1584,43 +1290,6 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
                 }
                 else
                     Add_note_option.createSelection(this,true);
-                return true;
-
-            case MenuId.OPEN_PLAY_SUBMENU:
-                // new play instance: stop button is off
-                if( (BackgroundAudioService.mMediaPlayer != null) &&
-                    (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP))
-                {
-                    // show Stop
-                    playOrStopMusicButton.setTitle(R.string.menu_button_stop_audio);
-                    playOrStopMusicButton.setIcon(R.drawable.ic_media_stop);
-                }
-                else
-                {
-                    // show Play
-                    playOrStopMusicButton.setTitle(R.string.menu_button_play_audio);
-                    playOrStopMusicButton.setIcon(R.drawable.ic_media_play);
-                }
-                return true;
-
-            case MenuId.PLAY_OR_STOP_AUDIO:
-                if( (BackgroundAudioService.mMediaPlayer != null) &&
-                    (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP))
-                {
-                    Audio_manager.stopAudioPlayer();
-
-                    // remove audio panel
-                    TabsHost.audioPlayer_page.page_runnable.run();
-
-                    // refresh
-                    TabsHost.reloadCurrentPage();
-
-                    return true; // just stop playing, wait for user action
-                }
-                else // play first audio
-                {
-                    playFirstAudio();
-                }
                 return true;
 
             case MenuId.SLIDE_SHOW:
@@ -1867,61 +1536,8 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
         }
     }
 
-    void playFirstAudio()
-    {
-        Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_PLAY);
-
-        Audio_manager.setAudioPlayMode(Audio_manager.PAGE_PLAY_MODE);
-        Audio_manager.mAudioPos = 0;
-
-        // cancel playing
-        if(BackgroundAudioService.mMediaPlayer != null)
-        {
-            if(BackgroundAudioService.mMediaPlayer.isPlaying())
-                BackgroundAudioService.mMediaPlayer.pause();
-
-            if((AudioPlayer_page.mAudioHandler != null) &&
-                    (TabsHost.audioPlayer_page != null)        ){
-                AudioPlayer_page.mAudioHandler.removeCallbacks(TabsHost.audioPlayer_page.page_runnable);
-            }
-            BackgroundAudioService.mMediaPlayer.release();
-            BackgroundAudioService.mMediaPlayer = null;
-        }
-
-        // initial
-        BackgroundAudioService.mMediaPlayer = null;//for first
-
-        Page_recycler page = TabsHost.getCurrentPage();
-        TabsHost.audioUi_page = new AudioUi_page(this,page.recyclerView);
-        TabsHost.audioUi_page.initAudioBlock(this);
-
-        TabsHost.audioPlayer_page = new AudioPlayer_page(this,TabsHost.audioUi_page);
-        TabsHost.audioPlayer_page.prepareAudioInfo();
-        TabsHost.audioPlayer_page.runAudioState();
-
-        // update audio play position
-        TabsHost.audioPlayTabPos = TabsHost.getFocus_tabPos();
-        TabsHost.mTabsPagerAdapter.notifyDataSetChanged();
-
-        UtilAudio.updateAudioPanel(TabsHost.audioUi_page.audioPanel_play_button,
-                TabsHost.audioUi_page.audio_panel_title_textView);
-
-        // update playing page position
-        mPlaying_pagePos = TabsHost.getFocus_tabPos();
-
-        // update playing page table Id
-        mPlaying_pageTableId = TabsHost.getCurrentPageTableId();
-
-        // update playing folder position
-        mPlaying_folderPos = FolderUi.getFocus_folderPos();
-
-        DB_drawer dB_drawer = new DB_drawer(this);
-        MainAct.mPlaying_folderTableId = dB_drawer.getFolderTableId(MainAct.mPlaying_folderPos,true);
-    }
-
     // configure layout view
-    void configLayoutView()
-    {
+    void configLayoutView(){
         System.out.println("MainAct / _configLayoutView");
 
         setContentView(R.layout.drawer);

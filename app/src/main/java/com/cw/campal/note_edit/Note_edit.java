@@ -16,14 +16,11 @@
 
 package com.cw.campal.note_edit;
 
-import com.cw.campal.operation.audio.Audio_manager;
-import com.cw.campal.operation.audio.AudioPlayer_page;
 import com.cw.campal.page.Page_recycler;
 import com.cw.campal.R;
 import com.cw.campal.db.DB_page;
 import com.cw.campal.page.PageUi;
 import com.cw.campal.tabs.TabsHost;
-import com.cw.campal.util.audio.UtilAudio;
 import com.cw.campal.util.image.TouchImageView;
 import com.cw.campal.util.image.UtilImage;
 import com.cw.campal.util.ColorSet;
@@ -166,18 +163,6 @@ public class Note_edit extends Activity
 							public void onClick(DialogInterface dialog1, int which1)
 							{
 								note_edit_ui.deleteNote(noteId);
-
-
-								if(PageUi.isAudioPlayingPage())
-									AudioPlayer_page.prepareAudioInfo();
-
-								// Stop Play/Pause if current edit item is played and is not at Stop state
-								if(Page_recycler.mHighlightPosition == position)
-									UtilAudio.stopAudioIfNeeded();
-
-								// update highlight position
-								if(position < Page_recycler.mHighlightPosition )
-									Audio_manager.mAudioPos--;
 
 								finish();
 							}
@@ -375,8 +360,6 @@ public class Note_edit extends Activity
 	    }
     }
     
-    static final int CHANGE_LINK = R.id.ADD_LINK;
-    static final int CHANGE_AUDIO = R.id.ADD_AUDIO;
     static final int CAPTURE_IMAGE = R.id.ADD_NEW_IMAGE;
     static final int CAPTURE_VIDEO = R.id.ADD_NEW_VIDEO;
 	private Uri picUri;
@@ -386,22 +369,6 @@ public class Note_edit extends Activity
 
 		// inflate menu
 		getMenuInflater().inflate(R.menu.edit_note_menu, menu);
-
-//	    menu.add(0, CHANGE_LINK, 0, R.string.edit_note_link )
-//	    .setIcon(android.R.drawable.ic_menu_share)
-//	    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-//
-//	    menu.add(0, CHANGE_AUDIO, 1, R.string.audioUi_note )
-//	    .setIcon(R.drawable.ic_audio_unselected)
-//	    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-//
-//	    menu.add(0, CAPTURE_IMAGE, 2, R.string.note_camera_image )
-//	    .setIcon(android.R.drawable.ic_menu_camera)
-//	    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-//
-//	    menu.add(0, CAPTURE_VIDEO, 3, R.string.note_camera_video )
-//	    .setIcon(android.R.drawable.presence_video_online)
-//	    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -423,18 +390,6 @@ public class Note_edit extends Activity
 		    	}
 		        return true;
 
-            case CHANGE_LINK:
-//            	Intent intent_youtube_link = new Intent(Intent.ACTION_VIEW,Uri.parse("http://www.youtube.com"));
-//            	startActivityForResult(intent_youtube_link,EDIT_YOUTUBE_LINK);
-//            	enSaveDb = false;
-            	setLinkUri();
-			    return true;
-			    
-            case CHANGE_AUDIO:
-				note_edit_ui.bRemoveAudioUri = false; // reset
-            	setAudioSource();
-			    return true;
-			    
             case CAPTURE_IMAGE:
             	Intent intentImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             	// new picture Uri with current time stamp
@@ -470,95 +425,6 @@ public class Note_edit extends Activity
     }
     
     
-    void setAudioSource() 
-    {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(R.string.edit_note_set_audio_dlg_title);
-		// Cancel
-		builder.setNegativeButton(R.string.btn_Cancel, new DialogInterface.OnClickListener()
-		   	   {
-				@Override
-				public void onClick(DialogInterface dialog, int which) 
-				{// cancel
-				}});
-		// Set
-		builder.setNeutralButton(R.string.btn_Select, new DialogInterface.OnClickListener(){
-		@Override
-		public void onClick(DialogInterface dialog, int which) 
-		{
-		    enSaveDb = true;
-	        startActivityForResult(Util.chooseMediaIntentByType(Note_edit.this,"audio/*"),
-	        					   Util.CHOOSER_SET_AUDIO);
-		}});
-
-		// None
-		if(!Util.isEmptyString(audioUri))
-		{
-			builder.setPositiveButton(R.string.btn_None, new DialogInterface.OnClickListener(){
-					@Override
-					public void onClick(DialogInterface dialog, int which) 
-					{
-						note_edit_ui.bRemoveAudioUri = true;
-						note_edit_ui.oriAudioUri = "";
-						audioUri = "";
-						note_edit_ui.removeAudioStringFromCurrentEditNote(noteId);
-						note_edit_ui.populateFields_all(noteId);
-					}});		
-		}
-		
-		Dialog dialog = builder.create();
-		dialog.show();
-    }
-    
-    void setLinkUri() 
-    {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(R.string.edit_note_dlg_set_link);
-		
-		// select Web link
-		builder.setNegativeButton(R.string.note_web_link, new DialogInterface.OnClickListener()
-   	   {
-			@Override
-			public void onClick(DialogInterface dialog, int which) 
-			{
-	    		Intent intent_web_link = new Intent(Intent.ACTION_VIEW,Uri.parse("http://www.google.com"));
-	    		startActivityForResult(intent_web_link,EDIT_LINK);	
-	    		enSaveDb = false;
-			}
-		});
-		
-		// select YouTube link
-		builder.setNeutralButton(R.string.note_youtube_link, new DialogInterface.OnClickListener()
-		{
-			@Override
-			public void onClick(DialogInterface dialog, int which) 
-			{
-	        	Intent intent_youtube_link = new Intent(Intent.ACTION_VIEW,Uri.parse("https://www.youtube.com"));
-	        	startActivityForResult(intent_youtube_link,EDIT_LINK);
-	        	enSaveDb = false;
-			}
-		});
-		// None
-		if(!Util.isEmptyString(linkUri))
-		{
-			builder.setPositiveButton(R.string.btn_None, new DialogInterface.OnClickListener()
-			{
-				@Override
-				public void onClick(DialogInterface dialog, int which) 
-				{
-//						Note_edit_ui.bRemoveAudioUri = true;
-					note_edit_ui.oriLinkUri = "";
-					linkUri = "";
-					note_edit_ui.removeLinkUriFromCurrentEditNote(noteId);
-					note_edit_ui.populateFields_all(noteId);
-				}
-			});		
-		}
-		
-		Dialog dialog = builder.create();
-		dialog.show();
-    }
-
 //    static String selectedAudioUri;
 	protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) 
 	{
@@ -620,73 +486,6 @@ public class Note_edit extends Activity
             cameraPictureUri = note_edit_ui.currPictureUri; // for save instance
         }  
         
-        // choose audio
-		if(requestCode == Util.CHOOSER_SET_AUDIO)
-		{
-			if (resultCode == Activity.RESULT_OK)
-			{
-				// for audio
-				Uri audioUri = returnedIntent.getData();
-
-				// SAF support, take persistent Uri permission
-				if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-				{
-					int takeFlags = returnedIntent.getFlags()
-							& (Intent.FLAG_GRANT_READ_URI_PERMISSION
-							| Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-
-					// add for solving inspection error
-					takeFlags |= Intent.FLAG_GRANT_READ_URI_PERMISSION;
-
-					//fix: no permission grant found for UID 10070 and Uri content://media/external/file/28
-					String authority = audioUri.getAuthority();
-					if(authority.equalsIgnoreCase("com.google.android.apps.docs.storage"))
-					{
-						getContentResolver().takePersistableUriPermission(audioUri, takeFlags);
-					}
-				}
-
-				String scheme = audioUri.getScheme();
-				String audioUriStr = audioUri.toString();
-
-				// get real path
-				if(	(scheme.equalsIgnoreCase("file") ||
-					 scheme.equalsIgnoreCase("content") ) ) {
-
-					// check if content scheme points to local file
-					if (scheme.equalsIgnoreCase("content")) {
-						String realPath = Util.getLocalRealPathByUri(this, audioUri);
-
-						if (realPath != null)
-							audioUriStr = "file://".concat(realPath);
-					}
-				}
-
-//				System.out.println(" Note_edit / onActivityResult / Util.CHOOSER_SET_AUDIO / picUriStr = " + picUriStr);
-				note_edit_ui.saveStateInDB(noteId,true, picUriStr, audioUriStr, drawingUri);
-
-				note_edit_ui.populateFields_all(noteId);
-	        	this.audioUri = audioUriStr;
-	    			
-	        	showSavedFileToast(audioUriStr);
-			} 
-			else if (resultCode == RESULT_CANCELED)
-			{
-				Toast.makeText(Note_edit.this, R.string.note_cancel_add_new, Toast.LENGTH_LONG).show();
-	            setResult(RESULT_CANCELED, getIntent());
-	            return; // must add this
-			}
-		}
-		
-        // choose link
-		if(requestCode == EDIT_LINK)
-		{
-			Toast.makeText(Note_edit.this, R.string.note_cancel_add_new, Toast.LENGTH_LONG).show();
-            setResult(RESULT_CANCELED, getIntent());
-            enSaveDb = true;
-            return; // must add this
-		}
-
 		// edit drawing
 		if(requestCode == Util.DRAWING_EDIT)
 		{

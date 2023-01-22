@@ -21,8 +21,6 @@ import java.io.File;
 import java.util.Objects;
 
 import com.cw.campal.folder.FolderUi;
-import com.cw.campal.operation.audio.Audio_manager;
-import com.cw.campal.operation.audio.BackgroundAudioService;
 import com.cw.campal.tabs.TabsHost;
 import com.cw.campal.util.BaseBackPressedListener;
 import com.cw.campal.main.MainAct;
@@ -85,12 +83,6 @@ public class Config extends Fragment
 		
 		//Set Take Picture Option
 		setTakeImageOption();
-
-		//set YouTube auto play
-		setYouTube_auto_play();
-
-		//Set YouTube launch delay
-		setYouTubeLaunchDelay();
 
 		//Set slideshow switch time
 		setSlideshowSwitchTime();
@@ -274,56 +266,6 @@ public class Config extends Fragment
    };
 
 	/**
-	 * Set YouTube auto play
-	 *
-	 */
-	private void setYouTube_auto_play(){
-		Switch sw = mRootView.findViewById(R.id.switch_youtube_auto_play);
-		if(Pref.getPref_is_autoPlay_YouTubeApi(getActivity()) ) {
-			sw.setChecked(true);
-			sw.setText(R.string.config_status_enabled);
-		}
-		else {
-			sw.setChecked(false);
-			sw.setText(R.string.config_status_disabled);
-		}
-
-		sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				Pref.setPref_is_autoPlay_YouTubeApi(getActivity(),isChecked);
-				if(isChecked)
-					sw.setText(R.string.config_status_enabled);
-				else
-					sw.setText(R.string.config_status_disabled);
-			}
-		});
-	}
-
-
-	/**
-	 *  set YouTube launch delay
-	 *
-	 */
-	void setYouTubeLaunchDelay()
-	{
-		//  set current
-		SharedPreferences pref_sw_time = getActivity().getSharedPreferences("youtube_launch_delay", 0);
-		View swTimeView = mRootView.findViewById(R.id.youtube_launch_delay);
-		TextView slideshow_text_view = (TextView)mRootView.findViewById(R.id.youtube_launch_delay_setting);
-		String strSwTime = pref_sw_time.getString("KEY_YOUTUBE_LAUNCH_DELAY","10");
-		slideshow_text_view.setText(strSwTime +"s");
-
-		// switch time picker
-		swTimeView.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				youtubeLaunchDelayPickerDialog();
-			}
-		});
-	}
-
-	/**
 	 *  set slideshow switch time
 	 *
 	 */
@@ -370,51 +312,6 @@ public class Config extends Fragment
 			}
 		});
 	}
-
-
-	/**
-	 * Dialog for setting youtube launch delay
-	 */
-	void youtubeLaunchDelayPickerDialog()
-	{
-		final AlertDialog.Builder d = new AlertDialog.Builder(getActivity());
-		LayoutInflater inflater = getActivity().getLayoutInflater();
-		View dialogView = inflater.inflate(R.layout.config_slideshow_sw_time_picker, null);
-		d.setTitle(R.string.config_set_slideshow_dlg_title);
-		d.setMessage(R.string.config_set_slideshow_dlg_message);
-		d.setView(dialogView);
-
-		final SharedPreferences pref_sw_time = getActivity().getSharedPreferences("youtube_launch_delay", 0);
-		final String strSwitchTime = pref_sw_time.getString("KEY_YOUTUBE_LAUNCH_DELAY","10");
-
-		final NumberPicker numberPicker = (NumberPicker) dialogView.findViewById(R.id.dialog_number_picker);
-		numberPicker.setMaxValue(20);
-		numberPicker.setMinValue(1);
-		numberPicker.setValue(Integer.valueOf(strSwitchTime));
-		numberPicker.setWrapSelectorWheel(true);
-		numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-			@Override
-			public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-			}
-		});
-		d.setPositiveButton(R.string.btn_OK, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialogInterface, int i) {
-				int len = numberPicker.getValue();
-				pref_sw_time.edit().putString("KEY_YOUTUBE_LAUNCH_DELAY",String.valueOf(len)).apply();
-				TextView slideshow_text_view = (TextView)mRootView.findViewById(R.id.youtube_launch_delay_setting);
-				slideshow_text_view.setText(len + "s");
-			}
-		});
-		d.setNegativeButton(R.string.btn_Cancel, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialogInterface, int i) {
-			}
-		});
-		AlertDialog alertDialog = d.create();
-		alertDialog.show();
-	}
-
 
 
 	/**
@@ -539,10 +436,6 @@ public class Config extends Fragment
 			DB_drawer db_drawer = new DB_drawer(getActivity());
 			db_drawer.deleteDB();
 
-			// stop audio player
-			if(BackgroundAudioService.mMediaPlayer != null)
-				Audio_manager.stopAudioPlayer();
-
 			//set last tab Id to 0, otherwise TabId will not start from 0 when deleting all
 			//reset tab Index to 0
 			//fix: select tab over next import amount => clean all => import => export => error
@@ -591,12 +484,8 @@ public class Config extends Fragment
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
 
-			// stop audio player
-			if(BackgroundAudioService.mMediaPlayer != null)
-				Audio_manager.stopAudioPlayer();
-
 			//remove preference
-			clearSharedPreferencesForSettings(Objects.requireNonNull(getActivity()));
+			clearSharedPreferencesForSettings(requireActivity());
 
 			dialog.dismiss();
 

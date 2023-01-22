@@ -33,7 +33,6 @@ import android.widget.Toast;
 import com.cw.campal.R;
 import com.cw.campal.db.DB_page;
 import com.cw.campal.operation.mail.MailNotes;
-import com.cw.campal.operation.youtube.SearchYouTube;
 import com.cw.campal.tabs.TabsHost;
 import com.cw.campal.util.Util;
 
@@ -84,11 +83,6 @@ public class View_note_option {
         option_list.add(new View_note_option(ID_OPTION_MAIL ,
                         android.R.drawable.ic_menu_send,
                         R.string.mail_notes_btn));
-
-        // search youtube with keyword
-        option_list.add(new View_note_option(ID_OPTION_SEARCH_YOUTUBE ,
-                R.drawable.ic_youtube,
-                R.string.search_youtube));
 
         // Back
         option_list.add(new View_note_option(ID_OPTION_BACK,
@@ -155,19 +149,6 @@ public class View_note_option {
 				}
 				new MailNotes(act,sentString,picFileArray);
             }
-            break;
-
-            case ID_OPTION_SEARCH_YOUTUBE:
-            {
-                dlgAddNew.dismiss();
-
-                DB_page dB_page = new DB_page(act, TabsHost.getCurrentPageTableId());
-                String keyWord = dB_page.getNoteTitle_byId(noteId);
-                Intent intent = new Intent(act,SearchYouTube.class);
-                intent.putExtra("search_keywords", keyWord );
-                act.startActivity(intent);
-            }
-
             break;
 
             case ID_OPTION_BACK:

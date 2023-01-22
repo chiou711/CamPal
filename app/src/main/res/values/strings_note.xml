@@ -7,10 +7,6 @@
     <string name="edit_note_confirm_update">Current note has been changed, do you want to update it?</string>
     <string name="edit_note_button_delete">Delete</string>
     <string name="edit_note_set_picture_dlg_title">Set picture</string>
-    <string name="edit_note_set_audio_dlg_title">Set audio</string>
-    <string name="edit_note_link">Link</string>
-    <string name="edit_note_dlg_link">Link:</string>
-    <string name="edit_note_dlg_set_link">Set link</string>
     <string name="edit_note_dlg_title">Title:</string>
     <string name="edit_note_dlg_body">Body:</string>
     <string name="view_note_title">View note</string>

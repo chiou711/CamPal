@@ -2,10 +2,6 @@
 <resources>
     <string name="options">选项</string>
     <string name="menu_button_play">播放</string>
-    <string name="menu_button_play_audio">播放音讯</string>
-    <string name="menu_button_continue_play_audio">继续播放音讯</string>
-    <string name="menu_button_pause_audio">暂停音讯</string>
-    <string name="menu_button_stop_audio">停止音讯</string>
     <string name="menu_button_slide_show">播放幻灯片</string>
     <string name="change_page_color">页面颜色</string>
     <string name="rearrange_page">页面顺序</string>
@@ -24,10 +20,6 @@
     <string name="gallery_toast_no_file">还没有文件，请您先建立一个</string>
     <string name="drag_note">拖放笔记</string>
     <string name="preview_note_body">预览本文</string>
-    <string name="click_launch_youtube">点击启动YouTube</string>
-    <string name="search_youtube">YouTube搜索</string>
-    <string name="search_youtube_keywords">关键词输入</string>
-    <string name="search_youtube_btn">搜索</string>
     <string name="drag_folder">拖放文件夹</string>
     <string name="delete_folders">删除文件夹</string>
 </resources>

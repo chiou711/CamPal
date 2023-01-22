@@ -2,14 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.cw.campal"
-    android:versionCode="00001"
-    android:versionName="0.00.01">
+    >
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
 	<uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
+
+
 	<uses-permission android:name="android.permission.WAKE_LOCK" />	
 	<!--<uses-permission android:name="android.permission.READ_PHONE_STATE"/>-->
 	<uses-permission android:name="android.permission.INTERNET" />
@@ -27,21 +31,6 @@
                   android:required="false"/>
     <uses-feature android:name="android.hardware.telephony"
                   android:required="false"/>
-
-    <!--option 1-->
-    <!--    <queries>-->
-    <!--        <intent>-->
-    <!--            <action android:name="com.google.android.youtube.api.service.START" />-->
-    <!--        </intent>-->
-    <!--    </queries>-->
-
-    <!--    option 2-->
-    <queries>
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-            <data  android:scheme="https" android:host="youtube.com" />
-        </intent>
-    </queries>
 
     <application
         android:name="com.cw.campal.util.uil.UilApplication"
@@ -62,7 +51,8 @@
             android:theme="@style/MyTheme"
             android:launchMode="singleTop"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize|screenLayout|uiMode"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -85,8 +75,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.cw.campal.main.MainAct" />
         </activity>
-        <activity android:name="com.cw.campal.note_add.Note_addAudio"
-                  android:theme="@style/MyTheme"/>
         <activity android:name="com.cw.campal.note_add.Note_addCameraImage"/>
         <activity android:name="com.cw.campal.note_add.Note_addReadyImage"
                   android:theme="@style/MyTheme"/>
@@ -97,7 +85,8 @@
                   android:windowSoftInputMode="adjustPan"/>
         <activity android:name="com.cw.campal.note.Note"
                   android:theme="@style/MyTheme"
-            	  android:configChanges="orientation|keyboard|keyboardHidden|screenSize|screenLayout|uiMode">
+            	  android:configChanges="orientation|keyboard|keyboardHidden|screenSize|screenLayout|uiMode"
+            android:exported="true">
             <intent-filter android:priority="0">
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
@@ -106,8 +95,6 @@
              onPause/onSaveInstanceState/onStop/onDestroy/
                                                 onCreate/onStart/onRestoreInstanceState/onResume    -->
 
-        <activity android:name="com.cw.campal.operation.youtube.YouTubePlayerAct"
-                  android:configChanges="orientation|screenSize|keyboardHidden"/>
         <activity android:name="com.cw.campal.operation.import_export.Import_webAct"
                   android:theme="@style/MyTheme"/>
         <activity android:name="com.cw.campal.operation.gallery.GalleryGridAct"/>
@@ -115,52 +102,29 @@
       	<activity android:name="com.cw.campal.operation.slideshow.SlideshowPlayer"
                   android:theme="@android:style/Theme.NoTitleBar"/>
 
-        <!--YouTube search -->
-        <activity android:name="com.cw.campal.operation.youtube.SearchYouTube"
-                  android:windowSoftInputMode="adjustPan"
-                  android:theme="@style/MyTheme"/>
-
-        <!--Add_recording-->
-        <activity
-            android:name="com.cw.campal.note_add.add_recording.Add_recording_act"
-            android:screenOrientation="unspecified"
-            android:label="@string/app_name"
-            android:theme="@style/MyTheme" >
-        </activity>
-
-        <service android:name="com.cw.campal.note_add.add_recording.RecordingService" />
-
         <!--receiver-->
         <receiver
             android:name="com.cw.campal.util.DeleteFileAlarmReceiver"
             android:enabled="true" />
-        <receiver android:name="androidx.media.session.MediaButtonReceiver" >
+        <receiver android:name="androidx.media.session.MediaButtonReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
                 <action android:name="android.media.AUDIO_BECOMING_NOISY" />
             </intent-filter>
         </receiver>
 
-        <!-- will create BackgroundAudioService instance when notification button is pressed -->
-        <service android:name="com.cw.campal.operation.audio.BackgroundAudioService">
-        <intent-filter>
-            <action android:name="android.intent.action.MEDIA_BUTTON" />
-            <action android:name="android.media.AUDIO_BECOMING_NOISY" />
-            <action android:name="android.media.browse.MediaBrowserService" />
-        </intent-filter>
-        </service>
-
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/ad_mob_app_id"/>
+<!--        <meta-data-->
+<!--            android:name="com.google.android.gms.ads.APPLICATION_ID"-->
+<!--            android:value="@string/ad_mob_app_id"/>-->
 
 <!--            <meta-data-->
 <!--                android:name="com.google.android.gms.ads.APPLICATION_ID"-->
 <!--                android:value="@string/ad_mob_app_id_test"/>-->
 
-        <meta-data
-            android:name="com.google.android.gms.ads.AD_MANAGER_APP"
-            android:value="true"/>
+<!--        <meta-data-->
+<!--            android:name="com.google.android.gms.ads.AD_MANAGER_APP"-->
+<!--            android:value="true"/>-->
            </application>
 
         </manifest>

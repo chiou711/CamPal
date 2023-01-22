@@ -18,11 +18,8 @@ package com.cw.campal.note;
 
 import com.cw.campal.R;
 import com.cw.campal.db.DB_page;
-import com.cw.campal.operation.audio.Audio_manager;
 import com.cw.campal.tabs.TabsHost;
 import com.cw.campal.util.uil.UilCommon;
-import com.cw.campal.util.audio.UtilAudio;
-import com.cw.campal.util.image.AsyncTaskAudioBitmap;
 import com.cw.campal.util.image.TouchImageView;
 import com.cw.campal.util.image.UtilImage;
 import com.cw.campal.util.image.UtilImage_bitmapLoader;
@@ -37,7 +34,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.text.Html;
 import android.text.Spannable;
@@ -165,10 +161,8 @@ public class Note_adapter extends FragmentStatePagerAdapter
 	  		line_view.setVisibility(View.VISIBLE);
 	  		textGroup.setVisibility(View.VISIBLE);
 
-	  	    if( Util.isYouTubeLink(linkUri) ||
-	 	  	   !Util.isEmptyString(strTitle)||
-	 	  	   !Util.isEmptyString(strBody) ||
-				linkUri.startsWith("http")      )
+	  	    if(!Util.isEmptyString(strTitle)||
+	 	  	   !Util.isEmptyString(strBody)    )
 	  	    {
 	  	    	showTextWebView(position,textWebView);
 	  	    }
@@ -187,9 +181,7 @@ public class Note_adapter extends FragmentStatePagerAdapter
 
 			// text
 	  	    if( !Util.isEmptyString(strTitle)||
-	  	       	!Util.isEmptyString(strBody) ||
-				Util.isYouTubeLink(linkUri)  ||
-				linkUri.startsWith("http")      )
+	  	       	!Util.isEmptyString(strBody)  )
 	  	    {
 	  	    	showTextWebView(position,textWebView);
 	  	    }
@@ -247,13 +239,8 @@ public class Note_adapter extends FragmentStatePagerAdapter
 		String audioUri = db_page.getNoteAudioUri(position,true);
 		String drawingUri = db_page.getNoteDrawingUri(position,true);
 
-    	// Check if Uri is for YouTube
-    	if(Util.isEmptyString(pictureUri) && Util.isYouTubeLink(linkUri) )
-    	{
-			pictureUri = "https://img.youtube.com/vi/"+Util.getYoutubeId(linkUri)+"/0.jpg";//??? how to get this jpg for a playlist
-			System.out.println("Note_adapter / _showPictureView / YouTube pictureUri = " + pictureUri);
-		}
-		else if(UtilImage.hasImageExtension(drawingUri, act))
+    	// Check if Uri is for drawing
+		if(UtilImage.hasImageExtension(drawingUri, act))
 			pictureUri = drawingUri;
 
         // show image view
@@ -277,47 +264,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
   			imageView.setVisibility(View.GONE);
   			videoView.setVisibility(View.VISIBLE);
   		}
-  		// show audio thumb nail view
-  		else if(Util.isEmptyString(pictureUri)&& 
-  				!Util.isEmptyString(audioUri)    )
-  		{
-			System.out.println("Note_adapter / _showPictureView / show audio thumb nail view");
-  			videoView.setVisibility(View.GONE);
-  			UtilVideo.mVideoView = null;
-  			linkWebView.setVisibility(View.GONE);
-  			imageView.setVisibility(View.VISIBLE);
-
-  			// workaround to fix no image in View note
-		    imageView.setZoom((float) 0.999);
-
-  			try
-			{
-			    AsyncTaskAudioBitmap audioAsyncTask;
-			    audioAsyncTask = new AsyncTaskAudioBitmap(act,
-						    							  audioUri, 
-						    							  imageView,
-						    							  null,
-														  false);
-				audioAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"Searching media ...");
-			}
-			catch(Exception e)
-			{
-				System.out.println("Note_adapter / _AsyncTaskAudioBitmap / exception");
-			}
-  		}
-  		// show link thumb view
-  		else if(Util.isEmptyString(pictureUri)&&
-  				Util.isEmptyString(audioUri)  &&
-  				!Util.isEmptyString(linkUri))
-  		{
-			System.out.println("Note_adapter / _showPictureView / show link thumb view");
-  			videoView.setVisibility(View.GONE);
-  			UtilVideo.mVideoView = null;
-  			imageView.setVisibility(View.GONE);
-  			linkWebView.setVisibility(View.VISIBLE);
-  		}
-		else
-			System.out.println("Note_adapter / _showPictureView / show none");
     }
 
 	@Override
@@ -389,9 +335,7 @@ public class Note_adapter extends FragmentStatePagerAdapter
 			{
 				// remove last link web view
 				if(	!UtilImage.hasImageExtension(lastPictureStr, act) &&
-					!UtilVideo.hasVideoExtension(lastPictureStr, act) &&
-					!UtilAudio.hasAudioExtension(lastAudioUri)         &&
-					!Util.isYouTubeLink(lastLinkUri)                      )
+					!UtilVideo.hasVideoExtension(lastPictureStr, act)   )
 				{
 					String tag = "current" + mLastPosition + "linkWebView";
 					CustomWebView lastLinkWebView = (CustomWebView) pager.findViewWithTag(tag);
@@ -405,8 +349,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
 
 				// set current link web view in case no picture Uri
 				if (  Util.isEmptyString(pictureStr) &&
-					 !Util.isYouTubeLink(linkUri) &&
-					  linkUri.startsWith("http") &&
 					 !Note.isTextMode()      )
 				{
 					if(Note.isViewAllMode() )
@@ -506,25 +448,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
 				}
 			}
 
-            ViewGroup audioBlock = (ViewGroup) act.findViewById(R.id.audioGroup);
-            audioBlock.setVisibility(View.VISIBLE);
-
-			// init audio block of pager
-			if(UtilAudio.hasAudioExtension(audioUri) ||
-               UtilAudio.hasAudioExtension(Util.getDisplayNameByUriString(audioUri, act)) )
-			{
-				AudioUi_note.initAudioProgress(act,audioUri,pager);
-
-				if(Audio_manager.getAudioPlayMode() == Audio_manager.NOTE_PLAY_MODE)
-				{
-					if (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP)
-						AudioUi_note.updateAudioProgress(act);
-				}
-
-				AudioUi_note.updateAudioPlayState(act);
-			}
-			else
-				audioBlock.setVisibility(View.GONE);
 		}
 	    mLastPosition = position;
 	    
@@ -590,63 +513,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
 
    		}
 	    
-    	if(whichView == CustomWebView.LINK_VIEW)
-    	{
-	        webView.setWebChromeClient(new WebChromeClient()
-	        {
-	            public void onProgressChanged(WebView view, int progress)
-	            {
-                    System.out.println("---------------- spinner progress = " + progress);
-
-                    if(spinner != null )
-	            	{
-						if(bWebViewIsShown)
-						{
-							if (progress < 100 && (spinner.getVisibility() == ProgressBar.GONE)) {
-								webView.setVisibility(View.GONE);
-								spinner.setVisibility(ProgressBar.VISIBLE);
-							}
-
-							spinner.setProgress(progress);
-
-							if (progress > 30)
-								bWebViewIsShown = true;
-						}
-
-						if(bWebViewIsShown || (progress == 100))
-						{
-							spinner.setVisibility(ProgressBar.GONE);
-							webView.setVisibility(View.VISIBLE);
-						}
-	            	}
-	            }
-
-	            @Override
-			    public void onReceivedTitle(WebView view, String title) {
-			        super.onReceivedTitle(view, title);
-			        if (!TextUtils.isEmpty(title) &&
-			        	!title.equalsIgnoreCase("about:blank"))
-			        {
-			        	System.out.println("Note_adapter / _onReceivedTitle / title = " + title);
-
-						int position = NoteUi.getFocus_notePos();
-				    	String tag = "current"+position+"textWebView";
-				    	CustomWebView textWebView = (CustomWebView) pager.findViewWithTag(tag);
-
-				    	String strLink = db_page.getNoteLinkUri(position,true);
-
-						// show title of http link
-				    	if((textWebView != null) &&
-				    	    !Util.isYouTubeLink(strLink) &&
-				    	    strLink.startsWith("http")        )
-			        	{
-				        	mWebTitle = title;
-		        			showTextWebView(position,textWebView);
-			        	}
-			        }
-			    }
-			});
-    	}
 	}
 
     final private static int VIEW_PORT_BY_NONE = 0;
@@ -662,24 +528,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
     	String strTitle = db_page.getNoteTitle(position,true);
     	String strBody = db_page.getNoteBody(position,true);
     	String linkUri = db_page.getNoteLinkUri(position,true);
-
-    	// replace note title
-		//若沒有Title與Body,但有YouTube link或Web link則Title會使用link得到的title,且用Gray顏色
-		boolean bSetGray = false;
-		if( Util.isEmptyString(strTitle) &&
-			Util.isEmptyString(strBody)     )
-		{
-			if(Util.isYouTubeLink(linkUri))
-			{
-				strTitle = Util.getYouTubeTitle(linkUri);
-				bSetGray = true;
-			}
-			else if(linkUri.startsWith("http"))
-			{
-				strTitle = mWebTitle;
-				bSetGray = true;
-			}
-		}
 
     	Long createTime = db_page.getNoteCreatedTime(position,true);
     	String head = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"+
@@ -717,12 +565,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
        							0,
        							spanTitle.length(),
        							Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-			//ref http://stackoverflow.com/questions/3282940/set-color-of-textview-span-in-android
-			if(bSetGray) {
-				ForegroundColorSpan foregroundSpan = new ForegroundColorSpan(Color.GRAY);
-				spanTitle.setSpan(foregroundSpan, 0, spanTitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-			}
 
        		strTitle = Html.toHtml(spanTitle);
        	}

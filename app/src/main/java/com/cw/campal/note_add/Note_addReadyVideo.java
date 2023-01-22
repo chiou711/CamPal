@@ -102,7 +102,6 @@ public class Note_addReadyVideo extends Activity {
 		if (resultCode == Activity.RESULT_OK)
 		{
             setContentView(R.layout.note_add_prepare);
-            progress = findViewById(R.id.add_audio_progress);//must add this, otherwise text view is not updated
 
 			// for ready picture
 			if(requestCode == Util.CHOOSER_SET_PICTURE)

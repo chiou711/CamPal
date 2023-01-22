@@ -35,12 +35,9 @@ import com.cw.campal.R;
 import com.cw.campal.db.DB_folder;
 import com.cw.campal.db.DB_page;
 import com.cw.campal.main.MainAct;
-import com.cw.campal.operation.audio.Audio_manager;
-import com.cw.campal.operation.audio.AudioPlayer_page;
 import com.cw.campal.operation.mail.MailNotes;
 import com.cw.campal.tabs.TabsHost;
 import com.cw.campal.util.Util;
-import com.cw.campal.util.audio.UtilAudio;
 import com.cw.campal.util.preferences.Pref;
 
 import java.util.ArrayList;
@@ -324,18 +321,9 @@ public class Checked_notes_option {
             String linkUri = mDb_page.getNoteLinkUri(i,false);
             String noteBody = mDb_page.getNoteBody(i,false);
             mDb_page.updateNote(rowId, noteTitle, pictureUri, audioUri, drawingUri, linkUri, noteBody , action, 0,false);// action 1:check all, 0:uncheck all
-            // Stop if unmarked item is at playing state
-            if((Audio_manager.mAudioPos == i) && (action == 0) )
-                bStopAudio = true;
         }
         mDb_page.close();
 
-        if(bStopAudio)
-            UtilAudio.stopAudioIfNeeded();
-
-        // update audio play list
-        if(PageUi.isAudioPlayingPage())
-            AudioPlayer_page.prepareAudioInfo();
 
         TabsHost.reloadCurrentPage();
 
@@ -362,17 +350,8 @@ public class Checked_notes_option {
             long marking = (mDb_page.getNoteMarking(i,false)==1)?0:1;
             mDb_page.updateNote(rowId, noteTitle, pictureUri, audioUri, drawingUri, linkUri, noteBody , marking, 0,false);// action 1:check all, 0:uncheck all
             // Stop if unmarked item is at playing state
-            if((Audio_manager.mAudioPos == i) && (marking == 0) )
-                bStopAudio = true;
         }
         mDb_page.close();
-
-        if(bStopAudio)
-            UtilAudio.stopAudioIfNeeded();
-
-        // update audio play list
-        if(PageUi.isAudioPlayingPage())
-            AudioPlayer_page.prepareAudioInfo();
 
         TabsHost.reloadCurrentPage();
         TabsHost.showFooter(MainAct.mAct);
@@ -437,7 +416,6 @@ public class Checked_notes_option {
                         {
                             mDb_page.deleteNote(mDb_page.getNoteId(i,false),false);
                             // update playing highlight
-                            UtilAudio.stopAudioIfNeeded();
                         }
                     }
                     mDb_page.close();
@@ -510,10 +488,6 @@ public class Checked_notes_option {
                                         mDb_page.deleteNote(mDb_page.getNoteId(i,false),false);
                                 }
                                 mDb_page.close();
-
-                                // Stop Play/Pause if current tab's item is played and is not at Stop state
-                                if(Audio_manager.mAudioPos == Page_recycler.mHighlightPosition)
-                                    UtilAudio.stopAudioIfNeeded();
 
                                 TabsHost.reloadCurrentPage();
                                 TabsHost.showFooter(MainAct.mAct);

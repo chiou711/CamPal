@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="config_confirm_taken_picture">显示刚刚拍摄的相机图片:</string>
-    <string name="config_launch_youtube_when_has_youtube_link">当笔记有YouTube连结时，点击笔记项目启动YouTube:</string>
     <string name="config_delete_warning">删除前需要确认</string>
     <string name="config_warning_title">启用项目：</string>
     <string name="config_checkbox_warn_delete_note">一项笔记</string>
     <string name="config_checkbox_warn_delete_page">一页笔记</string>
     <string name="config_checkbox_warn_delete_drawer">一个文件夹笔记</string>
     <string name="config_checkbox_warn_delete_checked">在当前页面中的选中笔记</string>
-    <string name="config_set_youtube_launch_delay">设置YouTube启动延迟:</string>
-    <string name="config_set_youtube_auto_play">设定YouTube自动播放:</string>
     <string name="config_set_slideshow_sw_time">设置幻灯片切换时间:</string>
     <string name="config_set_slideshow_dlg_title">设置切换时间</string>
     <string name="config_set_slideshow_dlg_message">以秒为单位:</string>
