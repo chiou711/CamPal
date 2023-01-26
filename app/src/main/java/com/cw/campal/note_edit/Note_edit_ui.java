@@ -38,8 +38,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.text.Html;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -48,7 +46,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class Note_edit_ui {
@@ -65,7 +62,6 @@ public class Note_edit_ui {
 	private String oriDrawingUri;
 	String oriLinkUri;
 
-	private EditText linkEditText;
 	private EditText titleEditText;
 	private EditText bodyEditText;
 	private String oriTitle;
@@ -117,7 +113,6 @@ public class Note_edit_ui {
 
 		UI_init_text();
 
-    	linkEditText = (EditText) act.findViewById(R.id.edit_link);
         picImageView = (ImageView) act.findViewById(R.id.edit_picture);
 
         progressBar = (ProgressBar) act.findViewById(R.id.edit_progress_bar);
@@ -235,7 +230,6 @@ public class Note_edit_ui {
 
 		titleEditText = (EditText) act.findViewById(R.id.edit_title);
 		bodyEditText = (EditText) act.findViewById(R.id.edit_body);
-		linkEditText = (EditText) act.findViewById(R.id.edit_link);
 
 		//set title color
 		titleEditText.setTextColor(ColorSet.mText_ColorArray[style]);
@@ -244,10 +238,6 @@ public class Note_edit_ui {
 		//set body color
 		bodyEditText.setTextColor(ColorSet.mText_ColorArray[style]);
 		bodyEditText.setBackgroundColor(ColorSet.mBG_ColorArray[style]);
-
-		//set link color
-		linkEditText.setTextColor(ColorSet.mText_ColorArray[style]);
-		linkEditText.setBackgroundColor(ColorSet.mBG_ColorArray[style]);
 	}
 
     // set image close listener
@@ -376,11 +366,6 @@ public class Note_edit_ui {
 			String strBodyEdit = dB_page.getNoteBody_byId(rowId);
 			bodyEditText.setText(strBodyEdit);
 			bodyEditText.setSelection(strBodyEdit.length());
-
-			// link
-			String strLinkEdit = dB_page.getNoteLinkUri_byId(rowId);
-			linkEditText.setText(strLinkEdit);
-			linkEditText.setSelection(strLinkEdit.length());
 		}
         else
         {
@@ -393,10 +378,6 @@ public class Note_edit_ui {
             // renew body
             bodyEditText.setText(strBlank);
             bodyEditText.setSelection(strBlank.length());
-
-			// renew link
-			linkEditText.setText(strBlank);
-			linkEditText.setSelection(strBlank.length());
         }
 	}
 
@@ -439,18 +420,11 @@ public class Note_edit_ui {
 			}
 			
 			// set listeners for closing image view 
-	    	if(!Util.isEmptyString(pictureUriInDB))
-	    	{
-	    		setCloseImageListeners(linkEditText);
+	    	if(!Util.isEmptyString(pictureUriInDB)){
 	    		setCloseImageListeners(titleEditText);
 	    		setCloseImageListeners(bodyEditText);
 	    	}			
         }
-    }
-
-	private boolean isLinkUriModified()
-    {
-    	return !oriLinkUri.equals(linkEditText.getText().toString());
     }
 
 	private boolean isTitleModified()
@@ -492,8 +466,6 @@ public class Note_edit_ui {
 	Long saveStateInDB(Long rowId,boolean enSaveDb, String pictureUri, String audioUri, String drawingUri)
 	{
 		String linkUri = "";
-		if(linkEditText != null)
-			linkUri = linkEditText.getText().toString();
     	String title = titleEditText.getText().toString();
         String body = bodyEditText.getText().toString();
 
@@ -578,7 +550,6 @@ public class Note_edit_ui {
 	}
 
 	private void removePictureStringFromCurrentEditNote(Long rowId) {
-        String linkUri = linkEditText.getText().toString();
         String title = titleEditText.getText().toString();
         String body = bodyEditText.getText().toString();
         
@@ -587,7 +558,7 @@ public class Note_edit_ui {
     				   "",
 				oriAudioUri,
 				oriDrawingUri,
-    				   linkUri,
+    				   "",
     				   body,
 				oriMarking,
 				oriCreatedTime, true );
@@ -606,7 +577,6 @@ public class Note_edit_ui {
 	}
 
 	void removeAudioStringFromCurrentEditNote(Long rowId) {
-        String linkUri = linkEditText.getText().toString();
         String title = titleEditText.getText().toString();
         String body = bodyEditText.getText().toString();
         dB_page.updateNote(rowId,
@@ -614,7 +584,7 @@ public class Note_edit_ui {
 				oriPictureUri,
     				   "",
 				oriDrawingUri,
-    				   linkUri,
+    				   "",
     				   body,
 				oriMarking,
 				oriCreatedTime, true );

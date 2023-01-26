@@ -85,11 +85,6 @@
 			android:layout_height="20dp"
 			android:src="@android:drawable/ic_menu_edit"
 			/>
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/edit_note_dlg_link"
-			android:textColor="@android:color/white"/>
 	</LinearLayout>
 
 	<EditText android:id="@+id/edit_link"

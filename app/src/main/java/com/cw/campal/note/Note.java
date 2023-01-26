@@ -447,10 +447,13 @@ public class Note extends AppCompatActivity
 
 		isPagerActive = true;
 
-        if(canShowFullScreenPicture())
-            Note.setPictureMode();
-        else
-            Note.setViewAllMode();
+//        if(canShowFullScreenPicture())
+//            Note.setPictureMode();
+//        else
+//            Note.setViewAllMode();
+
+		// always set picture mode for this App
+		Note.setPictureMode();
 
 		setOutline(act);
 
@@ -884,8 +887,8 @@ public class Note extends AppCompatActivity
 //		System.out.println(" Note / _canShowFullPicture / Util.isLandscapeOrientation(act) = " +Util.isLandscapeOrientation(act));
 //		System.out.println(" Note / _canShowFullPicture / UtilImage.isLandscapePicture(pictureStr) = " +UtilImage.isLandscapePicture(pictureStr));
         if( !Util.isEmptyString(pictureStr) &&
-            ( (Util.isLandscapeOrientation(act) && UtilImage.isLandscapePicture(pictureStr) ) ||
-            (Util.isPortraitOrientation(act) && !UtilImage.isLandscapePicture(pictureStr))  ) )
+            ( (Util.isLandscapeOrientation(act) && UtilImage.isLandscapePicture(pictureStr))||
+              (Util.isPortraitOrientation(act) && !UtilImage.isLandscapePicture(pictureStr))  ) )
             return true;
         else
             return false;

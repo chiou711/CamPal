@@ -164,7 +164,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
         ((CardView)holder.itemView).setCardBackgroundColor(ColorSet.mBG_ColorArray[style]);
 
-
         // get DB data
         String strTitle = null;
         String strBody = null;
@@ -197,16 +196,12 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
         holder.rowId.setText(String.valueOf(position+1));
         holder.rowId.setTextColor(ColorSet.mText_ColorArray[style]);
 
-
         // show marking check box
-        if(marking == 1)
-        {
+        if(marking == 1){
             holder.btnMarking.setBackgroundResource(style % 2 == 1 ?
                     R.drawable.btn_check_on_holo_light :
                     R.drawable.btn_check_on_holo_dark);
-        }
-        else
-        {
+        }else{
             holder.btnMarking.setBackgroundResource(style % 2 == 1 ?
                     R.drawable.btn_check_off_holo_light :
                     R.drawable.btn_check_off_holo_dark);
@@ -219,14 +214,11 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
             holder.btnDrag.setVisibility(View.GONE);
 
 		// show text title
-		if( Util.isEmptyString(strTitle) )
-		{
+		if( Util.isEmptyString(strTitle) ){
 			// make sure empty title is empty after scrolling
 			holder.textTitle.setVisibility(View.VISIBLE);
 			holder.textTitle.setText("");
-		}
-		else
-		{
+		}else{
 			holder.textTitle.setVisibility(View.VISIBLE);
 			holder.textTitle.setText(strTitle);
 			holder.textTitle.setTextColor(ColorSet.mText_ColorArray[style]);
@@ -238,21 +230,18 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
 		// case 1: show thumb nail if picture Uri exists
 		if(UtilImage.hasImageExtension(pictureUri, mAct ) ||
-		   UtilVideo.hasVideoExtension(pictureUri, mAct )   )
-		{
+		   UtilVideo.hasVideoExtension(pictureUri, mAct )   ){
 			holder.thumbBlock.setVisibility(View.VISIBLE);
 			holder.thumbPicture.setVisibility(View.VISIBLE);
 			// load bitmap to image view
-			try
-			{
+			try{
 				new UtilImage_bitmapLoader(holder.thumbPicture,
 										   pictureUri,
 										   holder.progressBar,
                                            UilCommon.optionsForFadeIn,
 										   mAct);
 			}
-			catch(Exception e)
-			{
+			catch(Exception e){
 				Log.e("PageAdapter_recycler", "UtilImage_bitmapLoader error");
 				holder.thumbBlock.setVisibility(View.GONE);
 				holder.thumbPicture.setVisibility(View.GONE);
@@ -269,11 +258,9 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 //            String strBody = cursor.getString(cursor.getColumnIndex(KEY_NOTE_BODY));
 	  		if(!Util.isEmptyString(strBody)){
 				//normal: do nothing
-			}
-	  		else if(!Util.isEmptyString(pictureUri)) {
+			}else if(!Util.isEmptyString(pictureUri)) {
 //				strBody = pictureUri;//show picture Uri
-			}
-	  		else if(!Util.isEmptyString(linkUri)) {
+			}else if(!Util.isEmptyString(linkUri)) {
 //				strBody = linkUri; //show link Uri
 			}
 
@@ -285,9 +272,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 			// time stamp
             holder.textTime.setText(Util.getTimeString(timeCreated));
 			holder.textTime.setTextColor(ColorSet.mText_ColorArray[style]);
-	  	}
-	  	else
-	  	{
+	  	}else{
             holder.textBody.setVisibility(View.GONE);
             holder.textTime.setVisibility(View.GONE);
 	  	}
@@ -335,8 +320,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
                 TabsHost.getCurrentPage().mCurrPlayPosition = position;
                 DB_page db_page = new DB_page(mAct,TabsHost.getCurrentPageTableId());
                 int count = db_page.getNotesCount(true);
-                if(position < count)
-                {
+                if(position < count){
                     // apply Note class
                     Intent intent;
                     intent = new Intent(mAct, Note.class);
@@ -417,13 +401,10 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
         Long idNote =  db_page.getNoteId(position,false);
 
         // toggle the marking
-        if(db_page.getNoteMarking(position,false) == 0)
-        {
+        if(db_page.getNoteMarking(position,false) == 0){
             db_page.updateNote(idNote, strNote, strPictureUri, strAudioUri, strDrawingUri, strLinkUri, strNoteBody, 1, 0, false);
             marking = 1;
-        }
-        else
-        {
+        }else{
             db_page.updateNote(idNote, strNote, strPictureUri, strAudioUri, strDrawingUri, strLinkUri, strNoteBody, 0, 0, false);
             marking = 0;
         }
@@ -454,8 +435,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
         //reorder data base storage
         int loop = Math.abs(fromPos-toPos);
-        for(int i=0;i< loop;i++)
-        {
+        for(int i=0;i< loop;i++){
             swapRows(mDb_page, fromPos,toPos);
             if((fromPos-toPos) >0)
                 toPos++;

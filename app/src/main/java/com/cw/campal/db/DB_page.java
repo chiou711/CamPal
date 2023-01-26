@@ -16,6 +16,7 @@
 
 package com.cw.campal.db;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -23,13 +24,11 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import java.util.Date;
 
-
 /**
  *  Data Base Class for Page
  *
  */
-public class DB_page
-{
+public class DB_page {
 
     private Context mContext = null;
     private static DatabaseHelper mDbHelper ;
@@ -60,8 +59,7 @@ public class DB_page
     private static int mTableId_page;
 
     /** Constructor */
-	public DB_page(Context context, int pageTableId)
-	{
+	public DB_page(Context context, int pageTableId){
 		mContext = context;
 		setFocusPage_tableId(pageTableId);
 	}
@@ -70,8 +68,7 @@ public class DB_page
      * DB functions
      * 
      */
-	public DB_page open() throws SQLException
-	{
+	public DB_page open() throws SQLException {
 		mDbHelper = new DatabaseHelper(mContext);
 
 		// Will call DatabaseHelper.onCreate()first time when WritableDatabase is not created yet
@@ -91,8 +88,7 @@ public class DB_page
 		return DB_page.this;
 	}
 
-	public void close()
-	{
+	public void close()	{
 		if((mCursor_note != null)&& (!mCursor_note.isClosed()))
 			mCursor_note.close();
 
@@ -212,8 +208,9 @@ public class DB_page
 
     // update note
     // 		createTime:  0 for Don't update time
-    public boolean updateNote(long rowId, String title, String pictureUri, String audioUri, String drawingUri, 
-    						  String linkUri, String body, long marking, long createTime,boolean enDbOpenClose) 
+    @SuppressLint("Range")
+    public boolean updateNote(long rowId, String title, String pictureUri, String audioUri, String drawingUri,
+                              String linkUri, String body, long marking, long createTime, boolean enDbOpenClose)
     {
     	if(enDbOpenClose)
     		this.open();
@@ -391,12 +388,13 @@ public class DB_page
 	}
 
 	// get note by position
-	public Long getNoteId(int position,boolean enDbOpenClose)
-	{
+	@SuppressLint("Range")
+	public Long getNoteId(int position,boolean enDbOpenClose){
 		if(enDbOpenClose)
 			this.open();
 
 		mCursor_note.moveToPosition(position);
+
 	    Long id = mCursor_note.getLong(mCursor_note.getColumnIndex(KEY_NOTE_ID));
 
 		if(enDbOpenClose)
@@ -405,7 +403,8 @@ public class DB_page
 		return id;
 	}	
 	
-	public String getNoteTitle(int position,boolean enDbOpenClose)
+	@SuppressLint("Range")
+	public String getNoteTitle(int position, boolean enDbOpenClose)
 	{
 		String title = null;
 
@@ -419,8 +418,9 @@ public class DB_page
         	this.close();
 
 		return title;
-	}	
-	
+	}
+
+	@SuppressLint("Range")
 	public String getNoteBody(int position,boolean enDbOpenClose)
 	{
 		if(enDbOpenClose)
@@ -443,6 +443,7 @@ public class DB_page
 
 		mCursor_note.moveToPosition(position);
 
+		@SuppressLint("Range")
 		String pictureUri = mCursor_note.getString(mCursor_note.getColumnIndex(KEY_NOTE_PICTURE_URI));
 
 		if(enDbOpenClose)
@@ -450,7 +451,8 @@ public class DB_page
 
 		return pictureUri;
 	}
-	
+
+	@SuppressLint("Range")
 	public String getNoteAudioUri(int position,boolean enDbOpenClose)
 	{
 		if(enDbOpenClose)
@@ -464,8 +466,9 @@ public class DB_page
         	this.close();
 
 		return audioUri;
-	}	
-	
+	}
+
+	@SuppressLint("Range")
 	public String getNoteDrawingUri(int position,boolean enDbOpenClose)
 	{
 		if(enDbOpenClose) 
@@ -478,8 +481,9 @@ public class DB_page
         	this.close();
 
 		return drawingUri;
-	}	
-	
+	}
+
+	@SuppressLint("Range")
 	public String getNoteLinkUri(int position,boolean enDbOpenClose)
 	{
 		if(enDbOpenClose) 
@@ -492,8 +496,9 @@ public class DB_page
         	this.close();
 
 		return linkUri;
-	}	
-	
+	}
+
+	@SuppressLint("Range")
 	public int getNoteMarking(int position,boolean enDbOpenClose)
 	{
 		if(enDbOpenClose)
@@ -508,7 +513,8 @@ public class DB_page
 
 		return marking;
 	}
-	
+
+	@SuppressLint("Range")
 	public Long getNoteCreatedTime(int position,boolean enDbOpenClose)
 	{
 		if(enDbOpenClose)

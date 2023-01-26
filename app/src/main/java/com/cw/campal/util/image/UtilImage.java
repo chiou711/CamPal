@@ -813,15 +813,13 @@ public class UtilImage
 	// Some cameras can add rotation data to EXIF, but others just add normal setting to EXIF
 	public static boolean isLandscapePicture(String path)
 	{
-//		System.out.println("UtilImage / isLandscapePicture / path = " +path);
+		System.out.println("UtilImage / isLandscapePicture / path = " +path);
         ExifInterface exif = null;
         try {
             exif = new ExifInterface(path.replace("file://",""));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        exif = null;
 
         boolean  isLandscape = true; //default setting if no exif
 
@@ -830,13 +828,11 @@ public class UtilImage
 			System.out.println("UtilImage / isLandscapePicture / rotSetting = " +rotSetting);
 
 			if ( (rotSetting == ExifInterface.ORIENTATION_ROTATE_90) ||
-				 (rotSetting == ExifInterface.ORIENTATION_ROTATE_270)   )
-			{
+				 (rotSetting == ExifInterface.ORIENTATION_ROTATE_270)   ){
 				isLandscape = false;
 			}
 			else if( (rotSetting == ExifInterface.ORIENTATION_ROTATE_180) ||
-					(rotSetting == ExifInterface.ORIENTATION_NORMAL)        )
-			{
+					(rotSetting == ExifInterface.ORIENTATION_NORMAL)        ){
 				// some device can not use width and height to determine landscape
 				BitmapFactory.Options options = new BitmapFactory.Options();
 				options.inJustDecodeBounds = true;

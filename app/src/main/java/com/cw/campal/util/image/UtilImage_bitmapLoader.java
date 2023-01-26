@@ -97,7 +97,7 @@ public class UtilImage_bitmapLoader
 				if (thumbnail != null) 
 				{
 					// add video play icon overlay
-					thumbnail = UtilImage.setIconOnThumbnail(thumbnail,	bmVideoIcon, 50);
+					thumbnail = UtilImage.setIconOnThumbnail(thumbnail,	bmVideoIcon, 20);
 					UilCommon.imageLoader
 							 .displayImage( "drawable://" + R.drawable.ic_media_play,
 									 mPicImageView,
@@ -116,9 +116,7 @@ public class UtilImage_bitmapLoader
 									 mUilProgressListener);
 	
 				}
-			}
-			else // for remote
-			{
+			} else { // for remote
 				System.out.println("UtilImage_bitmapLoader constructor / remote");
 				// refer to
 				// http://android-developers.blogspot.tw/2009/05/painless-threading.html
@@ -134,22 +132,18 @@ public class UtilImage_bitmapLoader
 //		}
 	}
 
-	private  void setLoadingListeners()
-    {
+	private  void setLoadingListeners(){
         // set image loading listener
-        mSimpleUilListener = new SimpleImageLoadingListener() 
-        {
+        mSimpleUilListener = new SimpleImageLoadingListener(){
       	    @Override
-      	    public void onLoadingStarted(String imageUri, View view)
-      	    {
+      	    public void onLoadingStarted(String imageUri, View view){
       		    mPicImageView.setVisibility(View.GONE);
       		    mProgressBar.setProgress(0);
       		    mProgressBar.setVisibility(View.VISIBLE);
       	    }
 
       	    @Override
-      	    public void onLoadingFailed(String imageUri, View view, FailReason failReason)
-      	    {
+      	    public void onLoadingFailed(String imageUri, View view, FailReason failReason){
       		    mProgressBar.setVisibility(View.GONE);
       		    mPicImageView.setVisibility(View.VISIBLE);
 
