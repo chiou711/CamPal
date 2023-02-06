@@ -136,9 +136,13 @@ public class Page_recycler extends Fragment implements OnStartDragListener {
     private void fillData()
     {
         System.out.println("Page_recycler / _fillData / page_tableId = " + page_tableId);
-        itemAdapter = new PageAdapter_recycler(page_pos, page_tableId, this);
-        // Set PageAdapter_recycler as the adapter for RecyclerView.
-        recyclerView.setAdapter(itemAdapter);
+        int focusTableId = Pref.getPref_focusView_page_tableId(act);
+        int diff = Math.abs(focusTableId - page_tableId);
+        if(diff <= 1) {
+            itemAdapter = new PageAdapter_recycler(page_pos, page_tableId, this);
+            // Set PageAdapter_recycler as the adapter for RecyclerView.
+            recyclerView.setAdapter(itemAdapter);
+        }
     }
 
     // swap rows
