@@ -15,7 +15,9 @@
     <FrameLayout
         android:id="@+id/image_or_video_block"     
 		android:layout_width="match_parent"
-    	android:layout_height="match_parent" >
+    	android:layout_height="match_parent"
+		android:background="@color/colorBlack"
+		>
     <ProgressBar
         android:id="@+id/loading"
         android:layout_width="wrap_content"

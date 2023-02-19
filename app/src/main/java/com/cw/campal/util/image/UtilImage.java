@@ -683,8 +683,8 @@ public class UtilImage
     {
     	boolean has = false;
     	String fn = file.getName().toLowerCase(Locale.getDefault());
-    	if(	fn.endsWith("jpg") || fn.endsWith("gif") ||
-    		fn.endsWith("png") || fn.endsWith("bmp") || fn.endsWith("webp") ) 
+    	if(	fn.endsWith("jpg") || fn.endsWith("gif") || fn.endsWith("png") ||
+			fn.endsWith("bmp") || fn.endsWith("webp") || fn.endsWith("heic") )
 	    	has = true;
 	    
     	return has;
@@ -697,9 +697,9 @@ public class UtilImage
     	if(!Util.isEmptyString(string))
     	{
 	    	String fn = string.toLowerCase(Locale.getDefault());
-	    	if(	fn.endsWith("jpg") || fn.endsWith("gif") ||
-	    		fn.endsWith("png") || fn.endsWith("bmp") || fn.endsWith("webp") ) 
-		    	has = true;
+		    if(	fn.endsWith("jpg") || fn.endsWith("gif") || fn.endsWith("png") ||
+				fn.endsWith("bmp") || fn.endsWith("webp") || fn.endsWith("heic") )
+			    has = true;
     	}
 		else
 			return has;
@@ -710,8 +710,8 @@ public class UtilImage
 
     		if(!Util.isEmptyString(fn)) {
 				fn = fn.toLowerCase(Locale.getDefault());
-				if (fn.endsWith("jpg") || fn.endsWith("gif") ||
-						fn.endsWith("png") || fn.endsWith("bmp") || fn.endsWith("webp"))
+			    if(	fn.endsWith("jpg") || fn.endsWith("gif") || fn.endsWith("png") ||
+					fn.endsWith("bmp") || fn.endsWith("webp") || fn.endsWith("heic") )
 					has = true;
 			}
     	}    	
