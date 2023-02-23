@@ -90,7 +90,12 @@ public class NoteUi
 	    DB_page db_page = new DB_page(act,TabsHost.getCurrentPageTableId());
         setNotesCnt(db_page.getNotesCount(true));
         String pictureUri = db_page.getNotePictureUri(position,true);
-        String linkUri = db_page.getNoteLinkUri(position,true);
+	    String linkUri = db_page.getNoteLinkUri(position,true);
+	    String drawingUri = db_page.getNoteDrawingUri(position,true);
+
+		// check drawing URI
+		if(!Util.isEmptyString(drawingUri))
+			pictureUri = drawingUri;
 
         String tagStr = "current"+ position +"pictureView";
         ViewGroup pictureGroup = (ViewGroup) pager.findViewWithTag(tagStr);
@@ -120,7 +125,7 @@ public class NoteUi
             picView_title = (TextView) (pictureGroup.findViewById(R.id.image_title));
             String pictureName;
             if(!Util.isEmptyString(pictureUri))
-                pictureName = Util.getDisplayNameByUriString(pictureUri, act);
+                pictureName = pictureUri;//Util.getDisplayNameByUriString(pictureUri, act);
             else
                 pictureName = "";
 

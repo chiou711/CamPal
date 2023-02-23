@@ -63,14 +63,14 @@ public class Add_note_option {
      */
     static List<Add_note_option> addNoteList;
 
-    private final static int ID_NEW_TEXT = 1;
-    private final static int ID_NEW_DRAWING = 2;
+//    private final static int ID_NEW_TEXT = 1;
     private final static int ID_NEW_CAMERA_IMAGE = 5;
     private final static int ID_NEW_READY_IMAGE = 6;
     private final static int ID_NEW_CAMERA_VIDEO = 7;
     private final static int ID_NEW_READY_VIDEO = 8;
+    private final static int ID_NEW_DRAWING = 9;
+    private final static int ID_NEW_SETTING = 10;
     private final static int ID_NEW_BACK = 11;
-    private final static int ID_NEW_SETTING = 12;
 
     public static void createSelection(AppCompatActivity act, boolean permitted)
     {
@@ -87,16 +87,11 @@ public class Add_note_option {
         addNoteList = new ArrayList<>();
 
         // text
-        addNoteList.add(new Add_note_option(ID_NEW_TEXT,
-                android.R.drawable.ic_menu_edit,
-                R.string.note_text));
+//        addNoteList.add(new Add_note_option(ID_NEW_TEXT,
+//                android.R.drawable.ic_menu_edit,
+//                R.string.note_text));
 
         if(permitted) {
-            // drawing
-            addNoteList.add(new Add_note_option(ID_NEW_DRAWING,
-                    R.drawable.ic_menu_draw,
-                    R.string.note_drawing));
-
             // camera image
             if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
                 addNoteList.add(new Add_note_option(ID_NEW_CAMERA_IMAGE,
@@ -120,17 +115,23 @@ public class Add_note_option {
             addNoteList.add(new Add_note_option(ID_NEW_READY_VIDEO,
                     R.drawable.ic_ready_video,
                     R.string.note_ready_video));
+
+            // drawing
+            addNoteList.add(new Add_note_option(ID_NEW_DRAWING,
+                    R.drawable.ic_menu_draw,
+                    R.string.note_drawing));
         }
+
+        // Setting
+        addNoteList.add(new Add_note_option(ID_NEW_SETTING,
+                android.R.drawable.ic_menu_preferences,
+                R.string.settings));
 
         // Back
         addNoteList.add(new Add_note_option(ID_NEW_BACK,
                 R.drawable.ic_menu_back,
                 R.string.btn_Cancel));
 
-        // Setting
-        addNoteList.add(new Add_note_option(ID_NEW_SETTING,
-                android.R.drawable.ic_menu_preferences,
-                R.string.settings));
 
         gridView = (GridView) rootView.findViewById(R.id.option_grid_view);
 
@@ -172,17 +173,17 @@ public class Add_note_option {
         boolean bDirectory = mPref_add_new_note_location.getString("KEY_ADD_DIRECTORY","no").equalsIgnoreCase("yes");
 
         switch (option) {
-            case ID_NEW_TEXT:
-            {
-                Intent intent = new Intent(act, Note_addText.class);
-                if(bTop)
-                    intent.putExtra("extra_ADD_NEW_TO_TOP", "true");
-                else
-                    intent.putExtra("extra_ADD_NEW_TO_TOP", "false");
-
-                act.startActivity(intent);
-            }
-            break;
+//            case ID_NEW_TEXT:
+//            {
+//                Intent intent = new Intent(act, Note_addText.class);
+//                if(bTop)
+//                    intent.putExtra("extra_ADD_NEW_TO_TOP", "true");
+//                else
+//                    intent.putExtra("extra_ADD_NEW_TO_TOP", "false");
+//
+//                act.startActivity(intent);
+//            }
+//            break;
 
             case ID_NEW_CAMERA_IMAGE:
             {

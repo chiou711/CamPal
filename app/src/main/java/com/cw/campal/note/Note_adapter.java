@@ -317,6 +317,11 @@ public class Note_adapter extends FragmentStatePagerAdapter
 			String pictureStr = db_page.getNotePictureUri(position,true);
 			String linkUri = db_page.getNoteLinkUri(position,true);
 			String audioUri = db_page.getNoteAudioUri(position,true);
+			String drawingUri = db_page.getNoteDrawingUri(position,true);;
+
+			// check drawing URI
+			if(!Util.isEmptyString(drawingUri))
+				pictureStr = drawingUri;
 
 			// remove last text web view
 			if (!Note.isPictureMode())

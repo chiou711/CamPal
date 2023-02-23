@@ -346,10 +346,6 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
         String videoFileName = "local.mp4";
         Util.createAssetsFile(this, videoFileName);
 
-        // default audio
-        String audioFileName = "local.mp3";
-        Util.createAssetsFile(this, audioFileName);
-
         fileName = "default_content_by_assets.xml";
 
         // By assets file

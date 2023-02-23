@@ -88,7 +88,7 @@ public class Note_edit_ui {
     	this.act = act;
     	this.noteId = noteId;
     			
-    	oriTitle = strTitle;
+    	oriTitle = pictureUri;//strTitle;
 	    oriBody = strBody;
 	    oriPictureUri = pictureUri;
 	    oriAudioUri = audioUri;
@@ -358,7 +358,8 @@ public class Note_edit_ui {
 	{
 		if (rowId != null) {
 			// title
-			String strTitleEdit = dB_page.getNoteTitle_byId(rowId);
+//			String strTitleEdit = dB_page.getNoteTitle_byId(rowId);
+			String strTitleEdit = dB_page.getNotePictureUri_byId(rowId);
 			titleEditText.setText(strTitleEdit);
 			titleEditText.setSelection(strTitleEdit.length());
 

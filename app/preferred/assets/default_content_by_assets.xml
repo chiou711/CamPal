@@ -15,17 +15,6 @@
     </page>
 
     <page>
-        <page_name>Audio</page_name>
-        <note>
-            <title>[n]local audio file</title>
-            <body></body>
-            <picture></picture>
-            <audio>file:///storage/emulated/0/Android/data/com.cw.campal/files/Documents/local.mp3</audio>
-            <link></link>
-        </note>
-    </page>
-
-    <page>
     <page_name>Video</page_name>
         <note>
             <title>[s]local video file</title>
@@ -36,24 +25,6 @@
         </note>
     </page>
 
-    <page>
-        <page_name>Link</page_name>
-        <note>
-            <title>[n]公共電視 網路直播 PTS Live</title>
-            <body></body>
-            <picture></picture>
-            <audio></audio>
-            <link>https://www.youtube.com/watch?v=JAzRXylm3M0</link>
-        </note>
-        <note>
-            <title>[s]Web link</title>
-            <body></body>
-            <picture></picture>
-            <audio></audio>
-            <link>http://www.yourpurebredpuppy.com/reviews/beagles.html</link>
-        </note>
-    </page>
     </folder>
-
 
 </CamPal>

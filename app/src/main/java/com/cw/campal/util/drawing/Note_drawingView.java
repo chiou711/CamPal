@@ -355,8 +355,8 @@ public class Note_drawingView extends View
         String uriStr = "file://"+ dirString +"/" +fileName +".jpg";
 
         // get a Uri for the location to save the file
-        Uri uri = getContext().getContentResolver().insert(
-              Images.Media.EXTERNAL_CONTENT_URI, values);
+//        Uri uri = getContext().getContentResolver().insert(
+//              Images.Media.EXTERNAL_CONTENT_URI, values);
 
         try
         {

@@ -16,10 +16,8 @@
 
 package com.cw.campal.note_edit;
 
-import com.cw.campal.page.Page_recycler;
 import com.cw.campal.R;
 import com.cw.campal.db.DB_page;
-import com.cw.campal.page.PageUi;
 import com.cw.campal.tabs.TabsHost;
 import com.cw.campal.util.image.TouchImageView;
 import com.cw.campal.util.image.UtilImage;
@@ -29,14 +27,12 @@ import com.cw.campal.util.Util;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.Menu;
@@ -56,7 +52,7 @@ public class Note_edit extends Activity
     DB_page dB;
     TouchImageView enlargedImage;
     int position;
-    final int EDIT_LINK = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) 
     {
