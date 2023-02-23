@@ -23,8 +23,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -34,8 +34,12 @@ import android.widget.Toast;
 import com.cw.campal.R;
 import com.cw.campal.util.Util;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import androidx.core.content.FileProvider;
 
 /**
  * Created by CW on 2016/7/21.
@@ -159,7 +163,7 @@ public class MailNotes {
         }
     }
 
-    // Send e-Mail : send file by e-Mail
+    // Send e-Mail : send attachments by e-Mail
     public static String[] mAttachmentFileName;
     public final static int EMAIL = 101;
     void sendEMail(String strEMailAddr,  // eMail address
@@ -182,37 +186,68 @@ public class MailNotes {
         List<String> filePaths = new ArrayList<String>();
 
         for(int i=0;i<attachmentFileName.length;i++) {
-            String messagePath = "file:///" + Environment.getExternalStorageDirectory().getPath() +
-                    "/" + Util.getStorageDirName(mAct) + "/" +
+//            String messagePath = "file:///" + Environment.getExternalStorageDirectory().getPath() +
+//                    "/" + Util.getStorageDirName(mAct) + "/" +
+//                    attachmentFileName[i];// message file name
+
+            // check external storage dir path
+            // /storage/emulated/0
+            System. out.println("---- Environment.getExternalStorageDirectory.getPath() = " +
+                    Environment.getExternalStorageDirectory().getPath());
+
+            // check external file dir path
+            // /storage/emulated/0/Android/data/com.cw.campal/files/Documents
+            System. out.println("---- mAct.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString() = " +
+                    mAct.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString());
+
+            // match with: name="external_files"
+            // example: messagePath = /storage/emulated/0/Android/data/com.cw.campal/files/Documents/CamPal_SEND_20230220_131939_706.xml
+            String messagePath = mAct.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString()
+                    + "/" +
                     attachmentFileName[i];// message file name
+            System. out.println("---- messagePath (getExternalFilesDir)= " + messagePath);
+
             filePaths.add(messagePath);
         }
 
         // attachment: pictures
-        if(picFileNameArray != null)
-        {
-            for(int i=0;i<picFileNameArray.length;i++)
-            {
-                filePaths.add(picFileNameArray[i]);
+        if(picFileNameArray != null){
+//            for(int i=0;i<picFileNameArray.length;i++){
+//                filePaths.add(picFileNameArray[i]);
+//            }
+            filePaths.addAll(Arrays.asList(picFileNameArray));
+        }
+
+        // get URIs for sending
+        ArrayList<Uri> uris = new ArrayList<>();
+        for (String filePath : filePaths){
+            Uri uri;
+            System.out.println("-----------> filePath = " + filePath);
+            if (mEMailIntent.resolveActivity(mAct.getPackageManager()) != null) {
+                try {
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                        uri = Uri.fromFile(new File(filePath));
+                    } else {
+                        // example: uri = content://com.cw.campal.MailNotes/external_files/Documents/CamPal_SEND_20230220_131939_706.xml
+                        uri = FileProvider.getUriForFile(mAct, mAct.getPackageName() + ".MailNotes", new File(filePath));
+                    }
+                    uris.add(uri);
+                    System.out.println("----------- uri = " + uri.toString());
+                }catch (Exception e){
+                    e.printStackTrace();
+                    // picture is not attached
+                    Toast.makeText(mAct,"Picture attachment is not available!",Toast.LENGTH_SHORT).show();
+                }
             }
         }
 
-        ArrayList<Uri> uris = new ArrayList<Uri>();
-        for (String file : filePaths)
-        {
-            Uri uri = Uri.parse(file);
-            uris.add(uri);
-        }
-
+        // mail intent
         mEMailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{strEMailAddr}) // eMail address
                     .putExtra(Intent.EXTRA_SUBJECT,
                               Util.getStorageDirName(mAct) + // eMail subject
                                 " " + mAct.getResources().getString(R.string.eMail_subject ))// eMail subject
                     .putExtra(Intent.EXTRA_TEXT,text_body) // eMail body (open issue)
                     .putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris); // multiple eMail attachment
-
-        Log.v(getClass().getSimpleName(),
-                "attachment " + Uri.parse("file name is:"+ attachmentFileName));
 
         mAct.startActivityForResult(Intent.createChooser(mEMailIntent,
                 mAct.getResources().getText(R.string.mail_chooser_title)) ,

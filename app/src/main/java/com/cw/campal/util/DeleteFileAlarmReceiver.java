@@ -24,6 +24,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Environment;
 
 public class DeleteFileAlarmReceiver extends BroadcastReceiver 
@@ -39,7 +40,11 @@ public class DeleteFileAlarmReceiver extends BroadcastReceiver
 			intent.putExtra(EXTRA_FILENAME, filename[i]);
 
 			AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-			PendingIntent pendIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+	        // Add for Strongly consider using FLAG_IMMUTABLE
+	        final int flags =  Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ?
+			        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_UPDATE_CURRENT;
+
+	        PendingIntent pendIntent = PendingIntent.getBroadcast(context, 0, intent, flags);
 			alarmMgr.set(AlarmManager.RTC_WAKEUP, timeMilliSec, pendIntent);
 		}
    }

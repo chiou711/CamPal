@@ -670,23 +670,27 @@ public class Note extends AppCompatActivity
         }
         else if(isPictureMode())
     	{
-            // dispatch touch event to show buttons
-            long downTime = SystemClock.uptimeMillis();
-            long eventTime = SystemClock.uptimeMillis() + 100;
-            float x = 0.0f;
-            float y = 0.0f;
-            // List of meta states found here: developer.android.com/reference/android/view/KeyEvent.html#getMetaState()
-            int metaState = 0;
-            MotionEvent event = MotionEvent.obtain(downTime, eventTime, MotionEvent.ACTION_UP,
-                                                    x, y,metaState);
-            dispatchTouchEvent(event);
-            event.recycle();
+//            // dispatch touch event to show buttons
+//            long downTime = SystemClock.uptimeMillis();
+//            long eventTime = SystemClock.uptimeMillis() + 100;
+//            float x = 0.0f;
+//            float y = 0.0f;
+//            // List of meta states found here: developer.android.com/reference/android/view/KeyEvent.html#getMetaState()
+//            int metaState = 0;
+//            MotionEvent event = MotionEvent.obtain(downTime, eventTime, MotionEvent.ACTION_UP,
+//                                                    x, y,metaState);
+//            dispatchTouchEvent(event);
+//            event.recycle();
+//
+//            // in order to make sure ImageViewBackButton is effective to be clicked
+//            mPagerHandler = new Handler();
+//            mPagerHandler.postDelayed(mOnBackPressedRun, 500);
 
-            // in order to make sure ImageViewBackButton is effective to be clicked
-            mPagerHandler = new Handler();
-            mPagerHandler.postDelayed(mOnBackPressedRun, 500);
+		    // back to view all mode
+		    setViewAllMode();
+		    setOutline(act);
         }
-    	else if(isTextMode())
+        else if(isTextMode())
     	{
 			// back to view all mode
     		setViewAllMode();
@@ -833,7 +837,7 @@ public class Note extends AppCompatActivity
 	        case MotionEvent.ACTION_MOVE:
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_POINTER_DOWN:
-	        case MotionEvent.ACTION_CANCEL: 
+	        case MotionEvent.ACTION_CANCEL:
 	        	 break;
         }
 

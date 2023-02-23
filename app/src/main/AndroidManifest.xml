@@ -102,6 +102,16 @@
       	<activity android:name="com.cw.campal.operation.slideshow.SlideshowPlayer"
                   android:theme="@android:style/Theme.NoTitleBar"/>
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.cw.campal.MailNotes"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+        </provider>
+
         <!--receiver-->
         <receiver
             android:name="com.cw.campal.util.DeleteFileAlarmReceiver"

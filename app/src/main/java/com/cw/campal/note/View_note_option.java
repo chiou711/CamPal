@@ -139,6 +139,9 @@ public class View_note_option {
 				if(Util.isEmptyString(picFile))
                     picFile = dB_page.getNoteDrawingUri_byId(noteId);
 
+                // match with name="external"
+                // example: picFile = /storage/emulated/0/DCIM/CamPal/IMG_20230219_163519_520.jpg
+                picFile = picFile.replace("file://","");
                 System.out.println("-> picFile = " + picFile);
 
 				String[] picFileArray = null;

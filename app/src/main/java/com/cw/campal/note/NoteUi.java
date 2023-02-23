@@ -414,8 +414,10 @@ public class NoteUi
 	{
 		System.out.println("NoteUi / _tempShow_picViewUI / delayTime = " + delayTime);
         mPictureString = pictureStr;
-        handler = new Handler();
-        handler.postDelayed(runnableHideUi,delayTime);
+
+		// disable temporary UI behaviour
+//        handler = new Handler();
+//        handler.postDelayed(runnableHideUi,delayTime);
     }
 
 
