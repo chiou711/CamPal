@@ -90,7 +90,6 @@ public class NoteUi
 	    DB_page db_page = new DB_page(act,TabsHost.getCurrentPageTableId());
         setNotesCnt(db_page.getNotesCount(true));
         String pictureUri = db_page.getNotePictureUri(position,true);
-	    String linkUri = db_page.getNoteLinkUri(position,true);
 	    String drawingUri = db_page.getNoteDrawingUri(position,true);
 
 		// check drawing URI
@@ -102,7 +101,7 @@ public class NoteUi
 
         if((pictureGroup != null))
         {
-            setPictureView_listeners(act, pager, pictureUri, linkUri, pictureGroup);
+            setPictureView_listeners(act, pager, pictureUri, pictureGroup);
 
 
             TextView picView_footer = (TextView) (pictureGroup.findViewById(R.id.image_footer));
@@ -213,11 +212,10 @@ public class NoteUi
      * @param act
      * @param pager
      * @param strPicture
-     * @param linkUri
      * @param viewGroup
      */
 	private void setPictureView_listeners(final AppCompatActivity act, final ViewPager pager,
-                                          final String strPicture, final String linkUri, ViewGroup viewGroup)
+                                          final String strPicture,  ViewGroup viewGroup)
 	{
         System.out.println("NoteUi / setPictureView_listeners");
         Button picView_back_button = (Button) (viewGroup.findViewById(R.id.image_view_back));
@@ -252,17 +250,6 @@ public class NoteUi
 	  		picView_back_button.setOnClickListener(new View.OnClickListener() {
 	            public void onClick(View view)
 	            {
-    		        // remove current link web view
-					int position = getFocus_notePos();
-					String tagPictureStr = "current"+ position +"pictureView";
-					ViewGroup pictureGroup = (ViewGroup) pager.findViewWithTag(tagPictureStr);
-					if(pictureGroup != null)
-					{
-						CustomWebView linkWebView = ((CustomWebView) pictureGroup.findViewById(R.id.link_web_view));
-						CustomWebView.pauseWebView(linkWebView);
-						CustomWebView.blankWebView(linkWebView);
-					}
-
 	    	    	// set not full screen
 	    	    	Util.setFullScreen_noImmersive(act);
 

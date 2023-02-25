@@ -45,7 +45,7 @@ public class Note_edit extends Activity
 {
 
     private Long noteId, createdTime;
-    private String title, picUriStr, drawingUri, audioUri, linkUri, cameraPictureUri, body;
+    private String title, picUriStr, drawingUri, cameraPictureUri, body;
     Note_edit_ui note_edit_ui;
     private boolean enSaveDb = true;
     boolean bUseCameraImage;
@@ -83,15 +83,13 @@ public class Note_edit extends Activity
     	noteId = extras.getLong(DB_page.KEY_NOTE_ID);
 		picUriStr = extras.getString(DB_page.KEY_NOTE_PICTURE_URI);
 		drawingUri = extras.getString(DB_page.KEY_NOTE_DRAWING_URI);
-    	audioUri = extras.getString(DB_page.KEY_NOTE_AUDIO_URI);
-    	linkUri = extras.getString(DB_page.KEY_NOTE_LINK_URI);
     	title = extras.getString(DB_page.KEY_NOTE_TITLE);
     	body = extras.getString(DB_page.KEY_NOTE_BODY);
     	createdTime = extras.getLong(DB_page.KEY_NOTE_CREATED);
         
 
         //initialization
-        note_edit_ui = new Note_edit_ui(this, dB, noteId, title, picUriStr, audioUri, drawingUri, linkUri, body, createdTime);
+        note_edit_ui = new Note_edit_ui(this, dB, noteId, title, picUriStr, drawingUri, body, createdTime);
         note_edit_ui.UI_init();
         cameraPictureUri = "";
         bUseCameraImage = false;
@@ -103,8 +101,6 @@ public class Note_edit extends Activity
 	        {
 	        	picUriStr = dB.getNotePictureUri_byId(noteId);
 				note_edit_ui.currPictureUri = picUriStr;
-	        	audioUri = dB.getNoteAudioUri_byId(noteId);
-				note_edit_ui.currAudioUri = audioUri;
 				drawingUri = dB.getNoteDrawingUri_byId(noteId);
 	        }
         }
@@ -124,10 +120,6 @@ public class Note_edit extends Activity
 				{
 					picUriStr = "";
 				}
-				if(note_edit_ui.bRemoveAudioUri)
-				{
-					audioUri = "";
-				}	
 				System.out.println("Note_edit / onClick (okButton) / noteId = " + noteId);
                 enSaveDb = true;
                 finish();
@@ -205,10 +197,6 @@ public class Note_edit extends Activity
 						{
 							picUriStr = "";
 						}
-						if(note_edit_ui.bRemoveAudioUri)
-						{
-							audioUri = "";
-						}						
 					    enSaveDb = true;
 					    finish();
 					}})
@@ -238,19 +226,11 @@ public class Note_edit extends Activity
 							enSaveDb = true;
 						}	
 						
-						String originalAudioFileName = extras.getString(DB_page.KEY_NOTE_AUDIO_URI);
 
-						if(Util.isEmptyString(originalAudioFileName))
-						{   // no picture at first
-							note_edit_ui.removeAudioStringFromOriginalNote(noteId);
-		                    enSaveDb = false;
-						}
-						else
-						{	// roll back existing picture
-                            note_edit_ui.bRollBackData = true;
-							audioUri = originalAudioFileName;
-							enSaveDb = true;
-						}	
+						// roll back existing picture
+                        note_edit_ui.bRollBackData = true;
+						enSaveDb = true;
+
 	                    finish();
 					}})
 			   .show();
@@ -264,8 +244,7 @@ public class Note_edit extends Activity
         
         System.out.println("Note_edit / onPause / enSaveDb = " + enSaveDb);
         System.out.println("Note_edit / onPause / picUriStr = " + picUriStr);
-        System.out.println("Note_edit / onPause / audioUri = " + audioUri);
-        noteId = note_edit_ui.saveStateInDB(noteId, enSaveDb, picUriStr, audioUri, drawingUri);
+        noteId = note_edit_ui.saveStateInDB(noteId, enSaveDb, picUriStr, drawingUri);
     }
 
     // for Rotate screen
@@ -280,10 +259,6 @@ public class Note_edit extends Activity
         if(note_edit_ui.bRemovePictureUri)
     	    outState.putBoolean("removeOriginalPictureUri",true);
 
-        if(note_edit_ui.bRemoveAudioUri)
-    	    outState.putBoolean("removeOriginalAudioUri",true);
-        
-        
         if(bUseCameraImage)
         {
         	outState.putBoolean("UseCameraImage",true);
@@ -295,7 +270,7 @@ public class Note_edit extends Activity
         	outState.putString("showCameraImageUri", "");
         }
         
-        noteId = note_edit_ui.saveStateInDB(noteId, enSaveDb, picUriStr, audioUri, drawingUri);
+        noteId = note_edit_ui.saveStateInDB(noteId, enSaveDb, picUriStr, drawingUri);
         outState.putSerializable(DB_page.KEY_NOTE_ID, noteId);
         
     }
@@ -321,14 +296,7 @@ public class Note_edit extends Activity
 			note_edit_ui.populateFields_all(noteId);
 			note_edit_ui.bRemovePictureUri = true;
         }
-        if(savedInstanceState.getBoolean("removeOriginalAudioUri"))
-        {
-			note_edit_ui.oriAudioUri ="";
-			note_edit_ui.currAudioUri ="";
-        	note_edit_ui.removeAudioStringFromOriginalNote(noteId);
-			note_edit_ui.populateFields_all(noteId);
-			note_edit_ui.bRemoveAudioUri = true;
-        }
+
     }
 
     @Override
@@ -421,8 +389,7 @@ public class Note_edit extends Activity
     }
     
     
-//    static String selectedAudioUri;
-	protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) 
+	protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent)
 	{
 		// take picture
 		if (requestCode == Util.ACTIVITY_TAKE_PICTURE)
@@ -443,7 +410,7 @@ public class Note_edit extends Activity
 				if(!Util.isEmptyString(cameraPictureUri))
 				{
 					// update
-					note_edit_ui.saveStateInDB(noteId, enSaveDb, cameraPictureUri, audioUri, "");// replace with existing picture
+					note_edit_ui.saveStateInDB(noteId, enSaveDb, cameraPictureUri, "");// replace with existing picture
 					note_edit_ui.populateFields_all(noteId);
 		            
 					// set for Rotate any times
@@ -461,7 +428,7 @@ public class Note_edit extends Activity
 				}
 				
 				enSaveDb = true;
-				note_edit_ui.saveStateInDB(noteId, enSaveDb, picUriStr, audioUri, drawingUri);
+				note_edit_ui.saveStateInDB(noteId, enSaveDb, picUriStr, drawingUri);
 				note_edit_ui.populateFields_all(noteId);
 			}
 		}
@@ -472,7 +439,7 @@ public class Note_edit extends Activity
 			String pictureUri = Util.getPicturePathOnActivityResult(this,returnedIntent);
         	System.out.println("Note_edit / _onActivityResult / picUri = " + pictureUri);
         	
-        	noteId = note_edit_ui.saveStateInDB(noteId,true,pictureUri, audioUri, drawingUri);
+        	noteId = note_edit_ui.saveStateInDB(noteId,true,pictureUri, drawingUri);
 
 			note_edit_ui.populateFields_all(noteId);
 			
@@ -487,16 +454,6 @@ public class Note_edit extends Activity
 		{
 			this.recreate();
 		}
-	}
-	
-	// show audio file name
-	void showSavedFileToast(String audioUri)
-	{
-        String audioName = Util.getDisplayNameByUriString(audioUri, Note_edit.this);
-		Toast.makeText(Note_edit.this,
-						audioName,
-						Toast.LENGTH_SHORT)
-						.show();
 	}
 	
 }

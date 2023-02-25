@@ -123,7 +123,6 @@ public class Util
     
     public static int ACTIVITY_TAKE_PICTURE = 3;
     public static int CHOOSER_SET_PICTURE = 4;
-	public static int CHOOSER_SET_AUDIO = 5;
 	public static int DRAWING_ADD = 6;
 	public static int DRAWING_EDIT = 7;
 
@@ -505,10 +504,6 @@ public class Util
 		String BODY_TAG_E = "</body>";
 		String PICTURE_TAG_B = "<picture>";
 		String PICTURE_TAG_E = "</picture>";
-		String AUDIO_TAG_B = "<audio>";
-		String AUDIO_TAG_E = "</audio>";
-		String LINK_TAG_B = "<link>";
-		String LINK_TAG_E = "</link>";
 		String PAGE_TAG_E = "</page>";
 
 		String sentString = NEW_LINE;
@@ -552,8 +547,6 @@ public class Util
 			sentString = sentString.concat(NEW_LINE + TITLE_TAG_B + TITLE_TAG_E);
 			sentString = sentString.concat(NEW_LINE + BODY_TAG_B +  BODY_TAG_E);
 			sentString = sentString.concat(NEW_LINE + PICTURE_TAG_B + PICTURE_TAG_E);
-			sentString = sentString.concat(NEW_LINE + AUDIO_TAG_B + AUDIO_TAG_E);
-			sentString = sentString.concat(NEW_LINE + LINK_TAG_B + LINK_TAG_E);
 			sentString = sentString.concat(NEW_LINE + NOTE_ITEM_TAG_E);
 			sentString = sentString.concat(NEW_LINE + PAGE_TAG_E );
 			sentString = sentString.concat(NEW_LINE);
@@ -573,13 +566,6 @@ public class Util
 				String picUrl = cursorNote.getString(cursorNote.getColumnIndexOrThrow(DB_page.KEY_NOTE_PICTURE_URI));
 				picUrl = replaceEscapeCharacter(picUrl);
 
-				String audioUrl = cursorNote.getString(cursorNote.getColumnIndexOrThrow(DB_page.KEY_NOTE_AUDIO_URI));
-				audioUrl = replaceEscapeCharacter(audioUrl);
-
-				String linkUrl = cursorNote.getString(cursorNote.getColumnIndexOrThrow(DB_page.KEY_NOTE_LINK_URI));
-
-				linkUrl = replaceEscapeCharacter(linkUrl);
-
 				int mark = cursorNote.getInt(cursorNote.getColumnIndexOrThrow(DB_page.KEY_NOTE_MARKING));
 				String srtMark = (mark == 1)? "[s]":"[n]";
 				dbPage.close();
@@ -595,8 +581,6 @@ public class Util
 				sentString = sentString.concat(NEW_LINE + TITLE_TAG_B + srtMark + title + TITLE_TAG_E);
 				sentString = sentString.concat(NEW_LINE + BODY_TAG_B + body + BODY_TAG_E);
 				sentString = sentString.concat(NEW_LINE + PICTURE_TAG_B + picUrl + PICTURE_TAG_E);
-				sentString = sentString.concat(NEW_LINE + AUDIO_TAG_B + audioUrl + AUDIO_TAG_E);
-				sentString = sentString.concat(NEW_LINE + LINK_TAG_B + linkUrl + LINK_TAG_E);
 				sentString = sentString.concat(NEW_LINE + NOTE_ITEM_TAG_E);
 				sentString = sentString.concat(NEW_LINE);
 				if(i==noteIdArray.size()-1)
@@ -652,18 +636,12 @@ public class Util
 		string = string.replace("<title></title>"+NEW_LINE,"");
         string = string.replace("<body></body>"+NEW_LINE,"");
         string = string.replace("<picture></picture>"+NEW_LINE,"");
-        string = string.replace("<audio></audio>"+NEW_LINE,"");
-        string = string.replace("<link></link>"+NEW_LINE,"");
 		string = string.replace("<title>","Title: ");
 		string = string.replace("</title>","");
 		string = string.replace("<body>","Body: ");
 		string = string.replace("</body>","");
 		string = string.replace("<picture>","Picture: ");
 		string = string.replace("</picture>","");		
-		string = string.replace("<audio>","Audio: ");
-		string = string.replace("</audio>","");		
-		string = string.replace("<link>","Link: ");
-		string = string.replace("</link>","");		
 		string = string.replace("</note>","");
 		string = string.replace("</page>"," ");
 		string = string.replace("</CamPal>","");
@@ -1015,7 +993,6 @@ public class Util
     
 
 	// get Url array of directory files
-    public final static int AUDIO = 0;
     public final static int IMAGE = 1;
     public final static int VIDEO = 2;
     public static String[] getUrlsByFiles(File[] files,int type)

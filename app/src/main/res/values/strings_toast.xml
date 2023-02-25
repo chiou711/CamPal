@@ -11,7 +11,6 @@
     <string name="toast_saved">Saved</string>
     <string name="toast_pause">Pause</string>
     <string name="toast_play">Play</string>
-    <string name="toast_no_link_found">No link is found</string>
     <string name="toast_edit_drawing_to_landscape">For viewing whole image,please rotate your device orientation to landscape</string>
     <string name="toast_edit_drawing_to_portrait">For viewing whole image,please rotate your device orientation to portrait</string>
 </resources>

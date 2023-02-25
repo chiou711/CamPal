@@ -127,16 +127,19 @@ public class UtilImage
 	public static Uri getPictureUri(String pictureName, Activity act)
     {
 		// main directory
-	    String dirString = Environment.getExternalStorageDirectory().toString() + 
-	    		              "/" + Util.getStorageDirName(act);
-	    
+//	    String dirString = Environment.getExternalStorageDirectory().toString() +
+//	    		              "/" + Util.getStorageDirName(act);
+
+	    String dirString = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath();
+
 		File dir = new File(dirString);
 		if(!dir.isDirectory())
 			dir.mkdir();
 
 		// picture directory
-	    String picDirString = Environment.getExternalStorageDirectory().toString() + 
-	              "/" + Util.getStorageDirName(act) +"/picture";
+	    String picDirString = dirString +
+//			    "/" + Util.getStorageDirName(act) +"/picture";
+	            "/" + Util.getStorageDirName(act);
 
 		File picDir = new File(picDirString);
 		if(!picDir.isDirectory())

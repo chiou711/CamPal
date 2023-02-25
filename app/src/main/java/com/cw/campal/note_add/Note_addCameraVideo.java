@@ -27,6 +27,7 @@ import com.cw.campal.tabs.TabsHost;
 import com.cw.campal.util.Util;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -321,6 +322,7 @@ public class Note_addCameraVideo extends Activity {
 		}
 	}
 
+	@SuppressLint("Range")
 	public void handleDuplicatedVideo(Context context, int lastContentId)
 	{
 	    /*
@@ -463,7 +465,7 @@ public class Note_addCameraVideo extends Activity {
 	    														videoOrderBy);
 	    if(videoCursor.moveToFirst())
 	    {
-	        int id = videoCursor.getInt(videoCursor.getColumnIndex(MediaStore.Video.Media._ID));
+	        @SuppressLint("Range") int id = videoCursor.getInt(videoCursor.getColumnIndex(MediaStore.Video.Media._ID));
 	        videoCursor.close();
 	        System.out.println("last captured video Id = " + id);
 	        return id;
@@ -482,7 +484,7 @@ public class Note_addCameraVideo extends Activity {
 				// insert
 				String name = Util.getDisplayNameByUriString(pictureUri, this);
 				System.out.println("Note_addCameraVideo / _savePictureStateInDB / insert");
-				rowId = dB_page.insertNote(name, pictureUri, "", "", "", "", 1, (long) 0);// add new note, get return row Id
+				rowId = dB_page.insertNote(name, pictureUri,  "", "",  1, (long) 0);// add new note, get return row Id
 			}
 		}
 		return rowId;

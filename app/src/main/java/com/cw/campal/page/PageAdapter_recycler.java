@@ -52,11 +52,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static com.cw.campal.db.DB_page.KEY_NOTE_AUDIO_URI;
 import static com.cw.campal.db.DB_page.KEY_NOTE_BODY;
 import static com.cw.campal.db.DB_page.KEY_NOTE_CREATED;
 import static com.cw.campal.db.DB_page.KEY_NOTE_DRAWING_URI;
-import static com.cw.campal.db.DB_page.KEY_NOTE_LINK_URI;
 import static com.cw.campal.db.DB_page.KEY_NOTE_MARKING;
 import static com.cw.campal.db.DB_page.KEY_NOTE_PICTURE_URI;
 import static com.cw.campal.db.DB_page.KEY_NOTE_TITLE;
@@ -68,7 +66,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 {
 	private AppCompatActivity mAct;
 	Cursor cursor;
-	private String linkUri;
 	private static int style;
     private DB_folder dbFolder;
 	private DB_page mDb_page;
@@ -170,7 +167,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
         String pictureUri = null;
         String drawingUri = null;
         Long timeCreated = null;
-        linkUri = null;
         int marking = 0;
 
 		SharedPreferences pref_show_note_attribute = MainAct.mAct.getSharedPreferences("show_note_attribute", 0);
@@ -182,7 +178,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
             strTitle = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_TITLE));
             strBody = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_BODY));
             pictureUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_PICTURE_URI));
-            linkUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_LINK_URI));
             drawingUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_DRAWING_URI));
             marking = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_NOTE_MARKING));
             timeCreated = cursor.getLong(cursor.getColumnIndex(KEY_NOTE_CREATED));
@@ -260,8 +255,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 				//normal: do nothing
 			}else if(!Util.isEmptyString(pictureUri)) {
 //				strBody = pictureUri;//show picture Uri
-			}else if(!Util.isEmptyString(linkUri)) {
-//				strBody = linkUri; //show link Uri
 			}
 
 			holder.textBody.setText(strBody);
@@ -343,8 +336,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
                 i.putExtra(DB_page.KEY_NOTE_TITLE, db_page.getNoteTitle_byId(rowId));
                 i.putExtra(DB_page.KEY_NOTE_PICTURE_URI , db_page.getNotePictureUri_byId(rowId));
                 i.putExtra(DB_page.KEY_NOTE_DRAWING_URI , db_page.getNoteDrawingUri_byId(rowId));
-                i.putExtra(DB_page.KEY_NOTE_AUDIO_URI , db_page.getNoteAudioUri_byId(rowId));
-                i.putExtra(DB_page.KEY_NOTE_LINK_URI , db_page.getNoteLinkUri_byId(rowId));
                 i.putExtra(DB_page.KEY_NOTE_BODY, db_page.getNoteBody_byId(rowId));
                 i.putExtra(DB_page.KEY_NOTE_CREATED, db_page.getNoteCreatedTime_byId(rowId));
                 mAct.startActivity(i);
@@ -394,18 +385,16 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
         String strNote = db_page.getNoteTitle(position,false);
         String strPictureUri = db_page.getNotePictureUri(position,false);
-        String strAudioUri = db_page.getNoteAudioUri(position,false);
         String strDrawingUri = db_page.getNoteDrawingUri(position,false);
-        String strLinkUri = db_page.getNoteLinkUri(position,false);
         String strNoteBody = db_page.getNoteBody(position,false);
         Long idNote =  db_page.getNoteId(position,false);
 
         // toggle the marking
         if(db_page.getNoteMarking(position,false) == 0){
-            db_page.updateNote(idNote, strNote, strPictureUri, strAudioUri, strDrawingUri, strLinkUri, strNoteBody, 1, 0, false);
+            db_page.updateNote(idNote, strNote, strPictureUri, strDrawingUri, strNoteBody, 1, 0, false);
             marking = 1;
         }else{
-            db_page.updateNote(idNote, strNote, strPictureUri, strAudioUri, strDrawingUri, strLinkUri, strNoteBody, 0, 0, false);
+            db_page.updateNote(idNote, strNote, strPictureUri, strDrawingUri, strNoteBody, 0, 0, false);
             marking = 0;
         }
         db_page.close();

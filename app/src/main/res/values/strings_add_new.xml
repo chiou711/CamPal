@@ -4,7 +4,6 @@
     <string name="add_new_note_position">New note position at page:</string>
     <string name="add_new_note_top">To the top</string>
     <string name="add_new_note_bottom">To the bottom</string>
-    <string name="add_new_link_title_also">Adding new link, also involve the title of link</string>
     <string name="add_new_note_option_title">Add new note:</string>
     <string name="add_new_note_title">Add new note</string>
     <string name="add_new_note_message">Note content:</string>

@@ -238,7 +238,7 @@ public class Note_drawingAct extends Activity
             {
                 // insert
                 // set marking to 1 for default
-                id = dB.insertNote("", "", "", uriStr, "", "", 1, (long) 0);// add new note, get return row Id
+                id = dB.insertNote(uriStr, "",  uriStr, "",  1, (long) 0);// add new note, get return row Id
                 drawingUriInDB = uriStr;
             }
 
@@ -265,9 +265,7 @@ public class Note_drawingAct extends Activity
         dB.updateNote(id,
                 dB.getNoteTitle_byId(id),
                 dB.getNotePictureUri_byId(id),
-                dB.getNoteAudioUri_byId(id),
                 drawingUriInDB,
-                dB.getNoteLinkUri_byId(id),
                 dB.getNoteBody_byId(id),
                 dB.getNoteMarking_byId(id),
                 now.getTime(),

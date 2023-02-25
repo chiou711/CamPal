@@ -4,7 +4,6 @@
     <string name="add_new_note_position">页面新笔记位置：</string>
     <string name="add_new_note_top">到顶部</string>
     <string name="add_new_note_bottom">到底部</string>
-    <string name="add_new_link_title_also">新增连结时,也包括连结的标题</string>
     <string name="add_new_note_option_title">新增笔记：</string>
     <string name="add_new_note_title">新增笔记</string>
     <string name="add_new_note_message">笔记内容:</string>

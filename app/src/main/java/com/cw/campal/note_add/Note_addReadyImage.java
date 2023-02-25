@@ -224,7 +224,7 @@ public class Note_addReadyImage extends AppCompatActivity {
 				// insert
 				String name = Util.getDisplayNameByUriString(pictureUri, this);
 				System.out.println("Note_addReadyImage / _savePictureStateInDB / insert");
-				rowId = dB_page.insertNote(name, pictureUri, "", "", "", "", 1, (long) 0);// add new note, get return row Id
+				rowId = dB_page.insertNote(name, pictureUri, "", "", 1, (long) 0);// add new note, get return row Id
 			}
 		}
 		return rowId;

@@ -9,8 +9,6 @@
             <title>[n]local image file</title>
             <body></body>
             <picture>file:///storage/emulated/0/Android/data/com.cw.campal/files/Documents/local.jpg</picture>
-            <audio></audio>
-            <link></link>
         </note>
     </page>
 
@@ -20,8 +18,6 @@
             <title>[s]local video file</title>
             <body></body>
             <picture>file:///storage/emulated/0/Android/data/com.cw.campal/files/Documents/local.mp4</picture>
-            <audio></audio>
-            <link></link>
         </note>
     </page>
 

@@ -35,7 +35,7 @@ import android.util.Xml;
 
 public class ParseXmlToDB {
 
-    private String pageName,title,body,picture,audio,link;
+    private String pageName,title,body,picture;
     private DB_folder mDb_folder;
     private DB_page mDb_page;
 
@@ -76,11 +76,6 @@ public class ParseXmlToDB {
     return picture;
     }
 
-    public String getAudio()
-    {
-    return audio;
-    }
-
     public String getPage()
     {
     return pageName;
@@ -97,7 +92,7 @@ public class ParseXmlToDB {
             boolean isEnd = false;
             while (event != XmlPullParser.END_DOCUMENT)
             {
-                String name = myParser.getName(); //name: null, link, item, title, description
+                String name = myParser.getName(); //name: null, item, title, description
                 System.out.println("ParseXmlToDB / _parseXMLAndInsertDB / name = " + name);
                 System.out.println("ParseXmlToDB / _parseXMLAndInsertDB / event = " + event);
                 switch (event)
@@ -214,39 +209,23 @@ public class ParseXmlToDB {
                        {
                             picture = text.trim();
                             picture = Util.getDefaultExternalStoragePath(picture);
-                       }
-                       else if(name.equals("audio"))
-                       {
-                            audio = text.trim();
-                            audio = Util.getDefaultExternalStoragePath(audio);
-                       }
-                       else if(name.equals("link"))
-                       {
-                           text = text.replace("&apos;","\'");
-                           text = text.replace("&quot;","\"");
-                           text = text.replace("&amp;","\\&");
 
-                            System.out.println("ParseXmlToDB / _parseXMLAndInsertDB / name 2 = " + name);
-                            link = text.trim();
-                            System.out.println("ParseXmlToDB / _parseXMLAndInsertDB / link = " + link);
-                            if(mEnableInsertDB)
-                            {
-                                DB_page.setFocusPage_tableId(TabsHost.getLastPageTableId());
-                                if(title.length() !=0 || body.length() != 0 || picture.length() !=0 || audio.length() !=0 ||link.length() !=0)
-                                {
-                                    if((!Util.isEmptyString(picture)) || (!Util.isEmptyString(audio)))
-                                        mDb_page.insertNote(title, picture, audio, "", link, body,1, (long) 0); // add mark for media
-                                    else
-                                        mDb_page.insertNote(title, picture, audio, "", link, body,0, (long) 0);
-                                }
-                            }
-                            fileBody = fileBody.concat(Util.NEW_LINE + strSplitter);
-                            fileBody = fileBody.concat(Util.NEW_LINE + "title:" + " " + title);
-                            fileBody = fileBody.concat(Util.NEW_LINE + "body:" + " " + body);
-                            fileBody = fileBody.concat(Util.NEW_LINE + "picture:" + " " + picture);
-                            fileBody = fileBody.concat(Util.NEW_LINE + "audio:" + " " + audio);
-                            fileBody = fileBody.concat(Util.NEW_LINE + "link:" + " " + link);
-                            fileBody = fileBody.concat(Util.NEW_LINE);
+                           if(mEnableInsertDB)
+                           {
+                               DB_page.setFocusPage_tableId(TabsHost.getLastPageTableId());
+                               if(title.length() !=0 || body.length() != 0 || picture.length() !=0 )
+                               {
+                                   if((!Util.isEmptyString(picture)) )
+                                       mDb_page.insertNote(title, picture,  "",  body,1, (long) 0); // add mark for media
+                                   else
+                                       mDb_page.insertNote(title, picture,  "",  body,0, (long) 0);
+                               }
+                           }
+                           fileBody = fileBody.concat(Util.NEW_LINE + strSplitter);
+                           fileBody = fileBody.concat(Util.NEW_LINE + "title:" + " " + title);
+                           fileBody = fileBody.concat(Util.NEW_LINE + "body:" + " " + body);
+                           fileBody = fileBody.concat(Util.NEW_LINE + "picture:" + " " + picture);
+                           fileBody = fileBody.concat(Util.NEW_LINE);
                        }
                        else if(name.equals("CamPal"))
                        {

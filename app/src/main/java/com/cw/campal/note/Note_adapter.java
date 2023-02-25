@@ -32,22 +32,17 @@ import com.cw.campal.util.Util;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.TextUtils;
 import android.text.Layout.Alignment;
 import android.text.style.AlignmentSpan;
-import android.text.style.ForegroundColorSpan;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -64,7 +59,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
 	static int mLastPosition;
 	private static LayoutInflater inflater;
 	private AppCompatActivity act;
-	private static String mWebTitle;
 	private ViewPager pager;
 	DB_page db_page;
 
@@ -137,7 +131,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
 		// set text web view
         setWebView(textWebView,spinner,CustomWebView.TEXT_VIEW);
 
-        String linkUri = db_page.getNoteLinkUri(position,true);
         String strTitle = db_page.getNoteTitle(position,true);
         String strBody = db_page.getNoteBody(position,true);
 
@@ -204,8 +197,8 @@ public class Note_adapter extends FragmentStatePagerAdapter
 			footerText.setVisibility(View.GONE);
 
     	container.addView(pagerView, 0);
-    	
-		return pagerView;			
+
+		return pagerView;
     } //instantiateItem
 	
     // show text web view
@@ -234,9 +227,7 @@ public class Note_adapter extends FragmentStatePagerAdapter
     		             CustomWebView linkWebView,
     		             ProgressBar spinner          )
     {
-		String linkUri = db_page.getNoteLinkUri(position,true);
 		String pictureUri = db_page.getNotePictureUri(position,true);
-		String audioUri = db_page.getNoteAudioUri(position,true);
 		String drawingUri = db_page.getNoteDrawingUri(position,true);
 
     	// Check if Uri is for drawing
@@ -245,9 +236,7 @@ public class Note_adapter extends FragmentStatePagerAdapter
 
         // show image view
   		if( UtilImage.hasImageExtension(pictureUri, act)||
-  		    (Util.isEmptyString(pictureUri)&& 
-  		     Util.isEmptyString(audioUri)&& 
-  		     Util.isEmptyString(linkUri)      )             ) // for wrong path icon
+  		    (Util.isEmptyString(pictureUri)   )             ) // for wrong path icon
   		{
 			System.out.println("Note_adapter / _showPictureView / show image view");
   			videoView.setVisibility(View.GONE);
@@ -304,19 +293,11 @@ public class Note_adapter extends FragmentStatePagerAdapter
             System.out.println("Note_adapter / _setPrimaryItem / position = " + position);
 
 			String lastPictureStr = null;
-			String lastLinkUri = null;
-			String lastAudioUri = null;
 
 			if(mLastPosition != -1)
-			{
 				lastPictureStr = db_page.getNotePictureUri(mLastPosition,true);
-				lastLinkUri = db_page.getNoteLinkUri(mLastPosition, true);
-				lastAudioUri = db_page.getNoteAudioUri(mLastPosition, true);
-			}
 
 			String pictureStr = db_page.getNotePictureUri(position,true);
-			String linkUri = db_page.getNoteLinkUri(position,true);
-			String audioUri = db_page.getNoteAudioUri(position,true);
 			String drawingUri = db_page.getNoteDrawingUri(position,true);;
 
 			// check drawing URI
@@ -331,58 +312,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
 				if (textWebView != null) {
 					textWebView.onPause();
 					textWebView.onResume();
-				}
-			}
-
-			// for web view
-			if (!UtilImage.hasImageExtension(pictureStr, act) &&
-				!UtilVideo.hasVideoExtension(pictureStr, act)   )
-			{
-				// remove last link web view
-				if(	!UtilImage.hasImageExtension(lastPictureStr, act) &&
-					!UtilVideo.hasVideoExtension(lastPictureStr, act)   )
-				{
-					String tag = "current" + mLastPosition + "linkWebView";
-					CustomWebView lastLinkWebView = (CustomWebView) pager.findViewWithTag(tag);
-
-					if (lastLinkWebView != null)
-					{
-						CustomWebView.pauseWebView(lastLinkWebView);
-						CustomWebView.blankWebView(lastLinkWebView);
-					}
-				}
-
-				// set current link web view in case no picture Uri
-				if (  Util.isEmptyString(pictureStr) &&
-					 !Note.isTextMode()      )
-				{
-					if(Note.isViewAllMode() )
-					{
-						String tagStr = "current" + position + "linkWebView";
-						CustomWebView linkWebView = (CustomWebView) pager.findViewWithTag(tagStr);
-						linkWebView.setVisibility(View.VISIBLE);
-                        setWebView(linkWebView,object,CustomWebView.LINK_VIEW);
-						System.out.println("Note_adapter / _setPrimaryItem / load linkUri = " + linkUri);
-						linkWebView.loadUrl(linkUri);
-
-						//Add for non-stop showing of full screen web view
-						linkWebView.setWebViewClient(new WebViewClient() {
-							@Override
-							public boolean shouldOverrideUrlLoading(WebView view, String url)
-							{
-								view.loadUrl(url);
-								return true;
-							}
-						});
-
-						//cf. https://stackoverflow.com/questions/13576153/how-to-get-text-from-a-webview
-//						linkWebView.addJavascriptInterface(new JavaScriptInterface(act), "Android");
-					}
-					else if(Note.isPictureMode())
-					{
-                        Intent i = new Intent(Intent.ACTION_VIEW,Uri.parse(linkUri));
-						act.startActivity(i);
-                    }
 				}
 			}
 
@@ -469,11 +398,7 @@ public class Note_adapter extends FragmentStatePagerAdapter
             int scale = pref_web_view.getInt("KEY_WEB_VIEW_SCALE",0);
             webView.setInitialScale(scale);
         }
-        else if( whichView == CustomWebView.LINK_VIEW )
-        {
-            bWebViewIsShown = false;
-            webView.setInitialScale(30);
-        }
+
 
         int style = Note.getStyle();
 		webView.setBackgroundColor(ColorSet.mBG_ColorArray[style]);
@@ -532,7 +457,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
     	System.out.println("Note_adapter / _getHtmlStringWithViewPort");
     	String strTitle = db_page.getNoteTitle(position,true);
     	String strBody = db_page.getNoteBody(position,true);
-    	String linkUri = db_page.getNoteLinkUri(position,true);
 
     	Long createTime = db_page.getNoteCreatedTime(position,true);
     	String head = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"+

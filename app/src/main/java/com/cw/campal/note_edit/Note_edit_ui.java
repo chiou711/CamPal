@@ -56,11 +56,8 @@ public class Note_edit_ui {
 	private String drawingUriInDB;
 	String oriPictureUri;
 	String currPictureUri;
-	String currAudioUri;
 
-	String oriAudioUri;
 	private String oriDrawingUri;
-	String oriLinkUri;
 
 	private EditText titleEditText;
 	private EditText bodyEditText;
@@ -73,9 +70,7 @@ public class Note_edit_ui {
 
 	boolean bRollBackData;
 	boolean bRemovePictureUri = false;
-	boolean bRemoveAudioUri = false;
 	private boolean bEditPicture = false;
-
     private DB_page dB_page;
 	private Activity act;
 	private int style;
@@ -83,7 +78,7 @@ public class Note_edit_ui {
 	private ProgressBar progressBarExpand;
 	private TouchImageView enlargedImage;
 
-	Note_edit_ui(Activity act, DB_page _db, Long noteId, String strTitle, String pictureUri, String audioUri, String drawingUri, String linkUri, String strBody, Long createdTime)
+	Note_edit_ui(Activity act, DB_page _db, Long noteId, String strTitle, String pictureUri, String drawingUri, String strBody, Long createdTime)
     {
     	this.act = act;
     	this.noteId = noteId;
@@ -91,14 +86,11 @@ public class Note_edit_ui {
     	oriTitle = pictureUri;//strTitle;
 	    oriBody = strBody;
 	    oriPictureUri = pictureUri;
-	    oriAudioUri = audioUri;
 	    oriDrawingUri = drawingUri;
-	    oriLinkUri = linkUri;
-	    
+
 	    oriCreatedTime = createdTime;
 	    currPictureUri = pictureUri;
-	    currAudioUri = audioUri;
-	    
+
 	    dB_page = _db;//Page.mDb_page;
 	    
 	    oriMarking = dB_page.getNoteMarking_byId(noteId);
@@ -448,15 +440,12 @@ public class Note_edit_ui {
     	boolean bModified = false;
 //		System.out.println("Note_edit_ui / _isNoteModified / isTitleModified() = " + isTitleModified());
 //		System.out.println("Note_edit_ui / _isNoteModified / isPictureModified() = " + isPictureModified());
-//		System.out.println("Note_edit_ui / _isNoteModified / isAudioModified() = " + isAudioModified());
 //		System.out.println("Note_edit_ui / _isNoteModified / isBodyModified() = " + isBodyModified());
 //		System.out.println("Note_edit_ui / _isNoteModified / bRemovePictureUri = " + bRemovePictureUri);
-//		System.out.println("Note_edit_ui / _isNoteModified / bRemoveAudioUri = " + bRemoveAudioUri);
     	if( isTitleModified() ||
     		isPictureModified() ||
     		isBodyModified() ||
-    		bRemovePictureUri ||
-    		bRemoveAudioUri)
+    		bRemovePictureUri )
     	{
     		bModified = true;
     	}
@@ -464,9 +453,8 @@ public class Note_edit_ui {
     	return bModified;
     }
 
-	Long saveStateInDB(Long rowId,boolean enSaveDb, String pictureUri, String audioUri, String drawingUri)
+	Long saveStateInDB(Long rowId,boolean enSaveDb, String pictureUri, String drawingUri)
 	{
-		String linkUri = "";
     	String title = titleEditText.getText().toString();
         String body = bodyEditText.getText().toString();
 
@@ -480,7 +468,7 @@ public class Note_edit_ui {
 	        	{
 	        		// insert
 	        		System.out.println("Note_edit_ui / _saveStateInDB / insert");
-	        		rowId = dB_page.insertNote(title, pictureUri, audioUri, drawingUri, linkUri, body, 0, (long) 0);// add new note, get return row Id
+	        		rowId = dB_page.insertNote(title, pictureUri, drawingUri, body, 0, (long) 0);// add new note, get return row Id
 	        	}
         		currPictureUri = pictureUri; // update file name
 	        }
@@ -495,18 +483,16 @@ public class Note_edit_ui {
 	        		if(bRollBackData) //roll back
 	        		{
 			        	System.out.println("Note_edit_ui / _saveStateInDB / update: roll back");
-			        	linkUri = oriLinkUri;
 	        			title = oriTitle;
 	        			body = oriBody;
 	        			Long time = oriCreatedTime;
-	        			dB_page.updateNote(rowId, title, pictureUri, audioUri, drawingUri, linkUri, body, oriMarking, time,true);
+	        			dB_page.updateNote(rowId, title, pictureUri, drawingUri, body, oriMarking, time,true);
 	        		}
 	        		else // update new
 	        		{
 	        			System.out.println("Note_edit_ui / _saveStateInDB / update new");
 						System.out.println("--- rowId = " + rowId);
 						System.out.println("--- oriMarking = " + oriMarking);
-						System.out.println("--- audioUri = " + audioUri);
 
                         long marking;
                         if(null == oriMarking)
@@ -515,7 +501,7 @@ public class Note_edit_ui {
                             marking = oriMarking;
 
                         boolean isOK;
-	        			isOK = dB_page.updateNote(rowId, title, pictureUri, audioUri, drawingUri, linkUri, body,
+	        			isOK = dB_page.updateNote(rowId, title, pictureUri, drawingUri, body,
 												marking, now.getTime(),true); // update note
 	        			System.out.println("--- isOK = " + isOK);
 	        		}
@@ -542,9 +528,7 @@ public class Note_edit_ui {
     	dB_page.updateNote(rowId,
 				oriTitle,
     				   "",
-				oriAudioUri,
 				oriDrawingUri,
-				oriLinkUri,
 				oriBody,
 				oriMarking,
 				oriCreatedTime, true );
@@ -557,49 +541,7 @@ public class Note_edit_ui {
     	dB_page.updateNote(rowId,
     				   title,
     				   "",
-				oriAudioUri,
 				oriDrawingUri,
-    				   "",
-    				   body,
-				oriMarking,
-				oriCreatedTime, true );
-	}
-
-	void removeAudioStringFromOriginalNote(Long rowId) {
-    	dB_page.updateNote(rowId,
-				oriTitle,
-				oriPictureUri,
-    				   "",
-				oriDrawingUri,
-				oriLinkUri,
-				oriBody,
-				oriMarking,
-				oriCreatedTime, true );
-	}
-
-	void removeAudioStringFromCurrentEditNote(Long rowId) {
-        String title = titleEditText.getText().toString();
-        String body = bodyEditText.getText().toString();
-        dB_page.updateNote(rowId,
-    				   title,
-				oriPictureUri,
-    				   "",
-				oriDrawingUri,
-    				   "",
-    				   body,
-				oriMarking,
-				oriCreatedTime, true );
-	}
-
-	void removeLinkUriFromCurrentEditNote(Long rowId) {
-        String title = titleEditText.getText().toString();
-        String body = bodyEditText.getText().toString();
-        dB_page.updateNote(rowId,
-    				   title,
-				oriPictureUri,
-				oriAudioUri,
-				oriDrawingUri,
-    				   "",
     				   body,
 				oriMarking,
 				oriCreatedTime, true );

@@ -44,9 +44,7 @@ public class DB_page {
     public static final String KEY_NOTE_BODY = "note_body";
     public static final String KEY_NOTE_MARKING = "note_marking";
     public static final String KEY_NOTE_PICTURE_URI = "note_picture_uri";
-    public static final String KEY_NOTE_AUDIO_URI = "note_audio_uri";
     public static final String KEY_NOTE_DRAWING_URI = "note_drawing_uri";
-    public static final String KEY_NOTE_LINK_URI = "note_link_uri";
     public static final String KEY_NOTE_CREATED = "note_created";
 
 	// DB
@@ -103,9 +101,7 @@ public class DB_page {
           KEY_NOTE_ID,
           KEY_NOTE_TITLE,
           KEY_NOTE_PICTURE_URI,
-          KEY_NOTE_AUDIO_URI,
 		  KEY_NOTE_DRAWING_URI,
-          KEY_NOTE_LINK_URI,
           KEY_NOTE_BODY,
           KEY_NOTE_MARKING,
           KEY_NOTE_CREATED
@@ -144,7 +140,7 @@ public class DB_page {
     
     // Insert note
     // createTime: 0 will update time
-    public long insertNote(String title,String pictureUri, String audioUri, String drawingUri, String linkUri, String body, int marking, Long createTime)
+    public long insertNote(String title,String pictureUri,String drawingUri, String body, int marking, Long createTime)
     {
     	this.open();
 
@@ -152,9 +148,7 @@ public class DB_page {
         ContentValues args = new ContentValues(); 
         args.put(KEY_NOTE_TITLE, title);   
         args.put(KEY_NOTE_PICTURE_URI, pictureUri);
-        args.put(KEY_NOTE_AUDIO_URI, audioUri);
         args.put(KEY_NOTE_DRAWING_URI, drawingUri);
-        args.put(KEY_NOTE_LINK_URI, linkUri);
         args.put(KEY_NOTE_BODY, body);
         if(createTime == 0)
         	args.put(KEY_NOTE_CREATED, now.getTime());
@@ -190,9 +184,7 @@ public class DB_page {
 					                new String[] {KEY_NOTE_ID,
 				  								  KEY_NOTE_TITLE,
 				  								  KEY_NOTE_PICTURE_URI,
-				  								  KEY_NOTE_AUDIO_URI,
 												  KEY_NOTE_DRAWING_URI,
-				  								  KEY_NOTE_LINK_URI,
         										  KEY_NOTE_BODY,
         										  KEY_NOTE_MARKING,
         										  KEY_NOTE_CREATED},
@@ -209,8 +201,8 @@ public class DB_page {
     // update note
     // 		createTime:  0 for Don't update time
     @SuppressLint("Range")
-    public boolean updateNote(long rowId, String title, String pictureUri, String audioUri, String drawingUri,
-                              String linkUri, String body, long marking, long createTime, boolean enDbOpenClose)
+    public boolean updateNote(long rowId, String title, String pictureUri, String drawingUri,
+                              String body, long marking, long createTime, boolean enDbOpenClose)
     {
     	if(enDbOpenClose)
     		this.open();
@@ -218,9 +210,7 @@ public class DB_page {
         ContentValues args = new ContentValues();
         args.put(KEY_NOTE_TITLE, title);
         args.put(KEY_NOTE_PICTURE_URI, pictureUri);
-        args.put(KEY_NOTE_AUDIO_URI, audioUri);
         args.put(KEY_NOTE_DRAWING_URI, drawingUri);
-        args.put(KEY_NOTE_LINK_URI, linkUri);
         args.put(KEY_NOTE_BODY, body);
         args.put(KEY_NOTE_MARKING, marking);
         
@@ -272,18 +262,6 @@ public class DB_page {
 	}		
 	
 	
-	// get note by Id
-	public String getNoteLink_byId(Long mRowId)
-	{
-		this.open();
-
-		String link = queryNote(mRowId).getString(queryNote(mRowId)
-									   .getColumnIndexOrThrow(DB_page.KEY_NOTE_LINK_URI));
-		this.close();
-
-		return link;
-	}	
-	
 	public String getNoteTitle_byId(Long mRowId)
 	{
 		this.open();
@@ -332,18 +310,6 @@ public class DB_page {
 		return pictureUri;
 	}	
 	
-	public String getNoteAudioUri_byId(Long mRowId)
-	{
-		this.open();
-
-		String audioUri = queryNote(mRowId).getString(queryNote(mRowId)
-														.getColumnIndexOrThrow(DB_page.KEY_NOTE_AUDIO_URI));
-
-		this.close();
-
-		return audioUri;
-	}	
-	
 	public String getNoteDrawingUri_byId(Long mRowId)
 	{
 		this.open();
@@ -353,16 +319,6 @@ public class DB_page {
 
 		return drawingUri;
 	}	
-	
-	public String getNoteLinkUri_byId(Long mRowId)
-	{
-		this.open();
-		String linkUri = queryNote(mRowId).getString(queryNote(mRowId)
-														.getColumnIndexOrThrow(DB_page.KEY_NOTE_LINK_URI));
-		this.close();
-
-		return linkUri;
-	}		
 	
 	public Long getNoteMarking_byId(Long mRowId)
 	{
@@ -453,22 +409,6 @@ public class DB_page {
 	}
 
 	@SuppressLint("Range")
-	public String getNoteAudioUri(int position,boolean enDbOpenClose)
-	{
-		if(enDbOpenClose)
-			this.open();
-
-		mCursor_note.moveToPosition(position);
-
-		String audioUri = mCursor_note.getString(mCursor_note.getColumnIndex(KEY_NOTE_AUDIO_URI));
-
-		if(enDbOpenClose)
-        	this.close();
-
-		return audioUri;
-	}
-
-	@SuppressLint("Range")
 	public String getNoteDrawingUri(int position,boolean enDbOpenClose)
 	{
 		if(enDbOpenClose) 
@@ -481,21 +421,6 @@ public class DB_page {
         	this.close();
 
 		return drawingUri;
-	}
-
-	@SuppressLint("Range")
-	public String getNoteLinkUri(int position,boolean enDbOpenClose)
-	{
-		if(enDbOpenClose) 
-			this.open();
-
-		mCursor_note.moveToPosition(position);
-        String linkUri = mCursor_note.getString(mCursor_note.getColumnIndex(KEY_NOTE_LINK_URI));
-
-		if(enDbOpenClose)
-        	this.close();
-
-		return linkUri;
 	}
 
 	@SuppressLint("Range")

@@ -64,7 +64,6 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.RemoteException;
 import android.os.StrictMode;
 import android.content.Context;
@@ -110,7 +109,6 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
     OnBackPressedListener onBackPressedListener;
     public Drawer drawer;
     public static Folder mFolder;
-    public static MainUi mMainUi;
     public static Toolbar mToolbar;
 
     public static MediaBrowserCompat mMediaBrowserCompat;
@@ -143,7 +141,6 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
 
         mAct = this;
         mAppTitle = getTitle();
-        mMainUi = new MainUi();
 
         // add the following to disable this requirement
         if (Build.VERSION.SDK_INT >= 24) {
@@ -291,34 +288,28 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
 
         mFolderTitles = new ArrayList<>();
 
-        String intentLink = mMainUi.addNote_IntentLink(getIntent(), mAct);
-        if (!Util.isEmptyString(intentLink)) {
-            finish(); // CamPal not running at first, keep closing
-            return;
-        } else {
-            // check DB
-            final boolean ENABLE_DB_CHECK = false;//true;//false
-            if (ENABLE_DB_CHECK) {
-                // list all folder tables
-                FolderUi.listAllFolderTables(mAct);
+        // check DB
+        final boolean ENABLE_DB_CHECK = false;//true;//false
+        if (ENABLE_DB_CHECK) {
+            // list all folder tables
+            FolderUi.listAllFolderTables(mAct);
 
-                // recover focus
-                DB_folder.setFocusFolder_tableId(Pref.getPref_focusView_folder_tableId(this));
-                DB_page.setFocusPage_tableId(Pref.getPref_focusView_page_tableId(this));
-            }//if(ENABLE_DB_CHECK)
+            // recover focus
+            DB_folder.setFocusFolder_tableId(Pref.getPref_focusView_folder_tableId(this));
+            DB_page.setFocusPage_tableId(Pref.getPref_focusView_page_tableId(this));
+        }//if(ENABLE_DB_CHECK)
 
-            // enable ActionBar app icon to behave as action to toggle nav drawer
+        // enable ActionBar app icon to behave as action to toggle nav drawer
 //	        getActionBar().setDisplayHomeAsUpEnabled(true);
 //	        getActionBar().setHomeButtonEnabled(true);
 //			getActionBar().setBackgroundDrawable(new ColorDrawable(ColorSet.getBarColor(mAct)));
 
-            mContext = getBaseContext();
+        mContext = getBaseContext();
 
-            // add on back stack changed listener
-            mFragmentManager = getSupportFragmentManager();
-            mOnBackStackChangedListener = this;
-            mFragmentManager.addOnBackStackChangedListener(mOnBackStackChangedListener);
-        }
+        // add on back stack changed listener
+        mFragmentManager = getSupportFragmentManager();
+        mOnBackStackChangedListener = this;
+        mFragmentManager.addOnBackStackChangedListener(mOnBackStackChangedListener);
 
         isAddedOnNewIntent = false;
 
@@ -711,17 +702,6 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
     protected void onNewIntent(Intent intent)
     {
         super.onNewIntent(intent);
-
-        if(!isAddedOnNewIntent)
-        {
-            String intentTitle = mMainUi.addNote_IntentLink(intent, mAct);
-
-            if (!Util.isEmptyString(intentTitle))
-                TabsHost.reloadCurrentPage();
-
-            if(Build.VERSION.SDK_INT >= O)//API26
-                isAddedOnNewIntent = true; // fix 2 times _onNewIntent on API26
-        }
     }
 
     @Override
@@ -939,14 +919,6 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
     /**
      * on Activity Result
      */
-    AlertDialog.Builder builder;
-    AlertDialog alertDlg;
-    Handler handler;
-    int count;
-    String countStr;
-    String nextLink;
-    String nextTitle;
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode,resultCode,data);
@@ -1299,12 +1271,9 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
                     {
                         String pictureUri = dB_page.getNotePictureUri(position,false);
                         String drawingUri = dB_page.getNoteDrawingUri(position,false);
-                        String linkUri = dB_page.getNoteLinkUri(position,false);
 
                         // replace picture path
-                        if(Util.isEmptyString(pictureUri) && UtilImage.hasImageExtension(linkUri,this))
-                            pictureUri = linkUri;
-                        else if(UtilImage.hasImageExtension(drawingUri,this))
+                        if(UtilImage.hasImageExtension(drawingUri,this))
                             pictureUri = drawingUri;
 
                         String title = dB_folder.getCurrentPageTitle();

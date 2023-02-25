@@ -88,7 +88,6 @@ public class Note extends AppCompatActivity
     Button optionButton;
     Button backButton;
 
-	public static String mAudioUriInDB;
 
     public AppCompatActivity act;
     public static int mPlayVideoPositionOfInstance;
@@ -114,23 +113,6 @@ public class Note extends AppCompatActivity
         MainAct.mMediaBrowserCompat = null;
 
 	} //onCreate end
-
-//	// callback of granted permission
-//	@Override
-//	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
-//	{
-//		System.out.println("Note / _onRequestPermissionsResult / grantResults.length =" + grantResults.length);
-//		switch (requestCode)
-//		{
-//			case Util.PERMISSIONS_REQUEST_PHONE:
-//			{
-//				// If request is cancelled, the result arrays are empty.
-//				if ( (grantResults.length > 0) && ( (grantResults[0] == PackageManager.PERMISSION_GRANTED) ))
-//					UtilAudio.setPhoneListener(this);
-//			}
-//			break;
-//		}
-//	}
 
 	// Add to prevent resizing full screen picture,
 	// when popup menu shows up at picture mode
@@ -235,7 +217,6 @@ public class Note extends AppCompatActivity
 
 		if(mDb_page != null) {
 			mNoteId = mDb_page.getNoteId(NoteUi.getFocus_notePos(), true);
-			mAudioUriInDB = mDb_page.getNoteAudioUri_byId(mNoteId);
 		}
 
 		// Note: if viewPager.getCurrentItem() is not equal to mEntryPosition, _onPageSelected will
@@ -252,10 +233,8 @@ public class Note extends AppCompatActivity
 				Intent intent = new Intent(Note.this, Note_edit.class);
 				intent.putExtra(DB_page.KEY_NOTE_ID, mNoteId);
 				intent.putExtra(DB_page.KEY_NOTE_TITLE, mDb_page.getNoteTitle_byId(mNoteId));
-				intent.putExtra(DB_page.KEY_NOTE_AUDIO_URI , mDb_page.getNoteAudioUri_byId(mNoteId));
 				intent.putExtra(DB_page.KEY_NOTE_PICTURE_URI , mDb_page.getNotePictureUri_byId(mNoteId));
 				intent.putExtra(DB_page.KEY_NOTE_DRAWING_URI , mDb_page.getNoteDrawingUri_byId(mNoteId));
-				intent.putExtra(DB_page.KEY_NOTE_LINK_URI , mDb_page.getNoteLinkUri_byId(mNoteId));
 				intent.putExtra(DB_page.KEY_NOTE_BODY, mDb_page.getNoteBody_byId(mNoteId));
 				intent.putExtra(DB_page.KEY_NOTE_CREATED, mDb_page.getNoteCreatedTime_byId(mNoteId));
 				startActivityForResult(intent, EDIT_CURRENT_VIEW);
@@ -457,19 +436,6 @@ public class Note extends AppCompatActivity
 
 		setOutline(act);
 
-		// Register Bluetooth device receiver
-		if(Build.VERSION.SDK_INT < 21)
-		{
-			IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
-			this.registerReceiver(mReceiver, filter);
-		}
-		else // Build.VERSION.SDK_INT >= 21
-		{
-			// Media session: to receive media button event of bluetooth device
-			// new media browser instance and create BackgroundAudioService instance: support notification
-
-			MainAct.mCurrentState = MainAct.STATE_PAUSED;
-		}
 	}
 	
 	@Override
@@ -491,18 +457,6 @@ public class Note extends AppCompatActivity
 			if(UtilVideo.mVideoPlayer != null)
 				VideoPlayer.stopVideo();
 		}
-
-		// to stop YouTube web view running
-    	String tagStr = "current"+ viewPager.getCurrentItem()+"webView";
-    	CustomWebView webView = (CustomWebView) viewPager.findViewWithTag(tagStr);
-    	CustomWebView.pauseWebView(webView);
-    	CustomWebView.blankWebView(webView);
-
-		// to stop Link web view running
-    	tagStr = "current"+ viewPager.getCurrentItem()+"linkWebView";
-    	CustomWebView linkWebView = (CustomWebView) viewPager.findViewWithTag(tagStr);
-    	CustomWebView.pauseWebView(linkWebView);
-    	CustomWebView.blankWebView(linkWebView);
 
 		NoteUi.cancel_UI_callbacks();
 	}
@@ -662,13 +616,7 @@ public class Note extends AppCompatActivity
     public void onBackPressed() {
 		System.out.println("Note / _onBackPressed");
     	// web view can go back
-    	String tagStr = "current"+ viewPager.getCurrentItem()+"linkWebView";
-    	CustomWebView linkWebView = (CustomWebView) viewPager.findViewWithTag(tagStr);
-        if (linkWebView.canGoBack()) 
-        {
-        	linkWebView.goBack();
-        }
-        else if(isPictureMode())
+        if(isPictureMode())
     	{
 //            // dispatch touch event to show buttons
 //            long downTime = SystemClock.uptimeMillis();

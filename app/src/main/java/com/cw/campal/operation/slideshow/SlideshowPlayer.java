@@ -298,20 +298,16 @@ public class SlideshowPlayer extends FragmentActivity
      * @param bEnableSlide
      */
 	void showToast(boolean bEnableSlide) {
-        if (!bEnableSlide) {
-            if ((toast != null) && toast.getView().isShown())
-                toast.cancel();
+		if ((toast != null) && (toast.getView() != null) && toast.getView().isShown())
+			toast.cancel();
 
+        if (!bEnableSlide)
             toast = Toast.makeText(SlideshowPlayer.this, R.string.toast_pause, Toast.LENGTH_SHORT);
-            toast.show();
-        } else {
-            if ((toast != null) && toast.getView().isShown())
-                toast.cancel();
-
+        else
             toast = Toast.makeText(SlideshowPlayer.this, R.string.toast_play, Toast.LENGTH_SHORT);
-            toast.show();
-        }
-    }
+
+		toast.show();
+	}
 
     /**
      * Populate image view and text view

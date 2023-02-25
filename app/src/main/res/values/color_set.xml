@@ -37,7 +37,6 @@
 
     <!-- grid item of Add new   -->
     <color name="textGrid">#034906</color>
-    <color name="audioGrid">#b32d00</color>
     <color name="pictureGrid">#191970</color>
     <color name="videoGrid">#0047b3</color>
     <color name="linkGrid">#107d1d</color>

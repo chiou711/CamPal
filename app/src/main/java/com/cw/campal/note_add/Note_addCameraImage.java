@@ -28,6 +28,7 @@ import com.cw.campal.util.image.UtilImage;
 import com.cw.campal.util.Util;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -435,6 +436,7 @@ public class Note_addCameraImage extends Activity {
 		}
 	}
 
+	@SuppressLint("Range")
 	public void handleDuplicatedImage(Context context)
 	{
 	    /*
@@ -568,7 +570,7 @@ public class Note_addCameraImage extends Activity {
 	    														imageOrderBy);
 	    if(imageCursor.moveToFirst())
 	    {
-	        int id = imageCursor.getInt(imageCursor.getColumnIndex(MediaStore.Images.Media._ID));
+	        @SuppressLint("Range") int id = imageCursor.getInt(imageCursor.getColumnIndex(MediaStore.Images.Media._ID));
 	        imageCursor.close();
 	        System.out.println("Note_addCameraImage / _getLastCapturedImageId / last captured image Id = " + id);
 	        return id;
@@ -646,7 +648,7 @@ public class Note_addCameraImage extends Activity {
 				// insert
 				String name = Util.getDisplayNameByUriString(pictureUri, this);
 				System.out.println("Note_addCameraImage / _savePictureStateInDB / insert");
-				rowId = dB_page.insertNote(name, pictureUri, "", "", "", "", 1, (long) 0);// add new note, get return row Id
+				rowId = dB_page.insertNote(name, pictureUri, "", "",  1, (long) 0);// add new note, get return row Id
 			}
 		}
 		return rowId;
