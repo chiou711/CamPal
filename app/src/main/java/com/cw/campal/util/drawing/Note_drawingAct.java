@@ -236,9 +236,11 @@ public class Note_drawingAct extends Activity
 
             if( !Util.isEmptyString(uriStr))
             {
+                String name = Util.getDisplayNameByUriString(uriStr, this);
                 // insert
                 // set marking to 1 for default
-                id = dB.insertNote(uriStr, "",  uriStr, "",  1, (long) 0);// add new note, get return row Id
+                // init body string is uriStr
+                id = dB.insertNote(name, "",  uriStr, uriStr,  1, (long) 0);// add new note, get return row Id
                 drawingUriInDB = uriStr;
             }
 

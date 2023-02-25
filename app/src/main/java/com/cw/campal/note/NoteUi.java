@@ -91,8 +91,9 @@ public class NoteUi
         setNotesCnt(db_page.getNotesCount(true));
         String pictureUri = db_page.getNotePictureUri(position,true);
 	    String drawingUri = db_page.getNoteDrawingUri(position,true);
+		String title = db_page.getNoteTitle(position,true);
 
-		// check drawing URI
+		// replacement if drawing URI exists
 		if(!Util.isEmptyString(drawingUri))
 			pictureUri = drawingUri;
 
@@ -120,11 +121,10 @@ public class NoteUi
                 picView_back_button.setVisibility(View.GONE);
 
             // Show picture title
-            TextView picView_title;
-            picView_title = (TextView) (pictureGroup.findViewById(R.id.image_title));
+            TextView picView_title = (TextView) (pictureGroup.findViewById(R.id.image_title));
             String pictureName;
             if(!Util.isEmptyString(pictureUri))
-                pictureName = pictureUri;//Util.getDisplayNameByUriString(pictureUri, act);
+		        pictureName = title;
             else
                 pictureName = "";
 

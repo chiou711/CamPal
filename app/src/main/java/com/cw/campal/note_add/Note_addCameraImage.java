@@ -648,7 +648,8 @@ public class Note_addCameraImage extends Activity {
 				// insert
 				String name = Util.getDisplayNameByUriString(pictureUri, this);
 				System.out.println("Note_addCameraImage / _savePictureStateInDB / insert");
-				rowId = dB_page.insertNote(name, pictureUri, "", "",  1, (long) 0);// add new note, get return row Id
+				// init body string is pictureUri
+				rowId = dB_page.insertNote(name, pictureUri, "", pictureUri,  1, (long) 0);// add new note, get return row Id
 			}
 		}
 		return rowId;

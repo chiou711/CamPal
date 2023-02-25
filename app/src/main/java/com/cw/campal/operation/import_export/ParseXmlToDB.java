@@ -210,6 +210,9 @@ public class ParseXmlToDB {
                             picture = text.trim();
                             picture = Util.getDefaultExternalStoragePath(picture);
 
+                           // init body string is pictureUri
+                            body = picture;
+
                            if(mEnableInsertDB)
                            {
                                DB_page.setFocusPage_tableId(TabsHost.getLastPageTableId());
