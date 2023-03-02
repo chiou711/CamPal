@@ -23,7 +23,6 @@ import com.cw.campal.db.DB_page;
 import com.cw.campal.main.MainAct;
 import com.cw.campal.page.PageAdapter_recycler;
 import com.cw.campal.tabs.TabsHost;
-import com.cw.campal.util.CustomWebView;
 import com.cw.campal.util.DeleteFileAlarmReceiver;
 import com.cw.campal.util.image.UtilImage;
 import com.cw.campal.util.preferences.Pref;

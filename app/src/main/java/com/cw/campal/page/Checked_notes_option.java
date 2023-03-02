@@ -313,7 +313,8 @@ public class Checked_notes_option {
             String pictureUri = mDb_page.getNotePictureUri(i,false);
             String drawingUri = mDb_page.getNoteDrawingUri(i,false);
             String noteBody = mDb_page.getNoteBody(i,false);
-            mDb_page.updateNote(rowId, noteTitle, pictureUri, drawingUri, noteBody , action, 0,false);// action 1:check all, 0:uncheck all
+            Long time  = mDb_page.getNoteCreatedTime(i,false);
+            mDb_page.updateNote(rowId, noteTitle, pictureUri, drawingUri, noteBody , action, time,false);// action 1:check all, 0:uncheck all
         }
         mDb_page.close();
 
@@ -338,7 +339,8 @@ public class Checked_notes_option {
             String drawingUri = mDb_page.getNoteDrawingUri(i,false);
             String noteBody = mDb_page.getNoteBody(i,false);
             long marking = (mDb_page.getNoteMarking(i,false)==1)?0:1;
-            mDb_page.updateNote(rowId, noteTitle, pictureUri, drawingUri, noteBody , marking, 0,false);// action 1:check all, 0:uncheck all
+            Long time  = mDb_page.getNoteCreatedTime(i,false);
+            mDb_page.updateNote(rowId, noteTitle, pictureUri, drawingUri, noteBody , marking, time,false);// action 1:check all, 0:uncheck all
             // Stop if unmarked item is at playing state
         }
         mDb_page.close();

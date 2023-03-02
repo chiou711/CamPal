@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 CW Chiu
+ * Copyright (C) 2023 CW Chiu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,18 +22,13 @@ import com.cw.campal.tabs.TabsHost;
 import com.cw.campal.util.image.UtilImage;
 import com.cw.campal.util.video.UtilVideo;
 import com.cw.campal.util.video.VideoPlayer;
-import com.cw.campal.util.CustomWebView;
 import com.cw.campal.util.Util;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -53,10 +48,6 @@ public class NoteUi
     private static int mPosition;
     private ViewPager pager;
     private AppCompatActivity act;
-
-    public static int getNotesCnt() {
-        return notesCnt;
-    }
 
     public static void setNotesCnt(int notesCnt) {
         NoteUi.notesCnt = notesCnt;

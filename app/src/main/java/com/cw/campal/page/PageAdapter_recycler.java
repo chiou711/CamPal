@@ -40,7 +40,6 @@ import com.cw.campal.page.item_touch_helper.ItemTouchHelperViewHolder;
 import com.cw.campal.page.item_touch_helper.OnStartDragListener;
 import com.cw.campal.tabs.TabsHost;
 import com.cw.campal.util.ColorSet;
-import com.cw.campal.util.CustomWebView;
 import com.cw.campal.util.Util;
 import com.cw.campal.util.image.UtilImage;
 import com.cw.campal.util.image.UtilImage_bitmapLoader;
@@ -388,13 +387,14 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
         String strDrawingUri = db_page.getNoteDrawingUri(position,false);
         String strNoteBody = db_page.getNoteBody(position,false);
         Long idNote =  db_page.getNoteId(position,false);
+		Long time = db_page.getNoteCreatedTime(position,false);
 
         // toggle the marking
         if(db_page.getNoteMarking(position,false) == 0){
-            db_page.updateNote(idNote, strNote, strPictureUri, strDrawingUri, strNoteBody, 1, 0, false);
+            db_page.updateNote(idNote, strNote, strPictureUri, strDrawingUri, strNoteBody, 1, time, false);
             marking = 1;
         }else{
-            db_page.updateNote(idNote, strNote, strPictureUri, strDrawingUri, strNoteBody, 0, 0, false);
+            db_page.updateNote(idNote, strNote, strPictureUri, strDrawingUri, strNoteBody, 0, time, false);
             marking = 0;
         }
         db_page.close();

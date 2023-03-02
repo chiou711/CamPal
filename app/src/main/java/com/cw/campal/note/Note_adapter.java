@@ -26,25 +26,14 @@ import com.cw.campal.util.image.UtilImage_bitmapLoader;
 import com.cw.campal.util.video.UtilVideo;
 import com.cw.campal.util.video.VideoViewCustom;
 import com.cw.campal.util.ColorSet;
-import com.cw.campal.util.CustomWebView;
 import com.cw.campal.util.Util;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Build;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.Layout.Alignment;
-import android.text.style.AlignmentSpan;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.VideoView;
@@ -107,29 +96,19 @@ public class Note_adapter extends FragmentStatePagerAdapter
 
 		ProgressBar spinner = (ProgressBar) pagerView.findViewById(R.id.loading);
 
-        // link web view
-		CustomWebView linkWebView = ((CustomWebView) pagerView.findViewById(R.id.link_web_view));
-        String tagStr = "current"+position+"linkWebView";
-        linkWebView.setTag(tagStr);
-
         // line view
         View line_view = pagerView.findViewById(R.id.line_view);
 
     	// text group
         ViewGroup textGroup = (ViewGroup) pagerView.findViewById(R.id.textGroup);
 
-        // Set tag for text web view
-    	CustomWebView textWebView = ((CustomWebView) textGroup.findViewById(R.id.textBody));
+        // Set tag for text view
+    	TextView textView = textGroup.findViewById(R.id.textBody);
 
     	// set accessibility
         textGroup.setContentDescription(act.getResources().getString(R.string.note_text));
-		textWebView.getRootView().setContentDescription(act.getResources().getString(R.string.note_text));
+		textView.getRootView().setContentDescription(act.getResources().getString(R.string.note_text));
 
-        tagStr = "current"+position+"textWebView";
-        textWebView.setTag(tagStr);
-
-		// set text web view
-        setWebView(textWebView,spinner,CustomWebView.TEXT_VIEW);
 
         String strTitle = db_page.getNoteTitle(position,true);
         String strBody = db_page.getNoteBody(position,true);
@@ -140,7 +119,7 @@ public class Note_adapter extends FragmentStatePagerAdapter
 	  	{
 			System.out.println("Note_adapter / _instantiateItem / isPictureMode ");
 	  		pictureGroup.setVisibility(View.VISIBLE);
-	  	    showPictureView(position,imageView,videoView,linkWebView,spinner);
+	  	    showPictureView(position,imageView,videoView,spinner);
 
 	  	    line_view.setVisibility(View.GONE);
 	  	    textGroup.setVisibility(View.GONE);
@@ -157,7 +136,7 @@ public class Note_adapter extends FragmentStatePagerAdapter
 	  	    if(!Util.isEmptyString(strTitle)||
 	 	  	   !Util.isEmptyString(strBody)    )
 	  	    {
-	  	    	showTextWebView(position,textWebView);
+	  	    	showTextView(position,textView);
 	  	    }
 	  	}
   		// picture and text
@@ -167,7 +146,7 @@ public class Note_adapter extends FragmentStatePagerAdapter
 
 			// picture
 			pictureGroup.setVisibility(View.VISIBLE);
-	  	    showPictureView(position,imageView,videoView,linkWebView,spinner);
+	  	    showPictureView(position,imageView,videoView,spinner);
 
 	  	    line_view.setVisibility(View.VISIBLE);
 	  	    textGroup.setVisibility(View.VISIBLE);
@@ -176,7 +155,7 @@ public class Note_adapter extends FragmentStatePagerAdapter
 	  	    if( !Util.isEmptyString(strTitle)||
 	  	       	!Util.isEmptyString(strBody)  )
 	  	    {
-	  	    	showTextWebView(position,textWebView);
+	  	    	showTextView(position,textView);
 	  	    }
 	  	    else
 			{
@@ -201,30 +180,19 @@ public class Note_adapter extends FragmentStatePagerAdapter
 		return pagerView;
     } //instantiateItem
 	
-    // show text web view
-    private void showTextWebView(int position,CustomWebView textWebView)
-    {
+    // show text view
+    private void showTextView(int position, TextView textView){
     	System.out.println("Note_adapter/ _showTextView / position = " + position);
-
-    	int viewPort;
-    	// load text view data
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-			viewPort = VIEW_PORT_BY_DEVICE_WIDTH;
-    	else
-    		viewPort = VIEW_PORT_BY_NONE;
-
-    	String strHtml;
-		strHtml = getHtmlStringWithViewPort(position,viewPort);
-//	    textWebView.loadData(strHtml,"text/html; charset=utf-8", "UTF-8");
-	    //refer https://stackoverflow.com/questions/3312643/android-webview-utf-8-not-showing
-	    textWebView.loadDataWithBaseURL(null, strHtml, "text/html", "UTF-8", null);
+	    String strBody = db_page.getNoteBody(position,true);
+	    Long createTime = db_page.getNoteCreatedTime(position,true);
+	    String textStr = strBody+"\n\n"+Util.getTimeString(createTime);
+	    textView.setText(textStr);
     }
     
     // show picture view
     private void showPictureView(int position,
     		             TouchImageView imageView,
     		             VideoView videoView,
-    		             CustomWebView linkWebView,
     		             ProgressBar spinner          )
     {
 		String pictureUri = db_page.getNotePictureUri(position,true);
@@ -240,16 +208,13 @@ public class Note_adapter extends FragmentStatePagerAdapter
   		{
 			System.out.println("Note_adapter / _showPictureView / show image view");
   			videoView.setVisibility(View.GONE);
-  			linkWebView.setVisibility(View.GONE);
   			UtilVideo.mVideoView = null;
   			imageView.setVisibility(View.VISIBLE);
   			showImageByTouchImageView(spinner, imageView, pictureUri,position);
   		}
   		// show video view
-  		else if(UtilVideo.hasVideoExtension(pictureUri, act))
-  		{
+  		else if(UtilVideo.hasVideoExtension(pictureUri, act)){
 			System.out.println("Note_adapter / _showPictureView / show video view");
-  			linkWebView.setVisibility(View.GONE);
   			imageView.setVisibility(View.GONE);
   			videoView.setVisibility(View.VISIBLE);
   		}
@@ -303,17 +268,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
 			// check drawing URI
 			if(!Util.isEmptyString(drawingUri))
 				pictureStr = drawingUri;
-
-			// remove last text web view
-			if (!Note.isPictureMode())
-			{
-				String tag = "current" + mLastPosition + "textWebView";
-				CustomWebView textWebView = (CustomWebView) pager.findViewWithTag(tag);
-				if (textWebView != null) {
-					textWebView.onPause();
-					textWebView.onResume();
-				}
-			}
 
 			// for video view
 			if (!Note.isTextMode() )
@@ -386,150 +340,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
 	    mLastPosition = position;
 	    
 	} //setPrimaryItem		
-
-	// Set web view
-    private static boolean bWebViewIsShown;
-	private void setWebView(final CustomWebView webView,Object object, int whichView)
-	{
-        final SharedPreferences pref_web_view = act.getSharedPreferences("web_view", 0);
-		final ProgressBar spinner = (ProgressBar) ((View)object).findViewById(R.id.loading);
-        if( whichView == CustomWebView.TEXT_VIEW )
-        {
-            int scale = pref_web_view.getInt("KEY_WEB_VIEW_SCALE",0);
-            webView.setInitialScale(scale);
-        }
-
-
-        int style = Note.getStyle();
-		webView.setBackgroundColor(ColorSet.mBG_ColorArray[style]);
-
-    	webView.getSettings().setBuiltInZoomControls(true);
-    	webView.getSettings().setSupportZoom(true);
-    	webView.getSettings().setUseWideViewPort(true);
-//    	customWebView.getSettings().setLoadWithOverviewMode(true);
-    	webView.getSettings().setJavaScriptEnabled(true);//warning: Using setJavaScriptEnabled can introduce XSS vulnerabilities
-
-//		// speed up
-//		if (Build.VERSION.SDK_INT >= 19) {
-//			// chromium, enable hardware acceleration
-//			webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-//		} else {
-//			// older android version, disable hardware acceleration
-//			webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-//		}
-
-        if( whichView == CustomWebView.TEXT_VIEW )
-   		{
-	    	webView.setWebViewClient(new WebViewClient()
-	        {
-	            @Override
-	            public void onScaleChanged(WebView web_view, float oldScale, float newScale)
-	            {
-	                super.onScaleChanged(web_view, oldScale, newScale);
-	//                System.out.println("Note_adapter / onScaleChanged");
-	//                System.out.println("    oldScale = " + oldScale);
-	//                System.out.println("    newScale = " + newScale);
-
-	                int newDefaultScale = (int) (newScale*100);
-	                pref_web_view.edit().putInt("KEY_WEB_VIEW_SCALE",newDefaultScale).apply();
-
-	                //update current position
-	                NoteUi.setFocus_notePos(pager.getCurrentItem());
-	            }
-
-	            @Override
-	            public void onPageFinished(WebView view, String url) {}
-	        });
-
-   		}
-	    
-	}
-
-    final private static int VIEW_PORT_BY_NONE = 0;
-    final private static int VIEW_PORT_BY_DEVICE_WIDTH = 1;
-    final private static int VIEW_PORT_BY_SCREEN_WIDTH = 2;
-    
-    // Get HTML string with view port
-    private String getHtmlStringWithViewPort(int position, int viewPort)
-    {
-    	int mStyle = Note.mStyle;
-    	
-    	System.out.println("Note_adapter / _getHtmlStringWithViewPort");
-    	String strTitle = db_page.getNoteTitle(position,true);
-    	String strBody = db_page.getNoteBody(position,true);
-
-    	Long createTime = db_page.getNoteCreatedTime(position,true);
-    	String head = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"+
-		       	  	  "<html><head>" +
-	  		       	  "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />";
-    	
-    	if(viewPort == VIEW_PORT_BY_NONE)
-    	{
-	    	head = head + "<head>";
-    	}
-    	else if(viewPort == VIEW_PORT_BY_DEVICE_WIDTH)
-    	{
-	    	head = head + 
-	    		   "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">" +
-	     	  	   "<head>";
-    	}
-    	else if(viewPort == VIEW_PORT_BY_SCREEN_WIDTH)
-    	{
-//        	int screen_width = UtilImage.getScreenWidth(act);
-        	int screen_width = 640;
-	    	head = head +
-	    		   "<meta name=\"viewport\" content=\"width=" + String.valueOf(screen_width) + ", initial-scale=1\">"+
-   	  			   "<head>";
-    	}
-    		
-       	String separatedLineTitle = (!Util.isEmptyString(strTitle))?"<hr size=2 color=blue width=99% >":"";
-       	String separatedLineBody = (!Util.isEmptyString(strBody))?"<hr size=1 color=black width=99% >":"";
-
-       	// title
-       	if(!Util.isEmptyString(strTitle))
-       	{
-       		Spannable spanTitle = new SpannableString(strTitle);
-       		Linkify.addLinks(spanTitle, Linkify.ALL);
-       		spanTitle.setSpan(new AlignmentSpan.Standard(Alignment.ALIGN_CENTER),
-       							0,
-       							spanTitle.length(),
-       							Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-       		strTitle = Html.toHtml(spanTitle);
-       	}
-       	else
-       		strTitle = "";
-    	
-    	// body
-       	if(!Util.isEmptyString(strBody))
-       	{
-	    	Spannable spanBody = new SpannableString(strBody);
-	    	Linkify.addLinks(spanBody, Linkify.ALL);
-	    	strBody = Html.toHtml(spanBody);
-       	}
-       	else
-       		strBody = "";
-	    	
-    	// set web view text color
-    	String colorStr = Integer.toHexString(ColorSet.mText_ColorArray[mStyle]);
-    	colorStr = colorStr.substring(2);
-    	
-    	String bgColorStr = Integer.toHexString(ColorSet.mBG_ColorArray[mStyle]);
-    	bgColorStr = bgColorStr.substring(2);
-    	
-    	return   head + "<body color=\"" + bgColorStr + "\">" +
-				 "<br>" + //Note: text mode needs this, otherwise title is overlaid
-		         "<p align=\"center\"><b>" +
-		         "<font color=\"" + colorStr + "\">" + strTitle + "</font>" +
-         		 "</b></p>" + separatedLineTitle +
-		         "<p>" + 
-				 "<font color=\"" + colorStr + "\">" + strBody + "</font>" +
-				 "</p>" + separatedLineBody +
-		         "<p align=\"right\">" + 
-				 "<font color=\"" + colorStr + "\">"  + Util.getTimeString(createTime) + "</font>" +
-		         "</p>" + 
-		         "</body></html>";
-    }
 
     // show image by touch image view
     private void showImageByTouchImageView(final ProgressBar spinner, final TouchImageView pictureView, String strPicture,final Integer position)

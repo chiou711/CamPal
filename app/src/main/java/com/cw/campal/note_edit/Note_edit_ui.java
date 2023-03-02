@@ -473,7 +473,6 @@ public class Note_edit_ui {
 	        }
 	        else // for Edit
 	        {
-    	        Date now = new Date();
 	        	if( !Util.isEmptyString(title) ||
 	        		!Util.isEmptyString(body) ||
 	        		!Util.isEmptyString(pictureUri)  )
@@ -501,7 +500,7 @@ public class Note_edit_ui {
 
                         boolean isOK;
 	        			isOK = dB_page.updateNote(rowId, title, pictureUri, drawingUri, body,
-												marking, now.getTime(),true); // update note
+												marking, oriCreatedTime,true); // update note
 	        			System.out.println("--- isOK = " + isOK);
 	        		}
 	        		currPictureUri = pictureUri;

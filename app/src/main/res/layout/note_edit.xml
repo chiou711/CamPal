@@ -102,7 +102,7 @@
         android:layout_weight="1"
 		android:textCursorDrawable="@null"
 	    android:inputType=""
-	    android:minLines="5"
+	    android:minLines="3"
 		android:maxLines="1000"
 	    android:autoLink="all"
 	    android:textSize="18sp"
@@ -113,8 +113,6 @@
 	<View android:layout_width="match_parent" android:layout_height="1dip" android:background="#4f4f4f" />
 
 <!-- expanded image  -->
-	
-
 	<com.cw.campal.util.image.TouchImageView
         android:id="@+id/expanded_image"
         android:layout_width="400dp"
