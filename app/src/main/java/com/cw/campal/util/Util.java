@@ -133,8 +133,6 @@ public class Util
 	public static final int PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES = 11;
 	public static final int PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO = 12;
 	public static final int PERMISSIONS_REQUEST_STORAGE = 13;
-	public static final int PERMISSIONS_REQUEST_STORAGE_IMPORT = 14;
-	public static final int PERMISSIONS_REQUEST_STORAGE_EXPORT = 15;
 
 	public Util(){}
     

@@ -17,6 +17,8 @@
 package com.cw.campal.main;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
@@ -34,14 +36,10 @@ import com.cw.campal.folder.FolderUi;
 import com.cw.campal.note_add.Add_note_option;
 import com.cw.campal.operation.delete.DeleteFolders;
 import com.cw.campal.operation.delete.DeletePages;
-import com.cw.campal.operation.import_export.Import_fileView;
-import com.cw.campal.operation.import_export.Import_webAct;
 import com.cw.campal.page.Checked_notes_option;
 import com.cw.campal.page.PageUi;
 import com.cw.campal.tabs.TabsHost;
 import com.cw.campal.util.DeleteFileAlarmReceiver;
-import com.cw.campal.operation.import_export.Export_toSDCardFragment;
-import com.cw.campal.operation.import_export.Import_filesList;
 import com.cw.campal.db.DB_drawer;
 import com.cw.campal.operation.gallery.GalleryGridAct;
 import com.cw.campal.operation.slideshow.SlideshowInfo;
@@ -61,7 +59,6 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.os.RemoteException;
@@ -90,7 +87,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import static android.os.Build.VERSION_CODES.M;
-import static android.os.Build.VERSION_CODES.O;
 
 public class MainAct extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener
 {
@@ -165,9 +161,7 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
 
         UtilImage.getDefaultScaleInPercent(MainAct.this);
 
-        if( (Define.DEFAULT_CONTENT == Define.BY_ASSETS) ||
-            (Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) )
-        {
+        if(Define.DEFAULT_CONTENT == Define.BY_ASSETS){
             // has not answered if default content needed
             if(!Pref.getPref_has_answered_if_default_content_needed(this)) {
                 // Click Yes
@@ -180,12 +174,8 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
                     else if (Build.VERSION.SDK_INT >= 23)
                         checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES);
                     else {
-                        if (Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) {
-                            createDefaultContent_byDownload();
-                        } else {
                             Pref.setPref_will_create_default_content(this, true);
                             recreate();
-                        }
                     }
                 };
 
@@ -344,15 +334,33 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
 
         // import content
         if(xmlFile.exists()) {
-            //todo Could halt on this ?
-            Import_fileView.importDefaultContentByXml(this, xmlFile);
+            TabsHost.setLastPageTableId(0);
+
+            FileInputStream fileInputStream = null;
+
+            try
+            {
+                fileInputStream = new FileInputStream(xmlFile);
+            }
+            catch (FileNotFoundException e)
+            {
+                e.printStackTrace();
+            }
+
+            // import data by HandleXmlByFile class
+            ParseXmlToDB importObject = new ParseXmlToDB(fileInputStream,this);
+            importObject.enableInsertDB(true);
+            importObject.handleXML();
+            while(ParseXmlToDB.isParsing);
+            {
+                try { Thread.sleep(100); } catch (InterruptedException e) {}
+            }
 
             //set default position to 0
             int folderTableId = dB_drawer.getFolderTableId(0, true);
             Pref.setPref_focusView_folder_tableId(this, folderTableId);
             DB_folder.setFocusFolder_tableId(folderTableId);
         }
-
 
         // already has preferred tables
         Pref.setPref_will_create_default_content(this, false);
@@ -502,122 +510,7 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
                     isStorageRequested = true;
 
                 break;
-
-//                case Util.PERMISSIONS_REQUEST_STORAGE_IMPORT:
-//                    isStorageRequestedImport = true;
-//                    break;
-//
-//                case Util.PERMISSIONS_REQUEST_STORAGE_EXPORT:
-//                    isStorageRequestedExport = true;
-//                    break;
-//
-//                case Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES:
-//                    if(Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD)
-//                        createDefaultContent_byDownload();
-//                    else {
-//                        Pref.setPref_will_create_default_content(this, true);
-//                        recreate();
-//                    }
-//                break;
-//
-//                case Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO:
-//                    Pref.setPref_will_create_default_content(this, false);
-//                    recreate();
-//                break;
         }
-    }
-
-    //  Download XML file from Google drive
-    void createDefaultContent_byDownload(){
-
-        /**
-         * CamPal_default_content.xml
-         * Unit: folder
-         */
-        // CamPal_default_content.xml
-        String srcUrl = "https://drive.google.com/uc?authuser=0&id=1qAfMUJ9DMsciVkb7hEQAwLrmcyfN95sF&export=download";
-
-        Async_default_byDownload async = new Async_default_byDownload(mAct,srcUrl);
-        async.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"Downloading file ...");
-
-
-        ///
-        // download txt file from Web site
-//                    Thread thread = new Thread(new Runnable()
-//                    {
-//                        @Override
-//                        public void run()
-//                        {
-//                            try {
-//                                //cf https://www.sample-videos.com/download-sample-text-file.php
-//                                URL url = new URL("https://www.sample-videos.com/text/Sample-text-file-10kb.txt");
-//
-//                                //create https connection
-//                                HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
-//                                urlConnection.setRequestMethod("GET");
-//                                urlConnection.setDoOutput(true);
-//
-//                                //connect
-//                                urlConnection.connect();
-//
-//                                //output path
-//                                String dirString = Environment.getExternalStorageDirectory().toString() +
-//                                        "/" +
-//                                        Util.getStorageDirName(MainAct.mAct);
-//
-//                                File storageRoot = new File(dirString);
-//                                File file = new File(storageRoot, "default_content_by_download.xml");
-//
-//                                FileOutputStream fileOutput = null;
-//                                fileOutput = new FileOutputStream(file);
-//
-//                                // input path
-//                                InputStream inputStream = null;
-//                                inputStream = urlConnection.getInputStream();
-//
-//                                int totalSize = urlConnection.getContentLength();
-//                                int downloadedSize = 0;
-//
-//                                //create buffer
-//                                byte[] buffer = new byte[1024];
-//                                int bufferLength = 0;
-//                                bufferLength = inputStream.read(buffer);
-//
-//                                while ( bufferLength  > 0 )
-//                                {
-//                                    // write
-//                                    try {
-//                                        fileOutput.write(buffer, 0, bufferLength);
-//                                    } catch (IOException e) {
-//                                        e.printStackTrace();
-//                                    }
-//
-//                                    downloadedSize += bufferLength;
-//
-//                                    // progress
-//                                    int progress=(int)(downloadedSize*100/totalSize);
-//
-//                                    try {
-//                                        bufferLength = inputStream.read(buffer);
-//                                    } catch (IOException e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                }
-//
-//                                //close
-//                                fileOutput.close();
-//
-//                                while(!file.exists() || (file.length() == 0) )
-//                                {
-//                                    System.out.println("MainAct / _onRequestPermissionsResult / downloading ! Waiting...");
-//                                }
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    });
-//                    thread.start();
-        ///
     }
 
     @Override
@@ -759,27 +652,6 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
                     recreate();
                 }
                 isStorageRequested = false;
-            }
-
-            if(isStorageRequestedImport) {
-                // replace fragment
-                Import_filesList importFragment = new Import_filesList();
-                transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
-                transaction.replace(R.id.content_frame, importFragment, "import").addToBackStack(null).commit();
-
-                isStorageRequestedImport = false;
-            }
-
-            if(isStorageRequestedExport){
-                DB_folder dB_folder = new DB_folder(this, Pref.getPref_focusView_folder_tableId(this));
-                if (dB_folder.getPagesCount(true) > 0) {
-                    Export_toSDCardFragment exportFragment = new Export_toSDCardFragment();
-                    transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
-                    transaction.replace(R.id.content_frame, exportFragment, "export").addToBackStack(null).commit();
-                } else {
-                    Toast.makeText(this, R.string.no_page_yet, Toast.LENGTH_SHORT).show();
-                }
-                isStorageRequestedExport = false;
             }
 
             if (FolderUi.mHandler != null)
@@ -1038,12 +910,6 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
 
                 // note operation
                 mMenu.findItem(R.id.note_operation).setVisible( (pgsCnt >0) && (notesCnt>0) );
-
-                // EXPORT TO SD CARD
-                mMenu.findItem(R.id.EXPORT_TO_SD_CARD).setVisible(pgsCnt >0);
-
-                // SEND PAGES
-                mMenu.findItem(R.id.SEND_PAGES).setVisible(pgsCnt >0);
 
                 /**
                  *  Note group
@@ -1393,85 +1259,6 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
                 }
                 invalidateOptionsMenu();
                 TabsHost.reloadCurrentPage();
-                return true;
-
-            // sub menu for backup
-            case MenuId.IMPORT_FROM_WEB:
-                Intent import_web = new Intent(this,Import_webAct.class);
-                startActivityForResult(import_web,8000);
-                return true;
-
-            case MenuId.IMPORT_FROM_SD_CARD:
-                if( (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) && //API23
-                        (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) // check permission
-                                != PackageManager.PERMISSION_GRANTED))
-                {
-                    // No explanation needed, we can request the permission.
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                    Manifest.permission.READ_EXTERNAL_STORAGE},
-                            Util.PERMISSIONS_REQUEST_STORAGE_IMPORT);
-                }
-                else {
-                    //hide the menu
-                    mMenu.setGroupVisible(R.id.group_notes, false);
-                    mMenu.setGroupVisible(R.id.group_pages_and_more, false);
-                    // replace fragment
-                    Import_filesList importFragment = new Import_filesList();
-                    transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
-                    transaction.replace(R.id.content_frame, importFragment, "import").addToBackStack(null).commit();
-                }
-                return true;
-
-            case MenuId.EXPORT_TO_SD_CARD:
-                if( (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) && //API23
-                        (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) // check permission
-                                != PackageManager.PERMISSION_GRANTED))
-                {
-                    // No explanation needed, we can request the permission.
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                    Manifest.permission.READ_EXTERNAL_STORAGE},
-                            Util.PERMISSIONS_REQUEST_STORAGE_EXPORT);
-                }
-                else {
-                    //hide the menu
-                    mMenu.setGroupVisible(R.id.group_notes, false);
-                    mMenu.setGroupVisible(R.id.group_pages_and_more, false);
-                    if (dB_folder.getPagesCount(true) > 0) {
-                        Export_toSDCardFragment exportFragment = new Export_toSDCardFragment();
-                        transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
-                        transaction.replace(R.id.content_frame, exportFragment, "export").addToBackStack(null).commit();
-                    } else {
-                        Toast.makeText(this, R.string.no_page_yet, Toast.LENGTH_SHORT).show();
-                    }
-                }
-                return true;
-
-            case MenuId.SEND_PAGES:
-                if( (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) && //API23
-                        (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) // check permission
-                                != PackageManager.PERMISSION_GRANTED))
-                {
-                    // No explanation needed, we can request the permission.
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                    Manifest.permission.READ_EXTERNAL_STORAGE},
-                            Util.PERMISSIONS_REQUEST_STORAGE);
-                }
-                else {
-                    //hide the menu
-                    mMenu.setGroupVisible(R.id.group_notes, false);
-                    mMenu.setGroupVisible(R.id.group_pages_and_more, false);
-
-                    if (dB_folder.getPagesCount(true) > 0) {
-                        MailPagesFragment mailFragment = new MailPagesFragment();
-                        transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
-                        transaction.replace(R.id.content_frame, mailFragment, "mail").addToBackStack(null).commit();
-                    } else {
-                        Toast.makeText(this, R.string.no_page_yet, Toast.LENGTH_SHORT).show();
-                    }
-                }
                 return true;
 
             case MenuId.CONFIG:

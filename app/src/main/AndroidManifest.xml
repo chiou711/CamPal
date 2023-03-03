@@ -15,7 +15,6 @@
 
 
 	<uses-permission android:name="android.permission.WAKE_LOCK" />	
-	<!--<uses-permission android:name="android.permission.READ_PHONE_STATE"/>-->
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="com.google.android.apps.photos.permission.GOOGLE_PHOTOS"/>
@@ -85,8 +84,6 @@
              onPause/onSaveInstanceState/onStop/onDestroy/
                                                 onCreate/onStart/onRestoreInstanceState/onResume    -->
 
-        <activity android:name="com.cw.campal.operation.import_export.Import_webAct"
-                  android:theme="@style/MyTheme"/>
         <activity android:name="com.cw.campal.operation.gallery.GalleryGridAct"/>
         <activity android:name="com.cw.campal.operation.gallery.GalleryPagerAct"/>
       	<activity android:name="com.cw.campal.operation.slideshow.SlideshowPlayer"
@@ -121,29 +118,3 @@
            </application>
 
         </manifest>
-        <!-- reference
-             theme:
-                android:theme="@style/AppTheme"
-                android:theme="@style/CustomTheme"
-             screen orientation:
-                android:screenOrientation="portrait"
-
-            For android tv:
-
-            - in manifest
-                <uses-feature android:name="android.software.leanback"
-                android:required="false" />
-                <uses-feature android:name="android.hardware.touchscreen"
-                android:required="false" />
-
-            - in application tag
-                android:banner="@drawable/ic_banner"
-
-            - in main activity
-                <intent-filter>
-                    <action android:name="android.intent.action.MAIN" />
-                    <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
-                </intent-filter>
-
-
-         -->

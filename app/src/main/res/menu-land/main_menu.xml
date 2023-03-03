@@ -29,7 +29,7 @@
         <item
             android:id="@+id/PLAY"
             android:orderInCategory="2"
-            app:showAsAction="never"
+            app:showAsAction="ifRoom|withText"
             android:title="Play"
             android:icon="@drawable/ic_media_play">
 
@@ -58,34 +58,10 @@
         app:showAsAction="never"
         android:orderInCategory="1">
 
-        <!-- Note operation -->
-        <item
-            android:id="@+id/note_operation"
-            android:orderInCategory="3"
-            app:showAsAction="never"
-            android:title="@string/note_operation"
-            >
-            <menu>
-                <item
-                    android:id="@+id/ENABLE_NOTE_DRAG_AND_DROP"
-                    android:orderInCategory="1"
-                    app:showAsAction="never"
-                    android:title="@string/drag_note"
-                    android:icon="@drawable/btn_check_off_holo_light"/>
-                <item
-                    android:id="@+id/SHOW_BODY"
-                    android:orderInCategory="2"
-                    app:showAsAction="never"
-                    android:title="@string/preview_note_body"
-                    android:icon="@drawable/btn_check_off_holo_light"/>
-
-            </menu>
-        </item>
-
         <!-- Page operation -->
         <item
             android:id="@+id/page_operation"
-            android:orderInCategory="4"
+            android:orderInCategory="1"
             app:showAsAction="never"
             android:title="@string/page_operation"
             >
@@ -117,45 +93,34 @@
             </menu>
         </item>
 
-        <!-- backup operation -->
+        <!-- Note operation -->
         <item
-            android:id="@+id/backup_operation"
-            android:orderInCategory="5"
+            android:id="@+id/note_operation"
+            android:orderInCategory="2"
             app:showAsAction="never"
-            android:title="@string/backup_operation"
+            android:title="@string/note_operation"
             >
             <menu>
                 <item
-                    android:id="@+id/IMPORT_FROM_WEB"
+                    android:id="@+id/ENABLE_NOTE_DRAG_AND_DROP"
                     android:orderInCategory="1"
                     app:showAsAction="never"
-                    android:title="@string/config_import_Web"
-                    android:icon="@android:drawable/ic_menu_revert"/>
+                    android:title="@string/drag_note"
+                    android:icon="@drawable/btn_check_off_holo_light"/>
                 <item
-                    android:id="@+id/IMPORT_FROM_SD_CARD"
+                    android:id="@+id/SHOW_BODY"
                     android:orderInCategory="2"
                     app:showAsAction="never"
-                    android:title="@string/config_import_SDCard_entry"
-                    android:icon="@android:drawable/ic_menu_revert"/>
-                <item
-                    android:id="@+id/EXPORT_TO_SD_CARD"
-                    android:orderInCategory="3"
-                    app:showAsAction="never"
-                    android:title="@string/config_export_SDCard_title"
-                    android:icon="@android:drawable/ic_menu_save"/>
-                <item
-                    android:id="@+id/SEND_PAGES"
-                    android:orderInCategory="4"
-                    app:showAsAction="never"
-                    android:title="@string/mail_notes_title"
-                    android:icon="@android:drawable/ic_menu_send"/>
+                    android:title="@string/preview_note_body"
+                    android:icon="@drawable/btn_check_off_holo_light"/>
+
             </menu>
         </item>
 
         <!-- Config -->
         <item
             android:id="@+id/CONFIG"
-            android:orderInCategory="6"
+            android:orderInCategory="3"
             app:showAsAction="never"
             android:title="@string/settings_operation"
             />
@@ -163,7 +128,7 @@
         <!-- About -->
         <item
             android:id="@+id/ABOUT"
-            android:orderInCategory="7"
+            android:orderInCategory="4"
             app:showAsAction="never"
             android:title="@string/about_menu"
             />

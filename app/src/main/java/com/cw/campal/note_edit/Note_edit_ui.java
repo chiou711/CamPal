@@ -132,7 +132,7 @@ public class Note_edit_ui {
 			    InputMethodManager imm = (InputMethodManager) act.getSystemService(Context.INPUT_METHOD_SERVICE);
 			    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
 
-				// clear original
+				// clear original title
 			    titleEditText.setText("");
 			    titleEditText.setSelection(0);
 				titleEditText.requestFocus();
