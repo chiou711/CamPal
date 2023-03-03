@@ -16,8 +16,6 @@
 
 package com.cw.campal.note_edit;
 
-import java.util.Date;
-
 import com.cw.campal.db.DB_folder;
 import com.cw.campal.main.MainAct;
 import com.cw.campal.R;
@@ -41,7 +39,10 @@ import android.net.Uri;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -60,6 +61,7 @@ public class Note_edit_ui {
 	private String oriDrawingUri;
 
 	private EditText titleEditText;
+	private Button newTitleButton;
 	private EditText bodyEditText;
 	private String oriTitle;
 	private String oriBody;
@@ -105,6 +107,9 @@ public class Note_edit_ui {
 
 		UI_init_text();
 
+	    newTitleButton = act.findViewById(R.id.edit_new_title);
+	    newTitleButton.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_menu_close_clear_cancel, 0, 0, 0);
+
         picImageView = (ImageView) act.findViewById(R.id.edit_picture);
 
         progressBar = (ProgressBar) act.findViewById(R.id.edit_progress_bar);
@@ -118,6 +123,21 @@ public class Note_edit_ui {
 		picImageView.setBackgroundColor(ColorSet.mBG_ColorArray[style]);
 
 	    final InputMethodManager imm = (InputMethodManager) act.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+		// new title button listener
+	    newTitleButton.setOnClickListener(new OnClickListener(){
+		    @Override
+		    public void onClick(View view) {
+				// show IME
+			    InputMethodManager imm = (InputMethodManager) act.getSystemService(Context.INPUT_METHOD_SERVICE);
+			    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+
+				// clear original
+			    titleEditText.setText("");
+			    titleEditText.setSelection(0);
+				titleEditText.requestFocus();
+		    }
+	    } );
 
 		// set thumb nail listener
         picImageView.setOnClickListener(new OnClickListener()

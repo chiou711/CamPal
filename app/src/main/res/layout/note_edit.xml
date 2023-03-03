@@ -54,10 +54,17 @@
 		android:layout_height="wrap_content"
 	    android:textCursorDrawable="@null"
 		android:layout_gravity="center"
-	    android:inputType=""
+	    android:inputType="text"
 	    android:textSize="18sp"
 	    android:minLines="2"
 	    android:maxLines="20" />
+	<Button
+		android:id="@+id/edit_new_title"
+		android:layout_width="30dp"
+		android:layout_height="30dp"
+		android:layout_gravity="center"
+		android:background="@drawable/button"
+		android:textColor="@android:color/white"/>
 	<ImageView
           android:id="@+id/edit_picture"
           android:layout_width="100dp"
