@@ -19,6 +19,9 @@ package com.cw.campal.util.image;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -27,6 +30,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.cw.campal.R;
 import com.cw.campal.util.video.AsyncTaskVideoBitmap;
 import com.cw.campal.util.video.UtilVideo;
@@ -36,6 +45,8 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+
+import androidx.annotation.Nullable;
 
 
 public class UtilImage_bitmapLoader
@@ -54,33 +65,39 @@ public class UtilImage_bitmapLoader
 								  DisplayImageOptions options,
 								  Activity mAct )
 	{
+		System.out.println("UtilImage_bitmapLoader");
+
  	    setLoadingListeners();
 	    mPicImageView = picImageView;
 	    mProgressBar = progressBar;
-	    
+
 		Bitmap bmVideoIcon = BitmapFactory.decodeResource(mAct.getResources(), R.drawable.ic_media_play);
 		Uri imageUri = Uri.parse(mPictureUriInDB);
 		String pictureUri = imageUri.toString();
 		System.out.println("UtilImage_bitmapLoader / _constructor / pictureUri = " + pictureUri);
-		
+
 		// 1 for image check
-		if (UtilImage.hasImageExtension(pictureUri,mAct)) 
+		if (UtilImage.hasImageExtension(pictureUri,mAct)|| pictureUri.contains("drive.google"))
 		{
 			System.out.println("UtilImage_bitmapLoader constructor / has image extension");
-			UilCommon.imageLoader
-					 .displayImage(	pictureUri,
-									mPicImageView,
-									options,
-									mSimpleUilListener,
-									mUilProgressListener);
+			// original method
+//			UilCommon.imageLoader
+//					 .displayImage(	pictureUri,
+//									mPicImageView,
+//									options,
+//									mSimpleUilListener,
+//									mUilProgressListener);
+
+			// by glide
+			glideDisplayImage(mPicImageView,pictureUri,mAct);
 		}
 		// 2 for video check
-		else if (UtilVideo.hasVideoExtension(pictureUri,mAct)) 
+		else if (UtilVideo.hasVideoExtension(pictureUri,mAct))
 		{
 //			System.out.println("UtilImage_bitmapLoader / _constructor / has video extension");
 			Uri uri = Uri.parse(pictureUri);
 			String path = uri.getPath();
-			
+
 			// check if content is local or remote
 			if(Util.getUriScheme(pictureUri).equals("content"))
 			{
@@ -94,7 +111,7 @@ public class UtilImage_bitmapLoader
 				thumbnail = ThumbnailUtils.createVideoThumbnail(path, MediaStore.Video.Thumbnails.MICRO_KIND);
 
 				// check if video thumb nail exists
-				if (thumbnail != null) 
+				if (thumbnail != null)
 				{
 					// add video play icon overlay
 					thumbnail = UtilImage.setIconOnThumbnail(thumbnail,	bmVideoIcon, 20);
@@ -106,7 +123,7 @@ public class UtilImage_bitmapLoader
 									 mUilProgressListener);
 				}
 				// video file is not found
-				else 
+				else
 				{
 					UilCommon.imageLoader
 				 			 .displayImage( "drawable://" + R.drawable.ic_not_found,
@@ -114,7 +131,7 @@ public class UtilImage_bitmapLoader
 				 					 options,
 									 mSimpleUilListener,
 									 mUilProgressListener);
-	
+
 				}
 			} else { // for remote
 				System.out.println("UtilImage_bitmapLoader constructor / remote");
@@ -130,6 +147,66 @@ public class UtilImage_bitmapLoader
 //			System.out.println("UtilImage_bitmapLoader constructor / can not decide image and video");
 //			mPicImageView.setVisibility(View.GONE);
 //		}
+	}
+
+	void glideDisplayImage(ImageView picImageView,String pictureUri,Activity act){
+		// show image with Glide
+		RequestOptions req_options = new RequestOptions()
+				.centerCrop()
+				.placeholder(R.drawable.ic_color_a)
+				.error(R.drawable.ic_error)
+				.diskCacheStrategy(DiskCacheStrategy.ALL)
+				.priority(Priority.HIGH);
+
+		Glide.with(act)
+				.asBitmap()
+				.load(pictureUri)
+				.apply(req_options)
+				.into(new CustomTarget<Bitmap>() {
+					@Override
+					public void onResourceReady(
+							Bitmap resource,
+							Transition<? super Bitmap> transition) {
+						System.out.println("UtilImage_bitmapLoader / _onResourceReady");
+
+//                      Drawable drawable = new BitmapDrawable(act.getResources(), resource);
+//						Drawable drawable = getScaledDrawable(act,resource,0.5f,0.5f);
+//						picImageView.setImageDrawable(drawable);
+
+						picImageView.setImageBitmap(resource);
+					}
+
+					@Override
+					public void onLoadCleared(@Nullable Drawable placeholder) {
+					}
+
+					@Override
+					public void onLoadFailed(@Nullable Drawable errorDrawable) {
+						super.onLoadFailed(errorDrawable);
+						System.out.println("UtilImage_bitmapLoader / _onLoadFailed");
+//						cardView.setMainImage(act.getResources().getDrawable(R.drawable.movie));
+						picImageView.setImageDrawable(act.getResources().getDrawable(R.drawable.ic_empty));
+					}
+				});
+
+	}
+
+	// Get scaled drawable
+	private Drawable getScaledDrawable(Activity act,Bitmap resource,float ratioX,float ratioY){
+		int width = resource.getWidth();
+		int height = resource.getHeight();
+
+		// create a matrix for the manipulation
+		Matrix matrix = new Matrix();
+
+		// resize the bit map
+		matrix.postScale(ratioX, ratioY);
+
+		// recreate the new Bitmap
+		Bitmap bitmap = Bitmap.createBitmap(resource, 0, 0, width, height, matrix, false);
+		Drawable drawable = new BitmapDrawable(act.getResources(), bitmap);
+
+		return drawable;
 	}
 
 	private  void setLoadingListeners(){

@@ -349,11 +349,11 @@ public class Note_adapter extends FragmentStatePagerAdapter
             pictureView.setImageResource(Note.mStyle%2 == 1 ?
                     R.drawable.btn_radio_off_holo_light:
                     R.drawable.btn_radio_off_holo_dark);//R.drawable.ic_empty);
-        }
-        else if(!Util.isUriExisted(strPicture, act))
-        {
-            pictureView.setImageResource(R.drawable.ic_not_found);
-        }
+        }//todo Need the following?
+//        else if(!Util.isUriExisted(strPicture, act))
+//        {
+//            pictureView.setImageResource(R.drawable.ic_not_found);
+//        }
         else
         {
 			// load bitmap to image view

@@ -165,10 +165,11 @@ public class Note_edit_ui {
                 		System.out.println("picImageView.setOnClickListener / pictureUriInDB = " + pictureUriInDB);
 
                 		// check if pictureUri has scheme
-                		if(Util.isUriExisted(pictureUriInDB, act) ||
-                           Util.isUriExisted(drawingUriInDB, act)	)
-                		{
-	                		if(Uri.parse(pictureUriInDB).isAbsolute())
+		                //todo need the following?
+//                		if(Util.isUriExisted(pictureUriInDB, act) ||
+//                         Util.isUriExisted(drawingUriInDB, act)	)
+//                		{
+	                		if(Uri.parse(pictureUriInDB).isAbsolute())//||
 	                		{
 //	                			int style =  Util.getCurrentPageStyle(TabsHost.getFocus_tabPos());
 	                			new UtilImage_bitmapLoader(enlargedImage,
@@ -179,6 +180,7 @@ public class Note_edit_ui {
 //                                                            UilCommon.optionsForRounded_dark),
                                                            UilCommon.optionsForFadeIn,
                                                            act);
+				                enlargedImage.setVisibility(View.VISIBLE);
 	                			bShowEnlargedImage = true;
 	                		}
                             else if(Uri.parse(drawingUriInDB).isAbsolute())
@@ -198,9 +200,9 @@ public class Note_edit_ui {
 	                		{
 	                			System.out.println("pictureUriInDB is not Uri format");
 	                		}
-                		}
-                		else
-                			Toast.makeText(act,R.string.file_not_found,Toast.LENGTH_SHORT).show();
+//                		}
+//                		else
+//                			Toast.makeText(act,R.string.file_not_found,Toast.LENGTH_SHORT).show();
                 	}
                 	else
             			Toast.makeText(act,R.string.file_is_not_created,Toast.LENGTH_SHORT).show();

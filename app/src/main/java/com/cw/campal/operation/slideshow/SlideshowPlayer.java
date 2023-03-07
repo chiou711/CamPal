@@ -236,6 +236,7 @@ public class SlideshowPlayer extends FragmentActivity
 			// check if Uri exists
 			boolean uriOK;
 			String path = viewHolder.imagePath;
+			//todo Add new check of Uri
 			if (UtilImage.hasImageExtension(path, SlideshowPlayer.this))
 				uriOK = Util.isUriExisted(path, SlideshowPlayer.this);
 			else

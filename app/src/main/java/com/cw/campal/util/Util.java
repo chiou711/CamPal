@@ -134,6 +134,8 @@ public class Util
 	public static final int PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO = 12;
 	public static final int PERMISSIONS_REQUEST_STORAGE = 13;
 
+	public static final int STORAGE_MANAGER_PERMISSION = 98;
+
 	public Util(){}
     
 	public Util(AppCompatActivity activity) {
@@ -689,8 +691,8 @@ public class Util
 	        }
 	        catch (Exception e)
 	        {
-	        	Toast toast = Toast.makeText(activity, "Uri is not accessible", Toast.LENGTH_SHORT);
-				toast.show();
+//	        	Toast toast = Toast.makeText(activity, "Uri is not accessible", Toast.LENGTH_SHORT);
+//				toast.show();
 	        }
 	        
             if((cursor != null) && cursor.moveToFirst()) //reset the cursor
@@ -1387,7 +1389,7 @@ public class Util
 	// Get picture path on activity result
 	public static String getPicturePathOnActivityResult(Activity act, Intent returnedIntent){
 		Uri selectedUri = returnedIntent.getData();
-		System.out.println("Note_edit / _onActivityResult / selectedUri = " + selectedUri.toString());
+		System.out.println("Util / _getPicturePathOnActivityResult / selectedUri = " + selectedUri.toString());
 
 		// SAF support, take persistent Uri permission
 		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
@@ -1440,6 +1442,23 @@ public class Util
 		return pictureUri;
 	}
 
-	public static final int STORAGE_MANAGER_PERMISSION = 98;
+	// get Google drive file ID
+	// original:
+	//      https://drive.google.com/file/d/1rMrKggOn3KcnuBRlhPjR-WsH0mWnAM-o/view?usp=drivesdk
+	// download path:
+	//      https://drive.google.com/uc?export=download&id=1rMrKggOn3KcnuBRlhPjR-WsH0mWnAM-o
+	public static String getGDriveFileId(String originalUri){
+		// remove view?usp=drivesdk
+		String last = originalUri.substring(originalUri.lastIndexOf('/')+1);
+		originalUri = originalUri.replace(last,"");
+		System.out.println("--------->　originalUri 2 "+ originalUri);
+		// remove /
+		originalUri = originalUri.substring(0,originalUri.length()-1);
+		System.out.println("--------->　originalUri 3 "+ originalUri);
+		// get ID
+		String id = originalUri.substring(originalUri.lastIndexOf('/')+1);
+		System.out.println("--------->　id = "+ id);
+		return id;
+	}
 
 }
