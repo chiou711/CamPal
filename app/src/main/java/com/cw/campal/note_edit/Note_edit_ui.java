@@ -21,7 +21,6 @@ import com.cw.campal.main.MainAct;
 import com.cw.campal.R;
 import com.cw.campal.db.DB_page;
 import com.cw.campal.tabs.TabsHost;
-import com.cw.campal.util.drawing.Note_drawingAct;
 import com.cw.campal.util.image.TouchImageView;
 import com.cw.campal.util.image.UtilImage_bitmapLoader;
 import com.cw.campal.util.ColorSet;
@@ -34,13 +33,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,21 +46,15 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class Note_edit_ui {
-
-
 	private ImageView picImageView;
 	private String pictureUriInDB;
-	private String drawingUriInDB;
 	String oriPictureUri;
 	String currPictureUri;
 
-	private String oriDrawingUri;
-
 	private EditText titleEditText;
 	private Button newTitleButton;
-	private EditText bodyEditText;
+	private EditText pictureUriEditText;
 	private String oriTitle;
-	private String oriBody;
 
 	private Long noteId;
 	private Long oriCreatedTime;
@@ -80,15 +70,13 @@ public class Note_edit_ui {
 	private ProgressBar progressBarExpand;
 	private TouchImageView enlargedImage;
 
-	Note_edit_ui(Activity act, DB_page _db, Long noteId, String strTitle, String pictureUri, String drawingUri, String strBody, Long createdTime)
+	Note_edit_ui(Activity act, DB_page _db, Long noteId, String strTitle, String pictureUri, Long createdTime)
     {
     	this.act = act;
     	this.noteId = noteId;
     			
     	oriTitle = strTitle;
-	    oriBody = strBody;
 	    oriPictureUri = pictureUri;
-	    oriDrawingUri = drawingUri;
 
 	    oriCreatedTime = createdTime;
 	    currPictureUri = pictureUri;
@@ -158,8 +146,7 @@ public class Note_edit_ui {
             			imm.hideSoftInputFromWindow(act.getCurrentFocus().getWindowToken(), 0);
 
                 	System.out.println("Note_edit_ui / pictureUriInDB = " + pictureUriInDB);
-                	if( (!Util.isEmptyString(pictureUriInDB)) ||
-						(!Util.isEmptyString(drawingUriInDB))   )
+                	if( (!Util.isEmptyString(pictureUriInDB)) )
                 	{
                 		bRemovePictureUri = false;
                 		System.out.println("picImageView.setOnClickListener / pictureUriInDB = " + pictureUriInDB);
@@ -183,19 +170,6 @@ public class Note_edit_ui {
 				                enlargedImage.setVisibility(View.VISIBLE);
 	                			bShowEnlargedImage = true;
 	                		}
-                            else if(Uri.parse(drawingUriInDB).isAbsolute())
-                            {
-//	                			int style =  Util.getCurrentPageStyle(TabsHost.getFocus_tabPos());
-                                new UtilImage_bitmapLoader(enlargedImage,
-                                        drawingUriInDB,
-                                        progressBarExpand,
-//	                					                   (style % 2 == 1 ?
-//                                                            UilCommon.optionsForRounded_light:
-//                                                            UilCommon.optionsForRounded_dark),
-                                        UilCommon.optionsForFadeIn,
-                                        act);
-                                bShowEnlargedImage = true;
-                            }
 	                		else
 	                		{
 	                			System.out.println("pictureUriInDB is not Uri format");
@@ -219,13 +193,13 @@ public class Note_edit_ui {
             	if(bEditPicture) {
 					if(!Util.isEmptyString(pictureUriInDB) )
 						openSetPictureDialog();
-					else if(!Util.isEmptyString(drawingUriInDB))
-					{
-						Intent i = new Intent(act, Note_drawingAct.class);
-						i.putExtra("drawing_id",noteId);
-						i.putExtra("drawing_mode",Util.DRAWING_EDIT);
-						act.startActivityForResult(i,Util.DRAWING_EDIT);
-					}
+//					else if(!Util.isEmptyString(drawingUriInDB))
+//					{
+//						Intent i = new Intent(act, Note_drawingAct.class);
+//						i.putExtra("drawing_id",noteId);
+//						i.putExtra("drawing_mode",Util.DRAWING_EDIT);
+//						act.startActivityForResult(i,Util.DRAWING_EDIT);
+//					}
 				}
                 return false;
             }
@@ -243,15 +217,15 @@ public class Note_edit_ui {
 			block.setBackgroundColor(ColorSet.mBG_ColorArray[style]);
 
 		titleEditText = (EditText) act.findViewById(R.id.edit_title);
-		bodyEditText = (EditText) act.findViewById(R.id.edit_body);
+		pictureUriEditText = (EditText) act.findViewById(R.id.edit_body);
 
 		//set title color
 		titleEditText.setTextColor(ColorSet.mText_ColorArray[style]);
 		titleEditText.setBackgroundColor(ColorSet.mBG_ColorArray[style]);
 
 		//set body color
-		bodyEditText.setTextColor(ColorSet.mText_ColorArray[style]);
-		bodyEditText.setBackgroundColor(ColorSet.mBG_ColorArray[style]);
+		pictureUriEditText.setTextColor(ColorSet.mText_ColorArray[style]);
+		pictureUriEditText.setBackgroundColor(ColorSet.mBG_ColorArray[style]);
 	}
 
     // set image close listener
@@ -376,10 +350,10 @@ public class Note_edit_ui {
 			titleEditText.setText(strTitleEdit);
 			titleEditText.setSelection(strTitleEdit.length());
 
-			// body
-			String strBodyEdit = dB_page.getNoteBody_byId(rowId);
-			bodyEditText.setText(strBodyEdit);
-			bodyEditText.setSelection(strBodyEdit.length());
+			// picture Uri
+			String strPictureUriEdit = dB_page.getNotePictureUri_byId(rowId);
+			pictureUriEditText.setText(strPictureUriEdit);
+			pictureUriEditText.setSelection(strPictureUriEdit.length());
 		}
         else
         {
@@ -390,8 +364,8 @@ public class Note_edit_ui {
             titleEditText.requestFocus();
 
             // renew body
-            bodyEditText.setText(strBlank);
-            bodyEditText.setSelection(strBlank.length());
+            pictureUriEditText.setText(strBlank);
+            pictureUriEditText.setSelection(strBlank.length());
         }
 	}
 
@@ -404,19 +378,13 @@ public class Note_edit_ui {
 
     		// for picture block
 			pictureUriInDB = dB_page.getNotePictureUri_byId(rowId);
-			drawingUriInDB = dB_page.getNoteDrawingUri_byId(rowId);
 			System.out.println("populateFields_all / mPictureFileNameInDB = " + pictureUriInDB);
     		
 			// load bitmap to image view
-			if( (!Util.isEmptyString(pictureUriInDB)) || (!Util.isEmptyString(drawingUriInDB)) )
-			{
-				int style =  Util.getCurrentPageStyle(TabsHost.getFocus_tabPos());
-
+			if( (!Util.isEmptyString(pictureUriInDB)) ){
 				String thumbUri = "";
 				if(!Util.isEmptyString(pictureUriInDB) )
 					thumbUri = pictureUriInDB;
-				else if(!Util.isEmptyString(drawingUriInDB))
-					thumbUri = drawingUriInDB;
 
 				new UtilImage_bitmapLoader(picImageView,
 						                   thumbUri, progressBar,
@@ -436,7 +404,7 @@ public class Note_edit_ui {
 			// set listeners for closing image view 
 	    	if(!Util.isEmptyString(pictureUriInDB)){
 	    		setCloseImageListeners(titleEditText);
-	    		setCloseImageListeners(bodyEditText);
+	    		setCloseImageListeners(pictureUriEditText);
 	    	}			
         }
     }
@@ -451,11 +419,6 @@ public class Note_edit_ui {
     	return !oriPictureUri.equals(pictureUriInDB);
     }
 
-	private boolean isBodyModified()
-    {
-    	return !oriBody.equals(bodyEditText.getText().toString());
-    }
-
 	boolean isNoteModified()
     {
     	boolean bModified = false;
@@ -465,7 +428,6 @@ public class Note_edit_ui {
 //		System.out.println("Note_edit_ui / _isNoteModified / bRemovePictureUri = " + bRemovePictureUri);
     	if( isTitleModified() ||
     		isPictureModified() ||
-    		isBodyModified() ||
     		bRemovePictureUri )
     	{
     		bModified = true;
@@ -474,29 +436,27 @@ public class Note_edit_ui {
     	return bModified;
     }
 
-	Long saveStateInDB(Long rowId,boolean enSaveDb, String pictureUri, String drawingUri)
+	Long saveStateInDB(Long rowId,boolean enSaveDb)
 	{
     	String title = titleEditText.getText().toString();
-        String body = bodyEditText.getText().toString();
+        String pictureUri = pictureUriEditText.getText().toString();
 
         if(enSaveDb)
         {
 	        if (rowId == null) // for Add new
 	        {
 	        	if( (!Util.isEmptyString(title)) ||
-	        		(!Util.isEmptyString(body)) ||
 	        		(!Util.isEmptyString(pictureUri))       )
 	        	{
 	        		// insert
 	        		System.out.println("Note_edit_ui / _saveStateInDB / insert");
-	        		rowId = dB_page.insertNote(title, pictureUri, drawingUri, body, 0, (long) 0);// add new note, get return row Id
+	        		rowId = dB_page.insertNote(title, pictureUri, 0, (long) 0);// add new note, get return row Id
 	        	}
         		currPictureUri = pictureUri; // update file name
 	        }
 	        else // for Edit
 	        {
 	        	if( !Util.isEmptyString(title) ||
-	        		!Util.isEmptyString(body) ||
 	        		!Util.isEmptyString(pictureUri)  )
 	        	{
 	        		// update
@@ -504,9 +464,8 @@ public class Note_edit_ui {
 	        		{
 			        	System.out.println("Note_edit_ui / _saveStateInDB / update: roll back");
 	        			title = oriTitle;
-	        			body = oriBody;
 	        			Long time = oriCreatedTime;
-	        			dB_page.updateNote(rowId, title, pictureUri, drawingUri, body, oriMarking, time,true);
+	        			dB_page.updateNote(rowId, title, pictureUri, oriMarking, time,true);
 	        		}
 	        		else // update new
 	        		{
@@ -521,16 +480,13 @@ public class Note_edit_ui {
                             marking = oriMarking;
 
                         boolean isOK;
-	        			isOK = dB_page.updateNote(rowId, title, pictureUri, drawingUri, body,
-												marking, oriCreatedTime,true); // update note
+	        			isOK = dB_page.updateNote(rowId, title, pictureUri, marking, oriCreatedTime,true); // update note
 	        			System.out.println("--- isOK = " + isOK);
 	        		}
 	        		currPictureUri = pictureUri;
 	        	}
 	        	else if( Util.isEmptyString(title) &&
-	        			 Util.isEmptyString(body) &&
- 						 Util.isEmptyString(pictureUri) &&
-						 Util.isEmptyString(drawingUri)   )
+ 						 Util.isEmptyString(pictureUri)    )
 	        	{
 	        		// delete
 	        		System.out.println("Note_edit_ui / _saveStateInDB / delete");
@@ -548,21 +504,16 @@ public class Note_edit_ui {
     	dB_page.updateNote(rowId,
 				oriTitle,
     				   "",
-				oriDrawingUri,
-				oriBody,
 				oriMarking,
 				oriCreatedTime, true );
 	}
 
 	private void removePictureStringFromCurrentEditNote(Long rowId) {
         String title = titleEditText.getText().toString();
-        String body = bodyEditText.getText().toString();
-        
+
     	dB_page.updateNote(rowId,
     				   title,
     				   "",
-				oriDrawingUri,
-    				   body,
 				oriMarking,
 				oriCreatedTime, true );
 	}

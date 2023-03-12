@@ -1,4 +1,4 @@
-package com.cw.campal.util.drawing;
+package com.cw.campal.note_add.drawing;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -65,7 +65,7 @@ public class Note_drawingAct extends Activity
 
         if(getMode() == Util.DRAWING_EDIT) {
             id = extras.getLong("drawing_id");
-            drawingUriInDB = dB.getNoteDrawingUri_byId(id);
+            drawingUriInDB = dB.getNotePictureUri_byId(id);
             getActionBar().setTitle(R.string.edit_drawing);
         } else if(getMode() == Util.DRAWING_ADD) {
             drawingUriInDB = "";
@@ -240,7 +240,7 @@ public class Note_drawingAct extends Activity
                 // insert
                 // set marking to 1 for default
                 // init body string is uriStr
-                id = dB.insertNote(name, "",  uriStr, uriStr,  1, (long) 0);// add new note, get return row Id
+                id = dB.insertNote(name, uriStr,  1, (long) 0);// add new note, get return row Id
                 drawingUriInDB = uriStr;
             }
 
@@ -267,8 +267,6 @@ public class Note_drawingAct extends Activity
         dB.updateNote(id,
                 dB.getNoteTitle_byId(id),
                 dB.getNotePictureUri_byId(id),
-                drawingUriInDB,
-                dB.getNoteBody_byId(id),
                 dB.getNoteMarking_byId(id),
                 now.getTime(),
                 true);// add new note, get return row Id

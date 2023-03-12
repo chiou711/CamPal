@@ -64,12 +64,12 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.cw.campal.note_add.Note_addCameraImage"/>
-        <activity android:name="com.cw.campal.note_add.Note_addReadyImage"
+        <activity android:name="com.cw.campal.note_add.image.Note_addCameraImage"/>
+        <activity android:name="com.cw.campal.note_add.image.Note_addReadyImage"
                   android:theme="@style/MyTheme"/>
-        <activity android:name="com.cw.campal.note_add.Note_addCameraVideo"/>
-        <activity android:name="com.cw.campal.note_add.Note_addReadyVideo"/>
-        <activity android:name="com.cw.campal.util.drawing.Note_drawingAct" />
+        <activity android:name="com.cw.campal.note_add.video.Note_addCameraVideo"/>
+        <activity android:name="com.cw.campal.note_add.video.Note_addReadyVideo"/>
+        <activity android:name="com.cw.campal.note_add.drawing.Note_drawingAct" />
         <activity android:name="com.cw.campal.note_edit.Note_edit"
                   android:windowSoftInputMode="adjustPan"/>
         <activity android:name="com.cw.campal.note.Note"
@@ -84,8 +84,8 @@
              onPause/onSaveInstanceState/onStop/onDestroy/
                                                 onCreate/onStart/onRestoreInstanceState/onResume    -->
 
-        <activity android:name="com.cw.campal.operation.gallery.GalleryGridAct"/>
-        <activity android:name="com.cw.campal.operation.gallery.GalleryPagerAct"/>
+        <activity android:name="com.cw.campal.operation.gallery.LocalGalleryGridAct"/>
+        <activity android:name="com.cw.campal.operation.gallery.LocalGalleryPagerAct"/>
       	<activity android:name="com.cw.campal.operation.slideshow.SlideshowPlayer"
                   android:theme="@android:style/Theme.NoTitleBar"/>
 

@@ -167,32 +167,24 @@ public class Page_recycler extends Fragment implements OnStartDragListener {
         noteNumber1 = dB_page.getNoteId(startPosition,false);
         noteTitle1 = dB_page.getNoteTitle(startPosition,false);
         notePictureUri1 = dB_page.getNotePictureUri(startPosition,false);
-        noteDrawingUri1 = dB_page.getNoteDrawingUri(startPosition,false);
-        noteBodyString1 = dB_page.getNoteBody(startPosition,false);
         markingIndex1 = dB_page.getNoteMarking(startPosition,false);
         createTime1 = dB_page.getNoteCreatedTime(startPosition,false);
 
         noteNumber2 = dB_page.getNoteId(endPosition,false);
         noteTitle2 = dB_page.getNoteTitle(endPosition,false);
         notePictureUri2 = dB_page.getNotePictureUri(endPosition,false);
-        noteDrawingUri2 = dB_page.getNoteDrawingUri(endPosition,false);
-        noteBodyString2 = dB_page.getNoteBody(endPosition,false);
         markingIndex2 = dB_page.getNoteMarking(endPosition,false);
         createTime2 = dB_page.getNoteCreatedTime(endPosition,false);
 
         dB_page.updateNote(noteNumber2,
                 noteTitle1,
                 notePictureUri1,
-                noteDrawingUri1,
-                noteBodyString1,
                 markingIndex1,
                 createTime1,false);
 
         dB_page.updateNote(noteNumber1,
                 noteTitle2,
                 notePictureUri2,
-                noteDrawingUri2,
-                noteBodyString2,
                 markingIndex2,
                 createTime2,false);
 

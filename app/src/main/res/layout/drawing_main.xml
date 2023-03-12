@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.cw.campal.util.drawing.Note_drawingView
+<com.cw.campal.note_add.drawing.Note_drawingView
    xmlns:android="http://schemas.android.com/apk/res/android"
    android:id="@+id/doodleView"
    android:layout_width="match_parent"

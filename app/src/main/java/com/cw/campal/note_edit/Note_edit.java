@@ -45,7 +45,7 @@ public class Note_edit extends Activity
 {
 
     private Long noteId, createdTime;
-    private String title, picUriStr, drawingUri, cameraPictureUri, body;
+    private String title, picUriStr, cameraPictureUri;
     Note_edit_ui note_edit_ui;
     private boolean enSaveDb = true;
     boolean bUseCameraImage;
@@ -82,14 +82,12 @@ public class Note_edit extends Activity
     	position = extras.getInt("list_view_position");
     	noteId = extras.getLong(DB_page.KEY_NOTE_ID);
 		picUriStr = extras.getString(DB_page.KEY_NOTE_PICTURE_URI);
-		drawingUri = extras.getString(DB_page.KEY_NOTE_DRAWING_URI);
     	title = extras.getString(DB_page.KEY_NOTE_TITLE);
-    	body = extras.getString(DB_page.KEY_NOTE_BODY);
     	createdTime = extras.getLong(DB_page.KEY_NOTE_CREATED);
         
 
         //initialization
-        note_edit_ui = new Note_edit_ui(this, dB, noteId, title, picUriStr, drawingUri, body, createdTime);
+        note_edit_ui = new Note_edit_ui(this, dB, noteId, title, picUriStr, createdTime);
         note_edit_ui.UI_init();
         cameraPictureUri = "";
         bUseCameraImage = false;
@@ -101,7 +99,6 @@ public class Note_edit extends Activity
 	        {
 	        	picUriStr = dB.getNotePictureUri_byId(noteId);
 				note_edit_ui.currPictureUri = picUriStr;
-				drawingUri = dB.getNoteDrawingUri_byId(noteId);
 	        }
         }
         
@@ -244,7 +241,7 @@ public class Note_edit extends Activity
         
         System.out.println("Note_edit / onPause / enSaveDb = " + enSaveDb);
         System.out.println("Note_edit / onPause / picUriStr = " + picUriStr);
-        noteId = note_edit_ui.saveStateInDB(noteId, enSaveDb, picUriStr, drawingUri);
+        noteId = note_edit_ui.saveStateInDB(noteId, enSaveDb);
     }
 
     // for Rotate screen
@@ -270,7 +267,7 @@ public class Note_edit extends Activity
         	outState.putString("showCameraImageUri", "");
         }
         
-        noteId = note_edit_ui.saveStateInDB(noteId, enSaveDb, picUriStr, drawingUri);
+        noteId = note_edit_ui.saveStateInDB(noteId, enSaveDb);
         outState.putSerializable(DB_page.KEY_NOTE_ID, noteId);
         
     }
@@ -410,7 +407,7 @@ public class Note_edit extends Activity
 				if(!Util.isEmptyString(cameraPictureUri))
 				{
 					// update
-					note_edit_ui.saveStateInDB(noteId, enSaveDb, cameraPictureUri, "");// replace with existing picture
+					note_edit_ui.saveStateInDB(noteId, enSaveDb);// replace with existing picture
 					note_edit_ui.populateFields_all(noteId);
 		            
 					// set for Rotate any times
@@ -428,7 +425,7 @@ public class Note_edit extends Activity
 				}
 				
 				enSaveDb = true;
-				note_edit_ui.saveStateInDB(noteId, enSaveDb, picUriStr, drawingUri);
+				note_edit_ui.saveStateInDB(noteId, enSaveDb) ;
 				note_edit_ui.populateFields_all(noteId);
 			}
 		}
@@ -439,7 +436,7 @@ public class Note_edit extends Activity
 			String pictureUri = Util.getPicturePathOnActivityResult(this,returnedIntent);
         	System.out.println("Note_edit / _onActivityResult / picUri = " + pictureUri);
         	
-        	noteId = note_edit_ui.saveStateInDB(noteId,true,pictureUri, drawingUri);
+        	noteId = note_edit_ui.saveStateInDB(noteId,true);
 
 			note_edit_ui.populateFields_all(noteId);
 			

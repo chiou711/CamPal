@@ -49,7 +49,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
 
-public class GalleryGridAct extends Activity 
+public class LocalGalleryGridAct extends Activity
 {
 	String IMAGES = "IMAGES";
 	String IMAGE_POSITION = "IMAGE_POSITION";		
@@ -86,7 +86,7 @@ public class GalleryGridAct extends Activity
 		}
 		else
 		{
-			Toast.makeText(GalleryGridAct.this,R.string.gallery_toast_no_file,Toast.LENGTH_SHORT).show();
+			Toast.makeText(LocalGalleryGridAct.this,R.string.gallery_toast_no_file,Toast.LENGTH_SHORT).show();
 			finish();
 		}
 		
@@ -117,7 +117,7 @@ public class GalleryGridAct extends Activity
     {
         if(files == null)
         {
-        	Toast.makeText(GalleryGridAct.this,R.string.gallery_toast_no_file,Toast.LENGTH_SHORT).show();
+        	Toast.makeText(LocalGalleryGridAct.this,R.string.gallery_toast_no_file,Toast.LENGTH_SHORT).show();
         	finish();
         }
         else
@@ -160,7 +160,7 @@ public class GalleryGridAct extends Activity
 
 	private void startImagePagerActivity(int position) 
 	{
-		Intent intent = new Intent(this, GalleryPagerAct.class);
+		Intent intent = new Intent(this, LocalGalleryPagerAct.class);
 		intent.putExtra(IMAGES, mImageUrls);
 		intent.putExtra(IMAGE_POSITION, position);
 		startActivity(intent);

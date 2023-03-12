@@ -111,7 +111,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
 
 
         String strTitle = db_page.getNoteTitle(position,true);
-        String strBody = db_page.getNoteBody(position,true);
 
         // View mode
     	// picture only
@@ -133,8 +132,7 @@ public class Note_adapter extends FragmentStatePagerAdapter
 	  		line_view.setVisibility(View.VISIBLE);
 	  		textGroup.setVisibility(View.VISIBLE);
 
-	  	    if(!Util.isEmptyString(strTitle)||
-	 	  	   !Util.isEmptyString(strBody)    )
+	  	    if(!Util.isEmptyString(strTitle) )
 	  	    {
 	  	    	showTextView(position,textView);
 	  	    }
@@ -152,8 +150,7 @@ public class Note_adapter extends FragmentStatePagerAdapter
 	  	    textGroup.setVisibility(View.VISIBLE);
 
 			// text
-	  	    if( !Util.isEmptyString(strTitle)||
-	  	       	!Util.isEmptyString(strBody)  )
+	  	    if( !Util.isEmptyString(strTitle)  )
 	  	    {
 	  	    	showTextView(position,textView);
 	  	    }
@@ -183,9 +180,9 @@ public class Note_adapter extends FragmentStatePagerAdapter
     // show text view
     private void showTextView(int position, TextView textView){
     	System.out.println("Note_adapter/ _showTextView / position = " + position);
-	    String strBody = db_page.getNoteBody(position,true);
-	    Long createTime = db_page.getNoteCreatedTime(position,true);
-	    String textStr = strBody+"\n\n"+Util.getTimeString(createTime);
+//	    Long createTime = db_page.getNoteCreatedTime(position,true);
+	    String textStr = db_page.getNotePictureUri(position,true);
+//	    String textStr = "\n\n"+Util.getTimeString(createTime);
 	    textView.setText(textStr);
     }
     
@@ -196,11 +193,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
     		             ProgressBar spinner          )
     {
 		String pictureUri = db_page.getNotePictureUri(position,true);
-		String drawingUri = db_page.getNoteDrawingUri(position,true);
-
-    	// Check if Uri is for drawing
-		if(UtilImage.hasImageExtension(drawingUri, act))
-			pictureUri = drawingUri;
 
         // show image view
   		if( UtilImage.hasImageExtension(pictureUri, act)||
@@ -257,33 +249,24 @@ public class Note_adapter extends FragmentStatePagerAdapter
 			System.out.println("Note_adapter / _setPrimaryItem / mLastPosition = " + mLastPosition);
             System.out.println("Note_adapter / _setPrimaryItem / position = " + position);
 
-			String lastPictureStr = null;
-
-			if(mLastPosition != -1)
-				lastPictureStr = db_page.getNotePictureUri(mLastPosition,true);
+//			String lastPictureStr = null;
+//
+//			if(mLastPosition != -1)
+//				lastPictureStr = db_page.getNotePictureUri(mLastPosition,true);
 
 			String pictureStr = db_page.getNotePictureUri(position,true);
-			String drawingUri = db_page.getNoteDrawingUri(position,true);;
-
-			// check drawing URI
-			if(!Util.isEmptyString(drawingUri))
-				pictureStr = drawingUri;
 
 			// for video view
-			if (!Note.isTextMode() )
-			{
-
+			if (!Note.isTextMode() ){
 				// stop last video view running
-				if (mLastPosition != -1)
-				{
+				if (mLastPosition != -1){
 					String tagVideoStr = "current" + mLastPosition + "videoView";
 					VideoViewCustom lastVideoView = (VideoViewCustom) pager.findViewWithTag(tagVideoStr);
 					lastVideoView.stopPlayback();
 				}
 
                 // Show picture view UI
-				if (Note.isViewAllMode() || Note.isPictureMode() )
-                {
+				if (Note.isViewAllMode() || Note.isPictureMode() ){
 					NoteUi.cancel_UI_callbacks();
 					picUI_primary = new NoteUi(act, pager, position);
 					picUI_primary.tempShow_picViewUI(5002, pictureStr);
@@ -291,22 +274,18 @@ public class Note_adapter extends FragmentStatePagerAdapter
 
 				// Set video view
 				if ( UtilVideo.hasVideoExtension(pictureStr, act) &&
-					 !UtilImage.hasImageExtension(pictureStr, act)   )
-				{
+					 !UtilImage.hasImageExtension(pictureStr, act)   ){
 					// update current pager view
 					UtilVideo.mCurrentPagerView = (View) object;
 
 					// for view mode change
-					if (Note.mIsViewModeChanged && (Note.mPlayVideoPositionOfInstance == 0) )
-					{
+					if (Note.mIsViewModeChanged && (Note.mPlayVideoPositionOfInstance == 0) ){
 						UtilVideo.mPlayVideoPosition = Note.mPositionOfChangeView;
 						UtilVideo.setVideoViewLayout(pictureStr);
 
 						if (UtilVideo.mPlayVideoPosition > 0)
 							UtilVideo.playOrPauseVideo(pager,pictureStr);
-					}
-					else
-					{
+					}else{
 						// for key protect
 						if (Note.mPlayVideoPositionOfInstance > 0)
 						{
@@ -319,9 +298,7 @@ public class Note_adapter extends FragmentStatePagerAdapter
                             }
 
 							UtilVideo.playOrPauseVideo(pager,pictureStr);
-						}
-						else
-						{
+						}else{
 							if (UtilVideo.hasMediaControlWidget)
 								UtilVideo.setVideoState(UtilVideo.VIDEO_AT_PLAY);
 							else

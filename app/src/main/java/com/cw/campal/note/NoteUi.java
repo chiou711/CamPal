@@ -81,12 +81,7 @@ public class NoteUi
 	    DB_page db_page = new DB_page(act,TabsHost.getCurrentPageTableId());
         setNotesCnt(db_page.getNotesCount(true));
         String pictureUri = db_page.getNotePictureUri(position,true);
-	    String drawingUri = db_page.getNoteDrawingUri(position,true);
 		String title = db_page.getNoteTitle(position,true);
-
-		// replacement if drawing URI exists
-		if(!Util.isEmptyString(drawingUri))
-			pictureUri = drawingUri;
 
         String tagStr = "current"+ position +"pictureView";
         ViewGroup pictureGroup = (ViewGroup) pager.findViewWithTag(tagStr);

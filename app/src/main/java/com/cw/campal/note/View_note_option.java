@@ -135,10 +135,6 @@ public class View_note_option {
                 // picture first priority
                 String picFile = dB_page.getNotePictureUri_byId(noteId);
 
-				// then drawing
-				if(Util.isEmptyString(picFile))
-                    picFile = dB_page.getNoteDrawingUri_byId(noteId);
-
                 // match with name="external"
                 // example: picFile = /storage/emulated/0/DCIM/CamPal/IMG_20230219_163519_520.jpg
                 picFile = picFile.replace("file://","");

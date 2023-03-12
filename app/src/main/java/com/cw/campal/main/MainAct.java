@@ -41,7 +41,7 @@ import com.cw.campal.page.PageUi;
 import com.cw.campal.tabs.TabsHost;
 import com.cw.campal.util.DeleteFileAlarmReceiver;
 import com.cw.campal.db.DB_drawer;
-import com.cw.campal.operation.gallery.GalleryGridAct;
+import com.cw.campal.operation.gallery.LocalGalleryGridAct;
 import com.cw.campal.operation.slideshow.SlideshowInfo;
 import com.cw.campal.operation.slideshow.SlideshowPlayer;
 import com.cw.campal.util.image.UtilImage;
@@ -1136,18 +1136,10 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
                     if(dB_page.getNoteMarking(position,false) == 1)
                     {
                         String pictureUri = dB_page.getNotePictureUri(position,false);
-                        String drawingUri = dB_page.getNoteDrawingUri(position,false);
-
-                        // replace picture path
-                        if(UtilImage.hasImageExtension(drawingUri,this))
-                            pictureUri = drawingUri;
 
                         String title = dB_folder.getCurrentPageTitle();
                         title = title.concat(" " + "(" + (position+1) + "/" + count + ")");
                         String text = dB_page.getNoteTitle(position,false);
-
-                        if(!Util.isEmptyString(dB_page.getNoteBody(position,false)))
-                            text += " : " + dB_page.getNoteBody(position,false);
 
                         if( (!Util.isEmptyString(pictureUri) && UtilImage.hasImageExtension(pictureUri,this)) ||
                             !(Util.isEmptyString(text)) 														) // skip empty
@@ -1169,7 +1161,7 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
                 return true;
 
             case MenuId.GALLERY:
-                Intent i_browsePic = new Intent(this, GalleryGridAct.class);
+                Intent i_browsePic = new Intent(this, LocalGalleryGridAct.class);
                 startActivity(i_browsePic);
                 return true;
 

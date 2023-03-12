@@ -23,7 +23,6 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import com.cw.campal.db.DB_drawer;
-import com.cw.campal.main.MainAct;
 import com.cw.campal.db.DB_folder;
 import com.cw.campal.db.DB_page;
 import com.cw.campal.tabs.TabsHost;
@@ -35,7 +34,7 @@ import android.util.Xml;
 
 public class ParseXmlToDB {
 
-    private String pageName,title,body,picture;
+    private String pageName,title,picture;
     private DB_folder mDb_folder;
     private DB_page mDb_page;
 
@@ -64,11 +63,6 @@ public class ParseXmlToDB {
     public String getTitle()
     {
     return title;
-    }
-
-    public String getBody()
-    {
-    return body;
     }
 
     public String getPicture()
@@ -201,32 +195,24 @@ public class ParseXmlToDB {
                             text = text.replace("[s]"," ");
                             title = text.trim();
                        }
-                       else if(name.equals("body"))
-                       {
-                            body = text.trim();
-                       }
                        else if(name.equals("picture"))
                        {
                             picture = text.trim();
                             picture = Util.getDefaultExternalStoragePath(picture);
 
-                           // init body string is pictureUri
-                            body = picture;
-
                            if(mEnableInsertDB)
                            {
                                DB_page.setFocusPage_tableId(TabsHost.getLastPageTableId());
-                               if(title.length() !=0 || body.length() != 0 || picture.length() !=0 )
+                               if(title.length() !=0 || picture.length() !=0 )
                                {
                                    if((!Util.isEmptyString(picture)) )
-                                       mDb_page.insertNote(title, picture,  "",  body,1, (long) 0); // add mark for media
+                                       mDb_page.insertNote(title, picture,  1, (long) 0); // add mark for media
                                    else
-                                       mDb_page.insertNote(title, picture,  "",  body,0, (long) 0);
+                                       mDb_page.insertNote(title, picture, 0, (long) 0);
                                }
                            }
                            fileBody = fileBody.concat(Util.NEW_LINE + strSplitter);
                            fileBody = fileBody.concat(Util.NEW_LINE + "title:" + " " + title);
-                           fileBody = fileBody.concat(Util.NEW_LINE + "body:" + " " + body);
                            fileBody = fileBody.concat(Util.NEW_LINE + "picture:" + " " + picture);
                            fileBody = fileBody.concat(Util.NEW_LINE);
                        }

@@ -233,8 +233,6 @@ public class Note extends AppCompatActivity
 				intent.putExtra(DB_page.KEY_NOTE_ID, mNoteId);
 				intent.putExtra(DB_page.KEY_NOTE_TITLE, mDb_page.getNoteTitle_byId(mNoteId));
 				intent.putExtra(DB_page.KEY_NOTE_PICTURE_URI , mDb_page.getNotePictureUri_byId(mNoteId));
-				intent.putExtra(DB_page.KEY_NOTE_DRAWING_URI , mDb_page.getNoteDrawingUri_byId(mNoteId));
-				intent.putExtra(DB_page.KEY_NOTE_BODY, mDb_page.getNoteBody_byId(mNoteId));
 				intent.putExtra(DB_page.KEY_NOTE_CREATED, mDb_page.getNoteCreatedTime_byId(mNoteId));
 				startActivityForResult(intent, EDIT_CURRENT_VIEW);
 			}

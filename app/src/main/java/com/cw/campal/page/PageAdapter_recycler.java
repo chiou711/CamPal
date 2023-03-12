@@ -51,9 +51,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static com.cw.campal.db.DB_page.KEY_NOTE_BODY;
 import static com.cw.campal.db.DB_page.KEY_NOTE_CREATED;
-import static com.cw.campal.db.DB_page.KEY_NOTE_DRAWING_URI;
 import static com.cw.campal.db.DB_page.KEY_NOTE_MARKING;
 import static com.cw.campal.db.DB_page.KEY_NOTE_PICTURE_URI;
 import static com.cw.campal.db.DB_page.KEY_NOTE_TITLE;
@@ -175,9 +173,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 	    cursor = mDb_page.mCursor_note;
         if(cursor.moveToPosition(position)) {
             strTitle = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_TITLE));
-            strBody = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_BODY));
             pictureUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_PICTURE_URI));
-            drawingUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_DRAWING_URI));
             marking = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_NOTE_MARKING));
             timeCreated = cursor.getLong(cursor.getColumnIndex(KEY_NOTE_CREATED));
         }
@@ -334,8 +330,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
                 i.putExtra(DB_page.KEY_NOTE_ID, rowId);
                 i.putExtra(DB_page.KEY_NOTE_TITLE, db_page.getNoteTitle_byId(rowId));
                 i.putExtra(DB_page.KEY_NOTE_PICTURE_URI , db_page.getNotePictureUri_byId(rowId));
-                i.putExtra(DB_page.KEY_NOTE_DRAWING_URI , db_page.getNoteDrawingUri_byId(rowId));
-                i.putExtra(DB_page.KEY_NOTE_BODY, db_page.getNoteBody_byId(rowId));
                 i.putExtra(DB_page.KEY_NOTE_CREATED, db_page.getNoteCreatedTime_byId(rowId));
                 mAct.startActivity(i);
             }
@@ -384,17 +378,15 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
         String strNote = db_page.getNoteTitle(position,false);
         String strPictureUri = db_page.getNotePictureUri(position,false);
-        String strDrawingUri = db_page.getNoteDrawingUri(position,false);
-        String strNoteBody = db_page.getNoteBody(position,false);
         Long idNote =  db_page.getNoteId(position,false);
 		Long time = db_page.getNoteCreatedTime(position,false);
 
         // toggle the marking
         if(db_page.getNoteMarking(position,false) == 0){
-            db_page.updateNote(idNote, strNote, strPictureUri, strDrawingUri, strNoteBody, 1, time, false);
+            db_page.updateNote(idNote, strNote, strPictureUri,1, time, false);
             marking = 1;
         }else{
-            db_page.updateNote(idNote, strNote, strPictureUri, strDrawingUri, strNoteBody, 0, time, false);
+            db_page.updateNote(idNote, strNote, strPictureUri, 0, time, false);
             marking = 0;
         }
         db_page.close();

@@ -3,11 +3,11 @@
 
     <folder>
         <folder_name>Sample</folder_name>
+
     <page>
         <page_name>Photo</page_name>
         <note>
             <title>[n]local image file</title>
-            <body></body>
             <picture>file:///storage/emulated/0/Android/data/com.cw.campal/files/Documents/local.jpg</picture>
         </note>
     </page>
@@ -16,7 +16,6 @@
     <page_name>Video</page_name>
         <note>
             <title>[s]local video file</title>
-            <body></body>
             <picture>file:///storage/emulated/0/Android/data/com.cw.campal/files/Documents/local.mp4</picture>
         </note>
     </page>

@@ -36,7 +36,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-public class GalleryPagerAct extends Activity {
+public class LocalGalleryPagerAct extends Activity {
 
 	String STATE_POSITION = "STATE_POSITION";
 	String IMAGES = "IMAGES";
@@ -144,7 +144,7 @@ public class GalleryPagerAct extends Activity {
 							message = "Unknown error";
 							break;
 					}
-					Toast.makeText(GalleryPagerAct.this, message, Toast.LENGTH_SHORT).show();
+					Toast.makeText(LocalGalleryPagerAct.this, message, Toast.LENGTH_SHORT).show();
 					spinner.setVisibility(View.GONE);
 				}
 

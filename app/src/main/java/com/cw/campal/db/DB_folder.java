@@ -16,6 +16,7 @@
 
 package com.cw.campal.db;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -112,8 +113,6 @@ public class DB_folder
         							DB_page.KEY_NOTE_ID + " INTEGER PRIMARY KEY," +
 									DB_page.KEY_NOTE_TITLE + " TEXT," +
 									DB_page.KEY_NOTE_PICTURE_URI + " TEXT," +
-									DB_page.KEY_NOTE_DRAWING_URI + " TEXT," +
-									DB_page.KEY_NOTE_BODY + " TEXT," +
 									DB_page.KEY_NOTE_MARKING + " INTEGER," +
 									DB_page.KEY_NOTE_CREATED + " INTEGER);";
         mSqlDb.execSQL(dB_insert_table);
@@ -272,7 +271,7 @@ public class DB_folder
 
         if(mCursor_page.moveToPosition(position))
         {
-            int pageId = mCursor_page.getInt(mCursor_page.getColumnIndex(KEY_PAGE_ID));
+            @SuppressLint("Range") int pageId = mCursor_page.getInt(mCursor_page.getColumnIndex(KEY_PAGE_ID));
 //			System.out.println("DB_folder / _getPageId / pageId = " + pageId);
 
             if(enDbOpenClose)
@@ -314,7 +313,7 @@ public class DB_folder
 			this.open();
 
         mCursor_page.moveToPosition(position);
-        int id = mCursor_page.getInt(mCursor_page.getColumnIndex(KEY_PAGE_TABLE_ID));
+        @SuppressLint("Range") int id = mCursor_page.getInt(mCursor_page.getColumnIndex(KEY_PAGE_TABLE_ID));
 
         if(enDbOpenClose)
         	this.close();
@@ -328,7 +327,7 @@ public class DB_folder
 			this.open();
 
         mCursor_page.moveToPosition(position);
-        String title = mCursor_page.getString(mCursor_page.getColumnIndex(KEY_PAGE_TITLE));
+        @SuppressLint("Range") String title = mCursor_page.getString(mCursor_page.getColumnIndex(KEY_PAGE_TITLE));
 
         if(enDbOpenClose)
         	this.close();
@@ -336,6 +335,7 @@ public class DB_folder
         return title;
 	}
 
+	@SuppressLint("Range")
 	public int getPageStyle(int position, boolean enDbOpenClose)
 	{
 		int style = 0;

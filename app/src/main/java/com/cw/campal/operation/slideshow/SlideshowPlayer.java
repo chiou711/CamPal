@@ -20,6 +20,7 @@ import com.cw.campal.main.MainAct;
 import com.cw.campal.R;
 import com.cw.campal.note.Note;
 import com.cw.campal.util.image.UtilImage;
+import com.cw.campal.util.image.UtilImage_bitmapLoader;
 import com.cw.campal.util.uil.UilCommon;
 import com.cw.campal.util.Util;
 
@@ -28,6 +29,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
@@ -234,13 +236,15 @@ public class SlideshowPlayer extends FragmentActivity
 			System.out.println("SlideshowPlayer / _Runnable runSlideshow / currIndex = " + currIndex);
 
 			// check if Uri exists
-			boolean uriOK;
+			boolean uriOK = false;
 			String path = viewHolder.imagePath;
 			//todo Add new check of Uri
 			if (UtilImage.hasImageExtension(path, SlideshowPlayer.this))
-				uriOK = Util.isUriExisted(path, SlideshowPlayer.this);
-			else
-				uriOK = false;
+//				uriOK = Util.isUriExisted(path, SlideshowPlayer.this);
+//			else
+//				uriOK = false;
+				uriOK = true;
+			
 			System.out.println("SlideshowPlayer / _Runnable runSlideshow / uriOK = " + uriOK);
 
 			String text = viewHolder.text;
@@ -320,6 +324,10 @@ public class SlideshowPlayer extends FragmentActivity
 		SlideshowInfo.ViewHolder holder = showInfo.getShowItem(slideIndex);
 		String path = holder.imagePath;
 
+		// make Slide works for No "file://" prefix
+//		if(path.startsWith("/"))
+//			path = "file://".concat(path);
+
 		// title
 		titleView = (TextView) findViewById(R.id.show_title);
 		if (!Util.isEmptyString(holder.title)) {
@@ -334,10 +342,26 @@ public class SlideshowPlayer extends FragmentActivity
 		else
 		{
 			imageView.setVisibility(View.VISIBLE);
-			UilCommon.imageLoader.displayImage(path,
-					imageView,
-					UilCommon.optionsForFadeIn,
-					UilCommon.animateFirstListener);
+
+//			UilCommon.imageLoader.displayImage(path,
+//					imageView,
+//					UilCommon.optionsForFadeIn,
+//					UilCommon.animateFirstListener);
+
+
+			// load bitmap to image view
+			try{
+				new UtilImage_bitmapLoader(imageView,
+						path,
+						null,
+						null,
+						this);
+			}
+			catch(Exception e){
+				Log.e("PageAdapter_recycler", "UtilImage_bitmapLoader error");
+				imageView.setVisibility(View.GONE);
+				imageView.setVisibility(View.GONE);
+			}
 		}
 
         // text

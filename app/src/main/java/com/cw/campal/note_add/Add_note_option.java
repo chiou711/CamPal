@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -33,8 +32,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cw.campal.R;
+import com.cw.campal.note_add.image.Note_addCameraImage;
+import com.cw.campal.note_add.image.Note_addReadyImage;
+import com.cw.campal.note_add.video.Note_addCameraVideo;
+import com.cw.campal.note_add.video.Note_addReadyVideo;
 import com.cw.campal.util.Util;
-import com.cw.campal.util.drawing.Note_drawingAct;
+import com.cw.campal.note_add.drawing.Note_drawingAct;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -173,18 +176,6 @@ public class Add_note_option {
         boolean bDirectory = mPref_add_new_note_location.getString("KEY_ADD_DIRECTORY","no").equalsIgnoreCase("yes");
 
         switch (option) {
-//            case ID_NEW_TEXT:
-//            {
-//                Intent intent = new Intent(act, Note_addText.class);
-//                if(bTop)
-//                    intent.putExtra("extra_ADD_NEW_TO_TOP", "true");
-//                else
-//                    intent.putExtra("extra_ADD_NEW_TO_TOP", "false");
-//
-//                act.startActivity(intent);
-//            }
-//            break;
-
             case ID_NEW_CAMERA_IMAGE:
             {
                 Intent intent = new Intent(act, Note_addCameraImage.class);
@@ -276,7 +267,7 @@ public class Add_note_option {
 
 
     /**
-     * Created by cw on 2017/10/7.
+     * Grid Icon Adapter for showing optional items
      */
     static class GridIconAdapter extends BaseAdapter {
         private AppCompatActivity act;

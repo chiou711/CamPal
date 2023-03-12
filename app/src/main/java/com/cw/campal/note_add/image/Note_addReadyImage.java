@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cw.campal.note_add;
+package com.cw.campal.note_add.image;
 
 import java.io.File;
 
@@ -225,7 +225,7 @@ public class Note_addReadyImage extends AppCompatActivity {
 				String name = Util.getDisplayNameByUriString(pictureUri, this);
 				System.out.println("Note_addReadyImage / _savePictureStateInDB / insert");
 				// init body string is pictureUri
-				rowId = dB_page.insertNote(name, pictureUri, "", pictureUri, 1, (long) 0);// add new note, get return row Id
+				rowId = dB_page.insertNote(name, pictureUri, 1, (long) 0);// add new note, get return row Id
 			}
 		}
 		return rowId;

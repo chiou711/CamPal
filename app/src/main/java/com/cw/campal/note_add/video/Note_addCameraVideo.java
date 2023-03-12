@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cw.campal.note_add;
+package com.cw.campal.note_add.video;
 
 import java.io.File;
 import java.io.IOException;
@@ -485,7 +485,7 @@ public class Note_addCameraVideo extends Activity {
 				String name = Util.getDisplayNameByUriString(pictureUri, this);
 				System.out.println("Note_addCameraVideo / _savePictureStateInDB / insert");
 				// init body string is pictureUri
-				rowId = dB_page.insertNote(name, pictureUri,  "", pictureUri,  1, (long) 0);// add new note, get return row Id
+				rowId = dB_page.insertNote(name, pictureUri,  1, (long) 0);// add new note, get return row Id
 			}
 		}
 		return rowId;

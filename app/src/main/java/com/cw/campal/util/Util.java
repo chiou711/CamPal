@@ -560,9 +560,6 @@ public class Util
                 String title = cursorNote.getString(cursorNote.getColumnIndexOrThrow(DB_page.KEY_NOTE_TITLE));
 				title = replaceEscapeCharacter(title);
 
-				String body = cursorNote.getString(cursorNote.getColumnIndexOrThrow(DB_page.KEY_NOTE_BODY));
-				body = replaceEscapeCharacter(body);
-
 				String picUrl = cursorNote.getString(cursorNote.getColumnIndexOrThrow(DB_page.KEY_NOTE_PICTURE_URI));
 				picUrl = replaceEscapeCharacter(picUrl);
 
@@ -579,7 +576,6 @@ public class Util
 
 				sentString = sentString.concat(NEW_LINE + NOTE_ITEM_TAG_B);
 				sentString = sentString.concat(NEW_LINE + TITLE_TAG_B + srtMark + title + TITLE_TAG_E);
-				sentString = sentString.concat(NEW_LINE + BODY_TAG_B + body + BODY_TAG_E);
 				sentString = sentString.concat(NEW_LINE + PICTURE_TAG_B + picUrl + PICTURE_TAG_E);
 				sentString = sentString.concat(NEW_LINE + NOTE_ITEM_TAG_E);
 				sentString = sentString.concat(NEW_LINE);

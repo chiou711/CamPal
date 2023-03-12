@@ -215,8 +215,6 @@ public class Checked_notes_option {
                         {
                             copyItemsTitle[cCopy] = mDb_page.getNoteTitle(i,false);
                             copyItemsPicture[cCopy] = mDb_page.getNotePictureUri(i,false);
-                            copyItemsDrawing[cCopy] = mDb_page.getNoteDrawingUri(i,false);
-                            copyItemsBody[cCopy] = mDb_page.getNoteBody(i,false);
                             copyItemsTime[cCopy] = mDb_page.getNoteCreatedTime(i,false);
                             cCopy++;
                         }
@@ -311,10 +309,8 @@ public class Checked_notes_option {
             Long rowId = mDb_page.getNoteId(i,false);
             String noteTitle = mDb_page.getNoteTitle(i,false);
             String pictureUri = mDb_page.getNotePictureUri(i,false);
-            String drawingUri = mDb_page.getNoteDrawingUri(i,false);
-            String noteBody = mDb_page.getNoteBody(i,false);
             Long time  = mDb_page.getNoteCreatedTime(i,false);
-            mDb_page.updateNote(rowId, noteTitle, pictureUri, drawingUri, noteBody , action, time,false);// action 1:check all, 0:uncheck all
+            mDb_page.updateNote(rowId, noteTitle, pictureUri, action, time,false);// action 1:check all, 0:uncheck all
         }
         mDb_page.close();
 
@@ -336,11 +332,9 @@ public class Checked_notes_option {
             Long rowId = mDb_page.getNoteId(i,false);
             String noteTitle = mDb_page.getNoteTitle(i,false);
             String pictureUri = mDb_page.getNotePictureUri(i,false);
-            String drawingUri = mDb_page.getNoteDrawingUri(i,false);
-            String noteBody = mDb_page.getNoteBody(i,false);
             long marking = (mDb_page.getNoteMarking(i,false)==1)?0:1;
             Long time  = mDb_page.getNoteCreatedTime(i,false);
-            mDb_page.updateNote(rowId, noteTitle, pictureUri, drawingUri, noteBody , marking, time,false);// action 1:check all, 0:uncheck all
+            mDb_page.updateNote(rowId, noteTitle, pictureUri,marking, time,false);// action 1:check all, 0:uncheck all
             // Stop if unmarked item is at playing state
         }
         mDb_page.close();
@@ -391,7 +385,7 @@ public class Checked_notes_option {
                 {
                     // move to same page is not allowed
                     if(!((action == MOVE_TO) && (srcPageTableId == destPageTableId)))
-                        mDb_page.insertNote(copyItemsTitle[i],copyItemsPicture[i], copyItemsDrawing[i], copyItemsBody[i],1, copyItemsTime[i]);
+                        mDb_page.insertNote(copyItemsTitle[i],copyItemsPicture[i],1, copyItemsTime[i]);
                 }
 
                 //recover table Id of original page
