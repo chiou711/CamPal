@@ -47,14 +47,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by cw on 2017/10/7.
+ * Modified on 2023/03/13
  */
-public class Add_note_option {
+public class Add_note {
     int option_id;
     int option_drawable_id;
     int option_string_id;
 
-    Add_note_option(int id, int draw_id, int string_id)
-    {
+    Add_note(int id, int draw_id, int string_id){
         this.option_id = id;
         this.option_drawable_id = draw_id;
         this.option_string_id = string_id;
@@ -65,7 +65,7 @@ public class Add_note_option {
      * 	Add new note
      *
      */
-    static List<Add_note_option> addNoteList;
+    static List<Add_note> addNoteList;
 
     private final static int ID_NEW_CAMERA_IMAGE = 1;
     private final static int ID_NEW_READY_IMAGE = 2;
@@ -76,8 +76,7 @@ public class Add_note_option {
     private final static int ID_NEW_SETTING = 7;
     private final static int ID_NEW_BACK = 8;
 
-    public static void createSelection(AppCompatActivity act, boolean permitted)
-    {
+    public static void createSelection(AppCompatActivity act, boolean permitted){
 
         System.out.println("Add_note_option / _createSelection");
         AbsListView gridView;
@@ -93,46 +92,46 @@ public class Add_note_option {
         if(permitted) {
             // camera image
             if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
-                addNoteList.add(new Add_note_option(ID_NEW_CAMERA_IMAGE,
+                addNoteList.add(new Add_note(ID_NEW_CAMERA_IMAGE,
                         android.R.drawable.ic_menu_camera,
                         R.string.note_camera_image));
             }
 
             // ready image
-            addNoteList.add(new Add_note_option(ID_NEW_READY_IMAGE,
+            addNoteList.add(new Add_note(ID_NEW_READY_IMAGE,
                     android.R.drawable.ic_menu_gallery,
                     R.string.note_ready_image));
 
             // camera video
             if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
-                addNoteList.add(new Add_note_option(ID_NEW_CAMERA_VIDEO,
+                addNoteList.add(new Add_note(ID_NEW_CAMERA_VIDEO,
                         android.R.drawable.presence_video_online,
                         R.string.note_camera_video));
             }
 
             // ready video
-            addNoteList.add(new Add_note_option(ID_NEW_READY_VIDEO,
+            addNoteList.add(new Add_note(ID_NEW_READY_VIDEO,
                     R.drawable.ic_ready_video,
                     R.string.note_ready_video));
 
             // drawing
-            addNoteList.add(new Add_note_option(ID_NEW_DRAWING,
+            addNoteList.add(new Add_note(ID_NEW_DRAWING,
                     R.drawable.ic_menu_draw,
                     R.string.note_drawing));
 
             // picture Uri
-            addNoteList.add(new Add_note_option(ID_NEW_PICTURE_URI,
+            addNoteList.add(new Add_note(ID_NEW_PICTURE_URI,
                     android.R.drawable.ic_menu_edit,
-                    R.string.edit_note_dlg_picture_uri));
+                    R.string.note_path));
         }
 
         // Setting
-        addNoteList.add(new Add_note_option(ID_NEW_SETTING,
+        addNoteList.add(new Add_note(ID_NEW_SETTING,
                 android.R.drawable.ic_menu_preferences,
                 R.string.settings));
 
         // Back
-        addNoteList.add(new Add_note_option(ID_NEW_BACK,
+        addNoteList.add(new Add_note(ID_NEW_BACK,
                 R.drawable.ic_menu_back,
                 R.string.btn_Cancel));
 
@@ -168,8 +167,7 @@ public class Add_note_option {
 
     private static AlertDialog dlgAddNew;
 
-    private static void startAddNoteOption(AppCompatActivity act, int option)
-    {
+    private static void startAddNoteOption(AppCompatActivity act, int option) {
         System.out.println("MainUi / _startAddNoteOption / option = " + option);
 
         SharedPreferences mPref_add_new_note_location = act.getSharedPreferences("add_new_note_option", 0);
@@ -247,7 +245,6 @@ public class Add_note_option {
             }
             break;
 
-            // picture Uri
             case ID_NEW_PICTURE_URI:
             {
                 Intent intent = new Intent(act, Note_addPictureUri.class);
@@ -268,7 +265,7 @@ public class Add_note_option {
 
             case ID_NEW_SETTING:
             {
-                new Note_addNew_option(act);
+                new Add_note_setting(act);
             }
             break;
 

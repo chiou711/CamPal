@@ -33,7 +33,7 @@ import com.cw.campal.db.DB_page;
 import com.cw.campal.drawer.Drawer;
 import com.cw.campal.folder.Folder;
 import com.cw.campal.folder.FolderUi;
-import com.cw.campal.note_add.Add_note_option;
+import com.cw.campal.note_add.Add_note;
 import com.cw.campal.operation.delete.DeleteFolders;
 import com.cw.campal.operation.delete.DeletePages;
 import com.cw.campal.page.Checked_notes_option;
@@ -1116,14 +1116,14 @@ public class MainAct extends AppCompatActivity implements FragmentManager.OnBack
                     // create selection list
                     if(Build.VERSION.SDK_INT >= 30) {
                         int permissionCamera = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-                        Add_note_option.createSelection(this, permissionCamera == PackageManager.PERMISSION_GRANTED);
+                        Add_note.createSelection(this, permissionCamera == PackageManager.PERMISSION_GRANTED);
                     } else if (Build.VERSION.SDK_INT >= 23) {
                         int permissionWriteExtStorage = ActivityCompat.checkSelfPermission(mAct, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                        Add_note_option.createSelection(this, permissionWriteExtStorage == PackageManager.PERMISSION_GRANTED);
+                        Add_note.createSelection(this, permissionWriteExtStorage == PackageManager.PERMISSION_GRANTED);
                     }
                 }
                 else
-                    Add_note_option.createSelection(this,true);
+                    Add_note.createSelection(this,true);
                 return true;
 
             case MenuId.SLIDE_SHOW:

@@ -17,6 +17,7 @@
     <string name="note_ready_image">現成圖片</string>
     <string name="note_ready_video">現成影片</string>
     <string name="note_drawing">塗鴉</string>
+    <string name="note_path">路徑</string>
     <string name="note_take_picture">拍照</string>
     <string name="note_take_picture_OK">完成</string>
     <string name="note_cancel_add_new">取消</string>

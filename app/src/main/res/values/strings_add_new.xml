@@ -17,6 +17,7 @@
     <string name="note_ready_image">Ready image</string>
     <string name="note_ready_video">Ready video</string>
     <string name="note_drawing">Doodle</string>
+    <string name="note_path">Path</string>
     <string name="note_take_picture">Take Picture</string>
     <string name="note_take_picture_OK">finished</string>
     <string name="note_cancel_add_new">Cancel</string>
