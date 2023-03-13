@@ -42,7 +42,7 @@
 		    android:maxLines="20"
 			/>
 
-	<!-- body -->
+	<!-- picture Uri -->
 	<LinearLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
@@ -56,50 +56,23 @@
 	<TextView
         android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="@string/edit_note_dlg_body"
+		android:text="@string/edit_note_dlg_picture_uri"
         android:textColor="@android:color/white"/>
 	</LinearLayout>
 	
-	<EditText android:id="@+id/edit_body"
+	<EditText android:id="@+id/add_picture_uri"
 	    android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
 		android:textCursorDrawable="@null"
 	    android:inputType=""
-	    android:minLines="2"
-		android:maxLines="1000"
+	    android:minLines="6"
+		android:maxLines="20"
 	    android:autoLink="all"
 	    android:textSize="18sp"
         android:scrollbars="vertical"
         android:gravity="top"
 		/>
-
-	<!-- link -->
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:background="@color/bar_color"
-		android:orientation="horizontal" >
-		<ImageView
-			android:layout_width="20dp"
-			android:layout_height="20dp"
-			android:src="@android:drawable/ic_menu_edit"
-			/>
-	</LinearLayout>
-
-	<EditText android:id="@+id/edit_link"
-			  android:layout_width="match_parent"
-			  android:layout_height="0dp"
-			  android:layout_weight="1"
-			  android:textCursorDrawable="@null"
-			  android:inputType=""
-			  android:minLines="1"
-			  android:maxLines="20"
-			  android:autoLink="all"
-			  android:textSize="18sp"
-			  android:scrollbars="vertical"
-			  android:gravity="top"
-	/>
 
 </LinearLayout>
 </ScrollView>

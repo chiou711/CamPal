@@ -188,7 +188,7 @@ public class DB_page {
     }
 
     // update note
-    // 		createTime:  0 for Don't update time
+    // createTime:  0 for Don't update time
     @SuppressLint("Range")
     public boolean updateNote(long rowId, String title, String pictureUri,long marking, long createTime, boolean enDbOpenClose)
     {

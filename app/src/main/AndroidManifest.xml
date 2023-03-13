@@ -80,6 +80,14 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </activity>
+        <activity android:name=".note_add.pictureUri.Note_addPictureUri"
+            android:theme="@style/MyTheme"
+            android:windowSoftInputMode="adjustPan"
+            android:parentActivityName=".main.MainAct">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".main.MainAct" />
+        </activity>
         <!-- note: add orientation above, when doing Rotate, activity will not go through the following states:
              onPause/onSaveInstanceState/onStop/onDestroy/
                                                 onCreate/onStart/onRestoreInstanceState/onResume    -->

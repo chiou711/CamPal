@@ -34,6 +34,7 @@ import android.widget.Toast;
 import com.cw.campal.R;
 import com.cw.campal.note_add.image.Note_addCameraImage;
 import com.cw.campal.note_add.image.Note_addReadyImage;
+import com.cw.campal.note_add.pictureUri.Note_addPictureUri;
 import com.cw.campal.note_add.video.Note_addCameraVideo;
 import com.cw.campal.note_add.video.Note_addReadyVideo;
 import com.cw.campal.util.Util;
@@ -66,14 +67,14 @@ public class Add_note_option {
      */
     static List<Add_note_option> addNoteList;
 
-//    private final static int ID_NEW_TEXT = 1;
-    private final static int ID_NEW_CAMERA_IMAGE = 5;
-    private final static int ID_NEW_READY_IMAGE = 6;
-    private final static int ID_NEW_CAMERA_VIDEO = 7;
-    private final static int ID_NEW_READY_VIDEO = 8;
-    private final static int ID_NEW_DRAWING = 9;
-    private final static int ID_NEW_SETTING = 10;
-    private final static int ID_NEW_BACK = 11;
+    private final static int ID_NEW_CAMERA_IMAGE = 1;
+    private final static int ID_NEW_READY_IMAGE = 2;
+    private final static int ID_NEW_CAMERA_VIDEO = 3;
+    private final static int ID_NEW_READY_VIDEO = 4;
+    private final static int ID_NEW_DRAWING = 5;
+    private final static int ID_NEW_PICTURE_URI = 6;
+    private final static int ID_NEW_SETTING = 7;
+    private final static int ID_NEW_BACK = 8;
 
     public static void createSelection(AppCompatActivity act, boolean permitted)
     {
@@ -88,11 +89,6 @@ public class Add_note_option {
         PackageManager packageManager = act.getPackageManager();
 
         addNoteList = new ArrayList<>();
-
-        // text
-//        addNoteList.add(new Add_note_option(ID_NEW_TEXT,
-//                android.R.drawable.ic_menu_edit,
-//                R.string.note_text));
 
         if(permitted) {
             // camera image
@@ -123,6 +119,11 @@ public class Add_note_option {
             addNoteList.add(new Add_note_option(ID_NEW_DRAWING,
                     R.drawable.ic_menu_draw,
                     R.string.note_drawing));
+
+            // picture Uri
+            addNoteList.add(new Add_note_option(ID_NEW_PICTURE_URI,
+                    android.R.drawable.ic_menu_edit,
+                    R.string.edit_note_dlg_picture_uri));
         }
 
         // Setting
@@ -237,6 +238,19 @@ public class Add_note_option {
                 Intent intent = new Intent(act, Note_drawingAct.class);
                 intent.putExtra("drawing_mode",Util.DRAWING_ADD);
 
+                if(bTop)
+                    intent.putExtra("extra_ADD_NEW_TO_TOP", "true");
+                else
+                    intent.putExtra("extra_ADD_NEW_TO_TOP", "false");
+
+                act.startActivity(intent);
+            }
+            break;
+
+            // picture Uri
+            case ID_NEW_PICTURE_URI:
+            {
+                Intent intent = new Intent(act, Note_addPictureUri.class);
                 if(bTop)
                     intent.putExtra("extra_ADD_NEW_TO_TOP", "true");
                 else

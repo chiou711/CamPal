@@ -98,12 +98,12 @@
 			android:layout_height="wrap_content"
 			android:textColor="@android:color/white"
 			android:labelFor="@+id/edit_body"
-			android:text="@string/edit_note_dlg_body" />
+			android:text="@string/edit_note_dlg_picture_uri" />
 	</LinearLayout>
 
-<!-- body Edit -->	
+	<!-- picture Uri Edit -->
 	<EditText 
-	    android:id="@+id/edit_body"
+	    android:id="@+id/edit_picture_uri"
 	    android:layout_width="match_parent"
 		android:layout_height="0dp"
         android:layout_weight="1"

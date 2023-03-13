@@ -217,7 +217,7 @@ public class Note_edit_ui {
 			block.setBackgroundColor(ColorSet.mBG_ColorArray[style]);
 
 		titleEditText = (EditText) act.findViewById(R.id.edit_title);
-		pictureUriEditText = (EditText) act.findViewById(R.id.edit_body);
+		pictureUriEditText = (EditText) act.findViewById(R.id.edit_picture_uri);
 
 		//set title color
 		titleEditText.setTextColor(ColorSet.mText_ColorArray[style]);
@@ -387,7 +387,8 @@ public class Note_edit_ui {
 					thumbUri = pictureUriInDB;
 
 				new UtilImage_bitmapLoader(picImageView,
-						                   thumbUri, progressBar,
+						                   thumbUri,
+										   progressBar,
 //    					                   (style % 2 == 1 ?
 //                                            UilCommon.optionsForRounded_light:
 //                                            UilCommon.optionsForRounded_dark),

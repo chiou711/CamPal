@@ -151,15 +151,11 @@ public class Page_recycler extends Fragment implements OnStartDragListener {
         Long noteNumber1;
         String noteTitle1;
         String notePictureUri1;
-        String noteDrawingUri1;
-        String noteBodyString1;
         int markingIndex1;
         Long createTime1;
         Long noteNumber2 ;
         String notePictureUri2;
-        String noteDrawingUri2;
         String noteTitle2;
-        String noteBodyString2;
         int markingIndex2;
         Long createTime2;
 

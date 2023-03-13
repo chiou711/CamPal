@@ -60,7 +60,7 @@ public class UtilImage_bitmapLoader
   
 
 	public UtilImage_bitmapLoader(ImageView picImageView,
-								  String mPictureUriInDB,
+								  String pictureUriInDB,
 								  final ProgressBar progressBar,
 								  DisplayImageOptions options,
 								  Activity mAct )
@@ -72,7 +72,7 @@ public class UtilImage_bitmapLoader
 	    mProgressBar = progressBar;
 
 		Bitmap bmVideoIcon = BitmapFactory.decodeResource(mAct.getResources(), R.drawable.ic_media_play);
-		Uri imageUri = Uri.parse(mPictureUriInDB);
+		Uri imageUri = Uri.parse(pictureUriInDB);
 		String pictureUri = imageUri.toString();
 		System.out.println("UtilImage_bitmapLoader / _constructor / pictureUri = " + pictureUri);
 
@@ -99,7 +99,8 @@ public class UtilImage_bitmapLoader
 			String path = uri.getPath();
 
 			// check if content is local or remote
-			if(Util.getUriScheme(pictureUri).equals("content"))
+			if(Util.getUriScheme(pictureUri)!= null &&
+			   Util.getUriScheme(pictureUri).equals("content"))
 			{
 				path = Util.getLocalRealPathByUri(mAct,uri);
 			}
