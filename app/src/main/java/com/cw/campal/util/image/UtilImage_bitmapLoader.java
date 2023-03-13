@@ -77,9 +77,16 @@ public class UtilImage_bitmapLoader
 		System.out.println("UtilImage_bitmapLoader / _constructor / pictureUri = " + pictureUri);
 
 		// 1 for image check
-		if (UtilImage.hasImageExtension(pictureUri,mAct)|| pictureUri.contains("drive.google"))
-		{
+		if (UtilImage.hasImageExtension(pictureUri,mAct)||
+		 	pictureUri.contains("drive.google")){
 			System.out.println("UtilImage_bitmapLoader constructor / has image extension");
+
+			// for Google Drive picture Uri
+			if(pictureUri.contains("drive.google")) {
+				pictureUri = "https://drive.google.com/uc?export=download&id=" + Util.getGDriveFileId(pictureUri);
+//				System.out.println("--------->　pictureUri (drive.google) " + pictureUri);
+			}
+
 			// original method
 //			UilCommon.imageLoader
 //					 .displayImage(	pictureUri,

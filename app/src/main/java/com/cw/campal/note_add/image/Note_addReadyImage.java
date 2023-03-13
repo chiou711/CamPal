@@ -121,8 +121,8 @@ public class Note_addReadyImage extends AppCompatActivity {
 					rowId = null; // set null for Insert
 					rowId = savePictureStateInDB(rowId, uriStr);
 
-					if ((dB_page.getNotesCount(true) > 0) &&
-							option.equalsIgnoreCase("single_to_top")) {
+					if ( (dB_page.getNotesCount(true) > 0) &&
+						 option.equalsIgnoreCase("single_to_top") ) {
 						Page_recycler.swapTopBottom();
 					}
 

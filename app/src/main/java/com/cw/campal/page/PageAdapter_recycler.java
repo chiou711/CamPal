@@ -162,7 +162,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
         String strTitle = null;
         String strBody = null;
         String pictureUri = null;
-        String drawingUri = null;
         Long timeCreated = null;
         int marking = 0;
 
@@ -214,12 +213,9 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 			holder.textTitle.setTextColor(ColorSet.mText_ColorArray[style]);
 		}
 
-		// set thumb nail of picture Uri
-		if(UtilImage.hasImageExtension(drawingUri, mAct ))
-            pictureUri = drawingUri;
-
 		// case 1: show thumb nail if picture Uri exists
 		if(UtilImage.hasImageExtension(pictureUri, mAct ) ||
+		   pictureUri.contains("drive.google")||
 		   UtilVideo.hasVideoExtension(pictureUri, mAct )   ){
 			holder.thumbBlock.setVisibility(View.VISIBLE);
 			holder.thumbPicture.setVisibility(View.VISIBLE);

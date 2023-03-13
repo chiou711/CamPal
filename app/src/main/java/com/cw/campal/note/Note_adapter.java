@@ -193,9 +193,9 @@ public class Note_adapter extends FragmentStatePagerAdapter
     		             ProgressBar spinner          )
     {
 		String pictureUri = db_page.getNotePictureUri(position,true);
-
         // show image view
   		if( UtilImage.hasImageExtension(pictureUri, act)||
+			pictureUri.contains("drive.google")||
   		    (Util.isEmptyString(pictureUri)   )             ) // for wrong path icon
   		{
 			System.out.println("Note_adapter / _showPictureView / show image view");

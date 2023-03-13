@@ -1447,13 +1447,13 @@ public class Util
 		// remove view?usp=drivesdk
 		String last = originalUri.substring(originalUri.lastIndexOf('/')+1);
 		originalUri = originalUri.replace(last,"");
-		System.out.println("--------->　originalUri 2 "+ originalUri);
+//		System.out.println("--------->　originalUri 2 "+ originalUri);
 		// remove /
 		originalUri = originalUri.substring(0,originalUri.length()-1);
-		System.out.println("--------->　originalUri 3 "+ originalUri);
+//		System.out.println("--------->　originalUri 3 "+ originalUri);
 		// get ID
 		String id = originalUri.substring(originalUri.lastIndexOf('/')+1);
-		System.out.println("--------->　id = "+ id);
+//		System.out.println("--------->　id = "+ id);
 		return id;
 	}
 

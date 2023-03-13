@@ -471,18 +471,13 @@ public class Note_edit_ui {
 	        		else // update new
 	        		{
 	        			System.out.println("Note_edit_ui / _saveStateInDB / update new");
-						System.out.println("--- rowId = " + rowId);
-						System.out.println("--- oriMarking = " + oriMarking);
-
                         long marking;
                         if(null == oriMarking)
                             marking = 0;
                         else
                             marking = oriMarking;
 
-                        boolean isOK;
-	        			isOK = dB_page.updateNote(rowId, title, pictureUri, marking, oriCreatedTime,true); // update note
-	        			System.out.println("--- isOK = " + isOK);
+	        			dB_page.updateNote(rowId, title, pictureUri, marking, oriCreatedTime,true); // update note
 	        		}
 	        		currPictureUri = pictureUri;
 	        	}
