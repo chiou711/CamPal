@@ -394,8 +394,8 @@ public class NoteUi
         mPictureString = pictureStr;
 
 		// disable temporary UI behaviour
-//        handler = new Handler();
-//        handler.postDelayed(runnableHideUi,delayTime);
+        handler = new Handler();
+        handler.postDelayed(runnableHideUi,delayTime);
     }
 
 
